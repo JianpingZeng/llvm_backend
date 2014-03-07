@@ -1,4 +1,4 @@
-;===- ./lib/Target/Cse523/TargetInfo/LLVMBuild.txt --------------*- Conf -*--===;
+;===- ./lib/Target/Cse523/TargetInfo/LLVMBuild.txt ----------------*- Conf -*--===;
 ;
 ;                     The LLVM Compiler Infrastructure
 ;

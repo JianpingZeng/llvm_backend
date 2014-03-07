@@ -1,4 +1,4 @@
-;===- ./lib/Target/Cse523/MCTargetDesc/LLVMBuild.txt --------------*- Conf -*--===;
+;===- ./lib/Target/Cse523/Utils/LLVMBuild.txt ---------------------*- Conf -*--===;
 ;
 ;                     The LLVM Compiler Infrastructure
 ;
@@ -17,7 +17,7 @@
 
 [component_0]
 type = Library
-name = Cse523Desc
+name = Cse523Utils
 parent = Cse523
-required_libraries = MC Support Cse523AsmPrinter Cse523Info
+required_libraries = Support
 add_to_library_groups = Cse523

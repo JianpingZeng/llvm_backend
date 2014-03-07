@@ -28,15 +28,15 @@ def FeatureCSE523
 // Register File, Calling Conv, Instruction Descriptions
 //===----------------------------------------------------------------------===//
 
-//include "Cse523RegisterInfo.td"
-//include "Cse523CallingConv.td"
+include "Cse523RegisterInfo.td"
+include "Cse523CallingConv.td"
 //include "Cse523InstrInfo.td"
 
 //def Cse523InstrInfo : InstrInfo;
 
-//def Cse523AsmParser : AsmParser {
-//  bit ShouldEmitMatchRegisterName = 0;
-//}
+def Cse523AsmParser : AsmParser {
+  bit ShouldEmitMatchRegisterName = 0;
+}
 
 //===----------------------------------------------------------------------===//
 // SPARC processors supported.

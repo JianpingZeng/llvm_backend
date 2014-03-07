@@ -1,4 +1,4 @@
-;===- ./lib/Target/Cse523/AsmParser/LLVMBuild.txt ---------------*- Conf -*--===;
+;===- ./lib/Target/Cse523/AsmParser/LLVMBuild.txt -----------------*- Conf -*--===;
 ;
 ;                     The LLVM Compiler Infrastructure
 ;

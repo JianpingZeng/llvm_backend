@@ -1,4 +1,4 @@
-##===- lib/Target/Cse523/AsmParser/Makefile -------------------*- Makefile -*-===##
+##===- lib/Target/Cse523/Utils/Makefile -----------------------*- Makefile -*-===##
 #
 #                     The LLVM Compiler Infrastructure
 #
@@ -7,7 +7,7 @@
 #
 ##===----------------------------------------------------------------------===##
 LEVEL = ../../../..
-LIBRARYNAME = LLVMCse523AsmParser
+LIBRARYNAME = LLVMCse523Utils
 
 # Hack: we need to include 'main' x86 target directory to grab private headers
 CPP.Flags += -I$(PROJ_OBJ_DIR)/.. -I$(PROJ_SRC_DIR)/..

@@ -1,4 +1,4 @@
-##===- lib/Target/Cse523/Makefile ---------------------------*- Makefile -*-===##
+##===- lib/Target/Cse523/Makefile -----------------------------*- Makefile -*-===##
 #
 #                     The LLVM Compiler Infrastructure
 #
@@ -14,12 +14,12 @@ TARGET = Cse523
 # Make sure that tblgen is run, first thing.
 #BUILT_SOURCES = Cse523GenRegisterInfo.inc Cse523GenInstrInfo.inc \
 #		Cse523GenAsmWriter.inc Cse523GenAsmMatcher.inc \
-#		Cse523GenDAGISel.inc Cse523GenDisassemblerTables.inc \
-#		Cse523GenSubtargetInfo.inc Cse523GenCallingConv.inc \
-#		Cse523GenCodeEmitter.inc Cse523GenMCCodeEmitter.inc
+#                Cse523GenAsmWriter1.inc Cse523GenDAGISel.inc  \
+#                Cse523GenDisassemblerTables.inc Cse523GenFastISel.inc \
+#                Cse523GenCallingConv.inc Cse523GenSubtargetInfo.inc
 
-#DIRS = InstPrinter AsmParser Disassembler TargetInfo MCTargetDesc
-DIRS = InstPrinter AsmParser TargetInfo MCTargetDesc
+BUILT_SOURCES = Cse523GenRegisterInfo.inc Cse523GenCallingConv.inc
+
+DIRS = InstPrinter AsmParser TargetInfo MCTargetDesc Utils
 
 include $(LEVEL)/Makefile.common
-

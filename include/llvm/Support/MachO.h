@@ -415,7 +415,21 @@ namespace llvm {
       X86_64_RELOC_SIGNED_1        = 6,
       X86_64_RELOC_SIGNED_2        = 7,
       X86_64_RELOC_SIGNED_4        = 8,
-      X86_64_RELOC_TLV             = 9
+      X86_64_RELOC_TLV             = 9,
+      
+      // Constant values for the r_type field in an Cse523 architecture
+      // llvm::MachO::relocation_info or llvm::MachO::scattered_relocation_info
+      // structure
+      CSE523_RELOC_UNSIGNED        = 0,
+      CSE523_RELOC_SIGNED          = 1,
+      CSE523_RELOC_BRANCH          = 2,
+      CSE523_RELOC_GOT_LOAD        = 3,
+      CSE523_RELOC_GOT             = 4,
+      CSE523_RELOC_SUBTRACTOR      = 5,
+      CSE523_RELOC_SIGNED_1        = 6,
+      CSE523_RELOC_SIGNED_2        = 7,
+      CSE523_RELOC_SIGNED_4        = 8,
+      CSE523_RELOC_TLV             = 9
     };
 
     // Values for segment_command.initprot.
@@ -910,7 +924,8 @@ namespace llvm {
       CPU_TYPE_ARM       = 12,
       CPU_TYPE_SPARC     = 14,
       CPU_TYPE_POWERPC   = 18,
-      CPU_TYPE_POWERPC64 = CPU_TYPE_POWERPC | CPU_ARCH_ABI64
+      CPU_TYPE_POWERPC64 = CPU_TYPE_POWERPC | CPU_ARCH_ABI64,
+      CPU_TYPE_CSE523    = 22
     };
 
     enum LLVM_ENUM_INT_TYPE(uint32_t) {
@@ -983,6 +998,10 @@ namespace llvm {
 
     enum CPUSubTypeSPARC {
       CPU_SUBTYPE_SPARC_ALL   = 0
+    };
+
+    enum CPUSubTypeCSE523 {
+      CPU_SUBTYPE_CSE523_ALL   = 0
     };
 
     enum CPUSubTypePowerPC {

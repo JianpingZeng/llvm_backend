@@ -1,9 +1,11 @@
 add_llvm_library(LLVMCse523Desc
   Cse523AsmBackend.cpp
-  Cse523ELFObjectWriter.cpp
+  Cse523MCTargetDesc.cpp
   Cse523MCAsmInfo.cpp
   Cse523MCCodeEmitter.cpp
-  Cse523MCTargetDesc.cpp
-  Cse523MCExpr.cpp
-  Cse523TargetStreamer.cpp
+  Cse523MachObjectWriter.cpp
+  Cse523ELFObjectWriter.cpp
+  Cse523WinCOFFObjectWriter.cpp
+  Cse523MachORelocationInfo.cpp
+  Cse523ELFRelocationInfo.cpp
   )

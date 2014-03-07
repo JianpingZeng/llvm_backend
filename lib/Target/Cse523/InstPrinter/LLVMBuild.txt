@@ -1,4 +1,4 @@
-;===- ./lib/Target/Cse523/InstPrinter/LLVMBuild.txt -------------*- Conf -*--===;
+;===- ./lib/Target/Cse523/InstPrinter/LLVMBuild.txt ---------------*- Conf -*--===;
 ;
 ;                     The LLVM Compiler Infrastructure
 ;
@@ -19,5 +19,5 @@
 type = Library
 name = Cse523AsmPrinter
 parent = Cse523
-required_libraries = MC Support
+required_libraries = MC Support Cse523Utils
 add_to_library_groups = Cse523

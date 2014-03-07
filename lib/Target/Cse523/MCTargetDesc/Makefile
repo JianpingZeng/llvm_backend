@@ -1,4 +1,4 @@
-##===- lib/Target/Cse523/TargetDesc/Makefile ----------------*- Makefile -*-===##
+##===- lib/Target/Cse523/TargetDesc/Makefile ------------------*- Makefile -*-===##
 #
 #                     The LLVM Compiler Infrastructure
 #
