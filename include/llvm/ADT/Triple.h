@@ -59,6 +59,7 @@ public:
     ppc64,      // PPC64: powerpc64, ppu
     ppc64le,    // PPC64LE: powerpc64le
     r600,       // R600: AMD GPUs HD2XXX - HD6XXX
+    cse523,     // Cse523: cse523
     sparc,      // Sparc: sparc
     sparcv9,    // Sparcv9: Sparcv9
     systemz,    // SystemZ: s390x

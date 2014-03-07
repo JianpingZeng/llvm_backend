@@ -572,7 +572,7 @@ ifeq ($(HOST_OS),Darwin)
     endif
   endif
 else
-  SharedLinkOptions=-shared
+  SharedLinkOptions=-shared -fPIC
 endif
 
 ifeq ($(TARGET_OS),Darwin)

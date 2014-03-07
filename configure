@@ -1449,7 +1449,7 @@ Optional Features:
                           Enable crash handling overrides (default is YES)
   --enable-targets        Build specific host targets: all or
                           target1,target2,... Valid targets are: host, x86,
-                          x86_64, sparc, powerpc, arm, aarch64, mips, hexagon,
+                          x86_64, cse523, sparc, powerpc, arm, aarch64, mips, hexagon,
                           xcore, msp430, nvptx, systemz, r600, and cpp
                           (default=all)
   --enable-experimental-targets
@@ -4146,6 +4146,7 @@ else
   case $target in
   i?86-*)                 llvm_cv_target_arch="x86" ;;
   amd64-* | x86_64-*)     llvm_cv_target_arch="x86_64" ;;
+  cse523*-*)              llvm_cv_target_arch="Cse523" ;;
   sparc*-*)               llvm_cv_target_arch="Sparc" ;;
   powerpc*-*)             llvm_cv_target_arch="PowerPC" ;;
   arm*-*)                 llvm_cv_target_arch="ARM" ;;
@@ -5076,6 +5077,8 @@ else
  ;;
     x86_64)      TARGET_HAS_JIT=1
  ;;
+    Cse523)      TARGET_HAS_JIT=0
+ ;;
     ARM)         TARGET_HAS_JIT=1
  ;;
     AArch64)     TARGET_HAS_JIT=0
@@ -5334,7 +5337,7 @@ _ACEOF
 
 fi
 
-ALL_TARGETS="X86 Sparc PowerPC AArch64 ARM Mips XCore MSP430 CppBackend NVPTX Hexagon SystemZ R600"
+ALL_TARGETS="X86 Cse523 Sparc PowerPC AArch64 ARM Mips XCore MSP430 CppBackend NVPTX Hexagon SystemZ R600"
 ALL_TARGETS=$ALL_TARGETS
 
 
@@ -5355,6 +5358,7 @@ case "$enableval" in
       case "$a_target" in
         x86)      TARGETS_TO_BUILD="X86 $TARGETS_TO_BUILD" ;;
         x86_64)   TARGETS_TO_BUILD="X86 $TARGETS_TO_BUILD" ;;
+        cse523)   TARGETS_TO_BUILD="Cse523 $TARGETS_TO_BUILD" ;;
         sparc)    TARGETS_TO_BUILD="Sparc $TARGETS_TO_BUILD" ;;
         powerpc)  TARGETS_TO_BUILD="PowerPC $TARGETS_TO_BUILD" ;;
         aarch64)  TARGETS_TO_BUILD="AArch64 $TARGETS_TO_BUILD" ;;
