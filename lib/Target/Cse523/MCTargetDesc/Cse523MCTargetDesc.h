@@ -111,11 +111,11 @@ MCRelocationInfo *createCse523_64ELFRelocationInfo(MCContext &Ctx);
 #define GET_REGINFO_ENUM
 #include "Cse523GenRegisterInfo.inc"
 
-//// Defines symbolic names for the Cse523 instructions.
-////
-//#define GET_INSTRINFO_ENUM
-//#include "Cse523GenInstrInfo.inc"
+// Defines symbolic names for the Cse523 instructions.
 //
+#define GET_INSTRINFO_ENUM
+#include "Cse523GenInstrInfo.inc"
+
 //#define GET_SUBTARGETINFO_ENUM
 //#include "Cse523GenSubtargetInfo.inc"
 

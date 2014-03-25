@@ -57,10 +57,13 @@ Cse523TargetMachine::Cse523TargetMachine(const Target &T, StringRef TT,
         CodeGenOpt::Level OL)
     : LLVMTargetMachine(T, TT, CPU, FS, Options, RM, CM, OL),
     Subtarget(TT, CPU, FS, true),
-    DL(computeDataLayout(Subtarget))
-    //InstrInfo(Subtarget),
-    //TLInfo(*this), TSInfo(*this),
-    //FrameLowering(Subtarget) 
+    DL(computeDataLayout(Subtarget)),
+    InstrInfo(*this)
+    //FrameLowering(*this, Subtarget),
+    //InstrItins(Subtarget.getInstrItineraryData()),
+    //TLInfo(*this),
+    //TSInfo(*this),
+    //JITInfo(*this)
 {
     initAsmInfo();
 }

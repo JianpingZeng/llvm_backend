@@ -16,7 +16,7 @@
 
 //#include "Cse523FrameLowering.h"
 //#include "Cse523ISelLowering.h"
-//#include "Cse523InstrInfo.h"
+#include "Cse523InstrInfo.h"
 //#include "Cse523JITInfo.h"
 //#include "Cse523SelectionDAGInfo.h"
 #include "Cse523Subtarget.h"
@@ -29,7 +29,7 @@ namespace llvm {
     class Cse523TargetMachine : public LLVMTargetMachine {
         Cse523Subtarget Subtarget;
         const DataLayout DL;       // Calculates type size & alignment
-        //Cse523InstrInfo InstrInfo;
+        Cse523InstrInfo InstrInfo;
         //Cse523TargetLowering TLInfo;
         //Cse523SelectionDAGInfo TSInfo;
         //Cse523FrameLowering FrameLowering;
@@ -41,14 +41,14 @@ namespace llvm {
                 Reloc::Model RM, CodeModel::Model CM,
                 CodeGenOpt::Level OL);
 
-        //virtual const Cse523InstrInfo *getInstrInfo() const { 
-        //    return &InstrInfo; 
+        virtual const Cse523InstrInfo *getInstrInfo() const { 
+            return &InstrInfo; 
+        }
+        //virtual const Cse523RegisterInfo *getRegisterInfo() const {
+        //    return &InstrInfo.getRegisterInfo();
         //}
         //virtual const TargetFrameLowering  *getFrameLowering() const {
         //    return &FrameLowering;
-        //}
-        //virtual const Cse523RegisterInfo *getRegisterInfo() const {
-        //    return &InstrInfo.getRegisterInfo();
         //}
         //virtual const Cse523TargetLowering* getTargetLowering() const {
         //    return &TLInfo;

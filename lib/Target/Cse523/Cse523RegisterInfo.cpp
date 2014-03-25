@@ -51,7 +51,7 @@ ForceStackAlign("force-align-stack",
         cl::init(false), cl::Hidden);
 
 static cl::opt<bool>
-EnableBasePointer("x86-use-base-pointer", cl::Hidden, cl::init(true),
+EnableBasePointer("cse523-use-base-pointer", cl::Hidden, cl::init(true),
         cl::desc("Enable use of a base pointer for complex stack frames"));
 
 Cse523RegisterInfo::Cse523RegisterInfo(Cse523TargetMachine &tm)
@@ -59,18 +59,19 @@ Cse523RegisterInfo::Cse523RegisterInfo(Cse523TargetMachine &tm)
             Cse523_MC::getDwarfRegFlavour(tm.getTargetTriple(), false),
             Cse523_MC::getDwarfRegFlavour(tm.getTargetTriple(), true),
             Cse523::RIP // Always use RIP for 64 bit
-            ),
-    TM(tm) {
-        Cse523_MC::InitLLVM2SEHRegisterMapping(this);
+    ),
+    TM(tm) 
+{
+    Cse523_MC::InitLLVM2SEHRegisterMapping(this);
 
-        SlotSize = 8;
-        StackPtr = Cse523::RSP;
-        FramePtr = Cse523::RBP;
-        // Use a callee-saved register as the base pointer.  These registers must
-        // not conflict with any ABI requirements.  For example, in 32-bit mode PIC
-        // requires GOT in the EBX register before function calls via PLT GOT pointer.
-        BasePtr = Cse523::RBX;
-    }
+    SlotSize = 8;
+    StackPtr = Cse523::RSP;
+    FramePtr = Cse523::RBP;
+    // Use a callee-saved register as the base pointer.  These registers must
+    // not conflict with any ABI requirements.  For example, in 32-bit mode PIC
+    // requires GOT in the EBX register before function calls via PLT GOT pointer.
+    BasePtr = Cse523::RBX;
+}
 
 /// getCompactUnwindRegNum - This function maps the register to the number for
 /// compact unwind encoding. Return -1 if the register isn't valid.
