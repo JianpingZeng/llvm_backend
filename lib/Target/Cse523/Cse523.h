@@ -23,7 +23,7 @@
 namespace llvm {
 
 class FunctionPass;
-//class JITCodeEmitter;
+class JITCodeEmitter;
 class Cse523TargetMachine;
 //
 /// createCse523ISelDag - This pass converts a legalized DAG into a
@@ -41,22 +41,22 @@ FunctionPass* createGlobalBaseRegPass();
 /// is only fetched once per execution path through the function.
 FunctionPass *createCleanupLocalDynamicTLSPass();
 
-///// createCse523FloatingPointStackifierPass - This function returns a pass which
-///// converts floating point register references and pseudo instructions into
-///// floating point stack references and physical instructions.
-/////
-//FunctionPass *createCse523FloatingPointStackifierPass();
-//
-///// createCse523IssueVZeroUpperPass - This pass inserts AVX vzeroupper instructions
-///// before each call to avoid transition penalty between functions encoded with
-///// AVX and SSE.
-//FunctionPass *createCse523IssueVZeroUpperPass();
-//
-///// createCse523CodeEmitterPass - Return a pass that emits the collected Cse523 code
-///// to the specified MCE object.
-//FunctionPass *createCse523JITCodeEmitterPass(Cse523TargetMachine &TM,
-//                                          JITCodeEmitter &JCE);
-//
+/// createCse523FloatingPointStackifierPass - This function returns a pass which
+/// converts floating point register references and pseudo instructions into
+/// floating point stack references and physical instructions.
+///
+FunctionPass *createCse523FloatingPointStackifierPass();
+
+/// createCse523IssueVZeroUpperPass - This pass inserts AVX vzeroupper instructions
+/// before each call to avoid transition penalty between functions encoded with
+/// AVX and SSE.
+FunctionPass *createCse523IssueVZeroUpperPass();
+
+/// createCse523CodeEmitterPass - Return a pass that emits the collected Cse523 code
+/// to the specified MCE object.
+FunctionPass *createCse523JITCodeEmitterPass(Cse523TargetMachine &TM,
+                                          JITCodeEmitter &JCE);
+
 /// createCse523EmitCodeToMemory - Returns a pass that converts a register
 /// allocated function into raw machine code in a dynamically
 /// allocated chunk of memory.

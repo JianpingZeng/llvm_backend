@@ -20,7 +20,7 @@ TARGET = Cse523
 
 BUILT_SOURCES = Cse523GenRegisterInfo.inc Cse523GenInstrInfo.inc \
 		Cse523GenAsmWriter.inc Cse523GenAsmWriter1.inc \
-                Cse523GenCallingConv.inc
+                Cse523GenCallingConv.inc Cse523GenSubtargetInfo.inc
 
 DIRS = InstPrinter AsmParser TargetInfo MCTargetDesc Utils
 

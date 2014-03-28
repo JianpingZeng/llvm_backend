@@ -5,6 +5,7 @@ tablegen(LLVM Cse523GenInstrInfo.inc -gen-instr-info)
 tablegen(LLVM Cse523GenAsmWriter.inc -gen-asm-writer)
 tablegen(LLVM Cse523GenAsmWriter1.inc -gen-asm-writer -asmwriternum=1)
 tablegen(LLVM Cse523GenCallingConv.inc -gen-callingconv)
+tablegen(LLVM Cse523GenSubtargetInfo.inc -gen-subtarget)
 add_public_tablegen_target(Cse523CommonTableGen)
 
 set(sources
