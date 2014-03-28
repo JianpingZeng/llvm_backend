@@ -116,7 +116,7 @@ MCRelocationInfo *createCse523_64ELFRelocationInfo(MCContext &Ctx);
 #define GET_INSTRINFO_ENUM
 #include "Cse523GenInstrInfo.inc"
 
-//#define GET_SUBTARGETINFO_ENUM
-//#include "Cse523GenSubtargetInfo.inc"
+#define GET_SUBTARGETINFO_ENUM
+#include "Cse523GenSubtargetInfo.inc"
 
 #endif

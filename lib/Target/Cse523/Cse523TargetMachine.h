@@ -1,4 +1,4 @@
-//===-- Cse523TargetMachine.h - Define TargetMachine for Cse523 ---*- C++ -*-===//
+//===-- Cse523TargetMachine.h - Define TargetMachine for the Cse523 ---*- C++ -*-===//
 //
 //                     The LLVM Compiler Infrastructure
 //
@@ -14,6 +14,7 @@
 #ifndef CSE523TARGETMACHINE_H
 #define CSE523TARGETMACHINE_H
 
+#include "Cse523.h"
 //#include "Cse523FrameLowering.h"
 //#include "Cse523ISelLowering.h"
 #include "Cse523InstrInfo.h"
@@ -26,14 +27,18 @@
 
 namespace llvm {
 
+    class StringRef;
+
     class Cse523TargetMachine : public LLVMTargetMachine {
-        Cse523Subtarget Subtarget;
-        const DataLayout DL;       // Calculates type size & alignment
-        Cse523InstrInfo InstrInfo;
-        //Cse523TargetLowering TLInfo;
+        virtual void anchor();
+        Cse523Subtarget       Subtarget;
+        //Cse523FrameLowering   FrameLowering;
+        InstrItineraryData InstrItins;
+        const DataLayout   DL; // Calculates type size & alignment
+        Cse523InstrInfo       InstrInfo;
+        //Cse523TargetLowering  TLInfo;
         //Cse523SelectionDAGInfo TSInfo;
-        //Cse523FrameLowering FrameLowering;
-        //Cse523JITInfo JITInfo;
+        //Cse523JITInfo         JITInfo;
 
         public:
         Cse523TargetMachine(const Target &T, StringRef TT,
@@ -41,36 +46,40 @@ namespace llvm {
                 Reloc::Model RM, CodeModel::Model CM,
                 CodeGenOpt::Level OL);
 
-        virtual const Cse523InstrInfo *getInstrInfo() const { 
-            return &InstrInfo; 
+        virtual const DataLayout *getDataLayout() const { return &DL; }
+        virtual const Cse523InstrInfo     *getInstrInfo() const {
+            return &InstrInfo;
         }
-        //virtual const Cse523RegisterInfo *getRegisterInfo() const {
-        //    return &InstrInfo.getRegisterInfo();
-        //}
-        //virtual const TargetFrameLowering  *getFrameLowering() const {
+        //  virtual const TargetFrameLowering  *getFrameLowering() const {
         //    return &FrameLowering;
-        //}
-        //virtual const Cse523TargetLowering* getTargetLowering() const {
-        //    return &TLInfo;
-        //}
-        //virtual const Cse523SelectionDAGInfo* getSelectionDAGInfo() const {
-        //    return &TSInfo;
-        //}
-        //virtual Cse523JITInfo *getJITInfo() {
+        //  }
+        //  virtual       Cse523JITInfo       *getJITInfo()         {
         //    return &JITInfo;
-        //}
-        virtual const DataLayout       *getDataLayout() const { 
-            return &DL; 
+        //  }
+        virtual const Cse523Subtarget     *getSubtargetImpl() const{ return &Subtarget; }
+        //  virtual const Cse523TargetLowering *getTargetLowering() const {
+        //    return &TLInfo;
+        //  }
+        //  virtual const Cse523SelectionDAGInfo *getSelectionDAGInfo() const {
+        //    return &TSInfo;
+        //  }
+        virtual const Cse523RegisterInfo  *getRegisterInfo() const {
+            return &getInstrInfo()->getRegisterInfo();
         }
-        //virtual const Cse523Subtarget   *getSubtargetImpl() const { 
-        //    return &Subtarget; 
-        //}
+        virtual const InstrItineraryData *getInstrItineraryData() const {
+          return &InstrItins;
+        }
+        
+        /// \brief Register Cse523 analysis passes with a pass manager.
+        virtual void addAnalysisPasses(PassManagerBase &PM);
 
-        // Pass Pipeline Configuration
+        // Set up the pass pipeline.
         virtual TargetPassConfig *createPassConfig(PassManagerBase &PM);
-        virtual bool addCodeEmitter(PassManagerBase &PM, JITCodeEmitter &JCE);
+
+        virtual bool addCodeEmitter(PassManagerBase &PM,
+                JITCodeEmitter &JCE);
     };
 
-} // end namespace llvm
+} // End llvm namespace
 
 #endif

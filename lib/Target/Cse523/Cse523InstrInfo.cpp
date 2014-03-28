@@ -96,11 +96,11 @@ struct Cse523OpTblEntry {
 void Cse523InstrInfo::anchor() {}
 
 Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
-    : Cse523GenInstrInfo(
+    : Cse523GenInstrInfo (
         0, 0
         //Cse523::ADJCALLSTACKDOWN64, Cse523::ADJCALLSTACKUP64
     ),
-    TM(tm), RI(tm) 
+    TM(tm), RI(tm)
 {
 
     static const Cse523OpTblEntry OpTbl2Addr[1] = {
