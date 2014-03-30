@@ -128,6 +128,14 @@ public:
   unsigned getSlotSize() const { return SlotSize; }
 };
 
+// getCse523SubSuperRegister - Cse523 utility function. It returns the sub or super
+// register of a specific Cse523 register.
+// e.g. getCse523SubSuperRegister(Cse523::EAX, MVT::i16) return Cse523:AX
+unsigned getCse523SubSuperRegister(unsigned, MVT::SimpleValueType, bool High=false);
+
+//get512BitRegister - Cse523 utility - returns 512-bit super register
+unsigned get512BitSuperRegister(unsigned Reg);
+
 } // End llvm namespace
 
 #endif

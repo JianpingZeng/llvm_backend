@@ -65,9 +65,9 @@ Cse523TargetMachine::Cse523TargetMachine(const Target &T, StringRef TT,
     //FrameLowering(*this, Subtarget),
     InstrItins(), //InstrItins(Subtarget.getInstrItineraryData()),
     DL(computeDataLayout()),
-    InstrInfo(*this)
-    //TLInfo(*this),
-    //TSInfo(*this),
+    InstrInfo(*this),
+    TLInfo(*this),
+    TSInfo(*this)
     //JITInfo(*this) 
 {
     // Determine the PICStyle based on the target selected.
@@ -120,7 +120,7 @@ void Cse523TargetMachine::addAnalysisPasses(PassManagerBase &PM) {
     // allows the Cse523 pass to delegate to the target independent layer when
     // appropriate.
     PM.add(createBasicTargetTransformInfoPass(this));
-    //PM.add(createCse523TargetTransformInfoPass(this));
+    PM.add(createCse523TargetTransformInfoPass(this));
 }
 
 
@@ -157,7 +157,7 @@ TargetPassConfig *Cse523TargetMachine::createPassConfig(PassManagerBase &PM) {
 
 bool Cse523PassConfig::addInstSelector() {
     // Install an instruction selector.
-    //addPass(createCse523ISelDag(getCse523TargetMachine(), getOptLevel()));
+    addPass(createCse523ISelDag(getCse523TargetMachine(), getOptLevel()));
  
     // For ELF, cleanup any local-dynamic TLS accesses.
     if (getCse523Subtarget().isTargetELF() && getOptLevel() != CodeGenOpt::None)

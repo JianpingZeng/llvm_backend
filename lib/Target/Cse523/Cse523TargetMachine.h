@@ -16,10 +16,10 @@
 
 #include "Cse523.h"
 //#include "Cse523FrameLowering.h"
-//#include "Cse523ISelLowering.h"
+#include "Cse523ISelLowering.h"
 #include "Cse523InstrInfo.h"
 //#include "Cse523JITInfo.h"
-//#include "Cse523SelectionDAGInfo.h"
+#include "Cse523SelectionDAGInfo.h"
 #include "Cse523Subtarget.h"
 #include "llvm/IR/DataLayout.h"
 #include "llvm/Target/TargetFrameLowering.h"
@@ -36,8 +36,8 @@ namespace llvm {
         InstrItineraryData InstrItins;
         const DataLayout   DL; // Calculates type size & alignment
         Cse523InstrInfo       InstrInfo;
-        //Cse523TargetLowering  TLInfo;
-        //Cse523SelectionDAGInfo TSInfo;
+        Cse523TargetLowering  TLInfo;
+        Cse523SelectionDAGInfo TSInfo;
         //Cse523JITInfo         JITInfo;
 
         public:
@@ -57,12 +57,12 @@ namespace llvm {
         //    return &JITInfo;
         //  }
         virtual const Cse523Subtarget     *getSubtargetImpl() const{ return &Subtarget; }
-        //  virtual const Cse523TargetLowering *getTargetLowering() const {
-        //    return &TLInfo;
-        //  }
-        //  virtual const Cse523SelectionDAGInfo *getSelectionDAGInfo() const {
-        //    return &TSInfo;
-        //  }
+        virtual const Cse523TargetLowering *getTargetLowering() const {
+          return &TLInfo;
+        }
+        virtual const Cse523SelectionDAGInfo *getSelectionDAGInfo() const {
+          return &TSInfo;
+        }
         virtual const Cse523RegisterInfo  *getRegisterInfo() const {
             return &getInstrInfo()->getRegisterInfo();
         }

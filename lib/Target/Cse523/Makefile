@@ -17,11 +17,14 @@ TARGET = Cse523
 #                Cse523GenAsmWriter1.inc Cse523GenDAGISel.inc  \
 #                Cse523GenDisassemblerTables.inc Cse523GenFastISel.inc \
 #                Cse523GenCallingConv.inc Cse523GenSubtargetInfo.inc
-
 BUILT_SOURCES = Cse523GenRegisterInfo.inc Cse523GenInstrInfo.inc \
-		Cse523GenAsmWriter.inc Cse523GenAsmWriter1.inc \
+		Cse523GenAsmWriter.inc Cse523GenAsmMatcher.inc \
+                Cse523GenAsmWriter1.inc Cse523GenDAGISel.inc  \
+                Cse523GenFastISel.inc \
                 Cse523GenCallingConv.inc Cse523GenSubtargetInfo.inc
 
+
+#DIRS = InstPrinter AsmParser Disassembler TargetInfo MCTargetDesc Utils
 DIRS = InstPrinter AsmParser TargetInfo MCTargetDesc Utils
 
 include $(LEVEL)/Makefile.common
