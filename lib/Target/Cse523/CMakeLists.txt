@@ -14,10 +14,12 @@ add_public_tablegen_target(Cse523CommonTableGen)
 set(sources
   Cse523AsmPrinter.cpp
   Cse523COFFMachineModuleInfo.cpp
-  Cse523InstrInfo.cpp
+  Cse523CodeEmitter.cpp
   Cse523ISelDAGToDAG.cpp
   Cse523ISelLowering.cpp
+  Cse523InstrInfo.cpp
   Cse523MachineFunctionInfo.cpp
+  Cse523MCInstLower.cpp
   Cse523RegisterInfo.cpp
   Cse523SelectionDAGInfo.cpp
   Cse523Subtarget.cpp

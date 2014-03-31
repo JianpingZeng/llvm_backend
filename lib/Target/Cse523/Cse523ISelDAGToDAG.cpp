@@ -2062,6 +2062,7 @@ SDNode *Cse523DAGToDAGISel::Select(SDNode *Node) {
     SDLoc dl(Node);
 
     DEBUG(dbgs() << "Selecting: "; Node->dump(CurDAG); dbgs() << '\n');
+    cout << "Selecting: "; Node->dump(CurDAG); dbgs() << '\n';
 
     if (Node->isMachineOpcode()) {
         DEBUG(dbgs() << "== ";  Node->dump(CurDAG); dbgs() << '\n');

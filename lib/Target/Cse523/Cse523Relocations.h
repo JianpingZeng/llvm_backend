@@ -1,4 +1,4 @@
-//===-- Cse523Relocations.h - Cse523 Code Relocations -------------*- C++ -*-===//
+//===-- Cse523Relocations.h - Cse523 Code Relocations -----------------*- C++ -*-===//
 //
 //                     The LLVM Compiler Infrastructure
 //
@@ -7,48 +7,44 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// This file defines the Cse523 target-specific relocation types
-// (for relocation-model=static).
+// This file defines the Cse523 target-specific relocation types.
 //
 //===----------------------------------------------------------------------===//
 
-#ifndef CSE523_RELOCATIONS_H
-#define CSE523_RELOCATIONS_H
+#ifndef CSE523RELOCATIONS_H
+#define CSE523RELOCATIONS_H
 
 #include "llvm/CodeGen/MachineRelocation.h"
 
 namespace llvm {
-  namespace SP {
+  namespace Cse523 {
+    /// RelocationType - An enum for the cse523 relocation codes. Note that
+    /// the terminology here doesn't follow cse523 convention - word means
+    /// 32-bit and dword means 64-bit. The relocations will be treated
+    /// by JIT or ObjectCode emitters, this is transparent to the cse523 code
+    /// emitter but JIT and ObjectCode will treat them differently
     enum RelocationType {
-      // reloc_cse523_hi - upper 22 bits
-      reloc_cse523_hi = 1,
+      /// reloc_pcrel_word - PC relative relocation, add the relocated value to
+      /// the value already in memory, after we adjust it for where the PC is.
+      reloc_pcrel_word = 0,
 
-      // reloc_cse523_lo - lower 10 bits
-      reloc_cse523_lo = 2,
+      /// reloc_picrel_word - PIC base relative relocation, add the relocated
+      /// value to the value already in memory, after we adjust it for where the
+      /// PIC base is.
+      reloc_picrel_word = 1,
 
-      // reloc_cse523_pc30 - pc rel. 30 bits for call
-      reloc_cse523_pc30 = 3,
+      /// reloc_absolute_word - absolute relocation, just add the relocated
+      /// value to the value already in memory.
+      reloc_absolute_word = 2,
 
-     // reloc_cse523_pc22 - pc rel. 22 bits for branch
-      reloc_cse523_pc22 = 4,
+      /// reloc_absolute_word_sext - absolute relocation, just add the relocated
+      /// value to the value already in memory. In object files, it represents a
+      /// value which must be sign-extended when resolving the relocation.
+      reloc_absolute_word_sext = 3,
 
-      // reloc_cse523_pc22 - pc rel. 19 bits for branch with icc/xcc
-      reloc_cse523_pc19 = 5,
-
-      // reloc_cse523_h44 - 43-22 bits
-      reloc_cse523_h44 = 6,
-
-      // reloc_cse523_m44 - 21-12 bits
-      reloc_cse523_m44 = 7,
-
-      // reloc_cse523_l44 - lower 12 bits
-      reloc_cse523_l44 = 8,
-
-      // reloc_cse523_hh - 63-42 bits
-      reloc_cse523_hh  = 9,
-
-      // reloc_cse523_hm - 41-32 bits
-      reloc_cse523_hm  = 10
+      /// reloc_absolute_dword - absolute relocation, just add the relocated
+      /// value to the value already in memory.
+      reloc_absolute_dword = 4
     };
   }
 }

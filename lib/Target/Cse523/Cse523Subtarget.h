@@ -375,7 +375,6 @@ public:
   }
 
   bool isCallingConvWin64(CallingConv::ID CC) const {
-    assert(0);
     return false;
     //return (isTargetWin64() && CC != CallingConv::Cse523_64_SysV) ||
     //       CC == CallingConv::Cse523_64_Win64;
