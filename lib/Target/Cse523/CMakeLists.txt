@@ -15,6 +15,7 @@ set(sources
   Cse523AsmPrinter.cpp
   Cse523COFFMachineModuleInfo.cpp
   Cse523CodeEmitter.cpp
+  Cse523FrameLowering.cpp
   Cse523ISelDAGToDAG.cpp
   Cse523ISelLowering.cpp
   Cse523InstrInfo.cpp

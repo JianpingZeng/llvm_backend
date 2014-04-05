@@ -15,7 +15,7 @@
 #define CSE523TARGETMACHINE_H
 
 #include "Cse523.h"
-//#include "Cse523FrameLowering.h"
+#include "Cse523FrameLowering.h"
 #include "Cse523ISelLowering.h"
 #include "Cse523InstrInfo.h"
 //#include "Cse523JITInfo.h"
@@ -32,7 +32,7 @@ namespace llvm {
     class Cse523TargetMachine : public LLVMTargetMachine {
         virtual void anchor();
         Cse523Subtarget       Subtarget;
-        //Cse523FrameLowering   FrameLowering;
+        Cse523FrameLowering   FrameLowering;
         InstrItineraryData InstrItins;
         const DataLayout   DL; // Calculates type size & alignment
         Cse523InstrInfo       InstrInfo;
@@ -50,12 +50,12 @@ namespace llvm {
         virtual const Cse523InstrInfo     *getInstrInfo() const {
             return &InstrInfo;
         }
-        //  virtual const TargetFrameLowering  *getFrameLowering() const {
-        //    return &FrameLowering;
-        //  }
-        //  virtual       Cse523JITInfo       *getJITInfo()         {
+        virtual const TargetFrameLowering  *getFrameLowering() const {
+          return &FrameLowering;
+        }
+        //virtual       Cse523JITInfo       *getJITInfo()         {
         //    return &JITInfo;
-        //  }
+        //}
         virtual const Cse523Subtarget     *getSubtargetImpl() const{ return &Subtarget; }
         virtual const Cse523TargetLowering *getTargetLowering() const {
           return &TLInfo;

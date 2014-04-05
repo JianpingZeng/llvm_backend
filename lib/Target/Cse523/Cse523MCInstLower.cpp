@@ -384,6 +384,7 @@ void Cse523MCInstLower::Lower(const MachineInstr *MI, MCInst &OutMI) const {
 
         OutMI.addOperand(MCOp);
     }
+    assert(0);
 
     // Handle a few special cases to eliminate operand modifiers.
 //ReSimplify:

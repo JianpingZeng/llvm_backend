@@ -1093,72 +1093,72 @@ Cse523TargetLowering::LowerReturn(SDValue Chain,
                 MVT::i16));
 
     // Copy the result values into the output registers.
-//    for (unsigned i = 0; i != RVLocs.size(); ++i) {
-//        CCValAssign &VA = RVLocs[i];
-//        assert(VA.isRegLoc() && "Can only return in registers!");
-//        SDValue ValToCopy = OutVals[i];
-//        EVT ValVT = ValToCopy.getValueType();
-//
-//        // Promote values to the appropriate types
-//        if (VA.getLocInfo() == CCValAssign::SExt)
-//            ValToCopy = DAG.getNode(ISD::SIGN_EXTEND, dl, VA.getLocVT(), ValToCopy);
-//        else if (VA.getLocInfo() == CCValAssign::ZExt)
-//            ValToCopy = DAG.getNode(ISD::ZERO_EXTEND, dl, VA.getLocVT(), ValToCopy);
-//        else if (VA.getLocInfo() == CCValAssign::AExt)
-//            ValToCopy = DAG.getNode(ISD::ANY_EXTEND, dl, VA.getLocVT(), ValToCopy);
-//        else if (VA.getLocInfo() == CCValAssign::BCvt)
-//            ValToCopy = DAG.getNode(ISD::BITCAST, dl, VA.getLocVT(), ValToCopy);
-//
-//        assert(VA.getLocInfo() != CCValAssign::FPExt &&
-//                "Unexpected FP-extend for return value.");  
-//
-//        // If this is cse523-64, and we disabled SSE, we can't return FP values,
-//        // or SSE or MMX vectors.
-//        if ((ValVT == MVT::f32 || ValVT == MVT::f64 ||
-//                    VA.getLocReg() == Cse523::XMM0 || VA.getLocReg() == Cse523::XMM1) &&
-//                (Subtarget->is64Bit() && !Subtarget->hasSSE1())) {
-//            report_fatal_error("SSE register return with SSE disabled");
-//        }
-//        // Likewise we can't return F64 values with SSE1 only.  gcc does so, but
-//        // llvm-gcc has never done it right and no one has noticed, so this
-//        // should be OK for now.
-//        if (ValVT == MVT::f64 &&
-//                (Subtarget->is64Bit() && !Subtarget->hasSSE2()))
-//            report_fatal_error("SSE2 register return with SSE2 disabled");
-//
-//        // Returns in ST0/ST1 are handled specially: these are pushed as operands to
-//        // the RET instruction and handled by the FP Stackifier.
-//        if (VA.getLocReg() == Cse523::ST0 ||
-//                VA.getLocReg() == Cse523::ST1) {
-//            // If this is a copy from an xmm register to ST(0), use an FPExtend to
-//            // change the value to the FP stack register class.
-//            if (isScalarFPTypeInSSEReg(VA.getValVT()))
-//                ValToCopy = DAG.getNode(ISD::FP_EXTEND, dl, MVT::f80, ValToCopy);
-//            RetOps.push_back(ValToCopy);
-//            // Don't emit a copytoreg.
-//            continue;
-//        }
-//
-//        // 64-bit vector (MMX) values are returned in XMM0 / XMM1 except for v1i64
-//        // which is returned in RAX / RDX.
-//        if (Subtarget->is64Bit()) {
-//            if (ValVT == MVT::cse523mmx) {
-//                if (VA.getLocReg() == Cse523::XMM0 || VA.getLocReg() == Cse523::XMM1) {
-//                    ValToCopy = DAG.getNode(ISD::BITCAST, dl, MVT::i64, ValToCopy);
-//                    ValToCopy = DAG.getNode(ISD::SCALAR_TO_VECTOR, dl, MVT::v2i64,
-//                            ValToCopy);
-//                    // If we don't have SSE2 available, convert to v4f32 so the generated
-//                    // register is legal.
-//                    if (!Subtarget->hasSSE2())
-//                        ValToCopy = DAG.getNode(ISD::BITCAST, dl, MVT::v4f32,ValToCopy);
-//                }
-//            }
-//        }
-//
-//        Chain = DAG.getCopyToReg(Chain, dl, VA.getLocReg(), ValToCopy, Flag);
-//        Flag = Chain.getValue(1);
-//        RetOps.push_back(DAG.getRegister(VA.getLocReg(), VA.getLocVT()));
-//    }
+    for (unsigned i = 0; i != RVLocs.size(); ++i) {
+        CCValAssign &VA = RVLocs[i];
+        assert(VA.isRegLoc() && "Can only return in registers!");
+        SDValue ValToCopy = OutVals[i];
+        EVT ValVT = ValToCopy.getValueType();
+
+        // Promote values to the appropriate types
+        if (VA.getLocInfo() == CCValAssign::SExt)
+            ValToCopy = DAG.getNode(ISD::SIGN_EXTEND, dl, VA.getLocVT(), ValToCopy);
+        else if (VA.getLocInfo() == CCValAssign::ZExt)
+            ValToCopy = DAG.getNode(ISD::ZERO_EXTEND, dl, VA.getLocVT(), ValToCopy);
+        else if (VA.getLocInfo() == CCValAssign::AExt)
+            ValToCopy = DAG.getNode(ISD::ANY_EXTEND, dl, VA.getLocVT(), ValToCopy);
+        else if (VA.getLocInfo() == CCValAssign::BCvt)
+            ValToCopy = DAG.getNode(ISD::BITCAST, dl, VA.getLocVT(), ValToCopy);
+
+        assert(VA.getLocInfo() != CCValAssign::FPExt &&
+                "Unexpected FP-extend for return value.");  
+
+        // If this is cse523-64, and we disabled SSE, we can't return FP values,
+        // or SSE or MMX vectors.
+        //if ((ValVT == MVT::f32 || ValVT == MVT::f64 ||
+        //            VA.getLocReg() == Cse523::XMM0 || VA.getLocReg() == Cse523::XMM1) &&
+        //        (Subtarget->is64Bit() && !Subtarget->hasSSE1())) {
+        //    report_fatal_error("SSE register return with SSE disabled");
+        //}
+        // Likewise we can't return F64 values with SSE1 only.  gcc does so, but
+        // llvm-gcc has never done it right and no one has noticed, so this
+        // should be OK for now.
+        if (ValVT == MVT::f64 &&
+                (Subtarget->is64Bit() && !Subtarget->hasSSE2()))
+            report_fatal_error("SSE2 register return with SSE2 disabled");
+
+        // Returns in ST0/ST1 are handled specially: these are pushed as operands to
+        // the RET instruction and handled by the FP Stackifier.
+        //if (VA.getLocReg() == Cse523::ST0 ||
+        //        VA.getLocReg() == Cse523::ST1) {
+        //    // If this is a copy from an xmm register to ST(0), use an FPExtend to
+        //    // change the value to the FP stack register class.
+        //    if (isScalarFPTypeInSSEReg(VA.getValVT()))
+        //        ValToCopy = DAG.getNode(ISD::FP_EXTEND, dl, MVT::f80, ValToCopy);
+        //    RetOps.push_back(ValToCopy);
+        //    // Don't emit a copytoreg.
+        //    continue;
+        //}
+
+        // 64-bit vector (MMX) values are returned in XMM0 / XMM1 except for v1i64
+        // which is returned in RAX / RDX.
+        //if (Subtarget->is64Bit()) {
+        //    if (ValVT == MVT::cse523mmx) {
+        //        if (VA.getLocReg() == Cse523::XMM0 || VA.getLocReg() == Cse523::XMM1) {
+        //            ValToCopy = DAG.getNode(ISD::BITCAST, dl, MVT::i64, ValToCopy);
+        //            ValToCopy = DAG.getNode(ISD::SCALAR_TO_VECTOR, dl, MVT::v2i64,
+        //                    ValToCopy);
+        //            // If we don't have SSE2 available, convert to v4f32 so the generated
+        //            // register is legal.
+        //            if (!Subtarget->hasSSE2())
+        //                ValToCopy = DAG.getNode(ISD::BITCAST, dl, MVT::v4f32,ValToCopy);
+        //        }
+        //    }
+        //}
+
+        Chain = DAG.getCopyToReg(Chain, dl, VA.getLocReg(), ValToCopy, Flag);
+        Flag = Chain.getValue(1);
+        RetOps.push_back(DAG.getRegister(VA.getLocReg(), VA.getLocVT()));
+    }
 
     // The cse523-64 ABIs require that for returning structs by value we copy
     // the sret argument into %rax/%eax (depending on ABI) for the return.
@@ -13835,7 +13835,7 @@ Cse523TargetLowering::EmitVAStartSaveXMMRegsWithCustomInserter(
     // that was just emitted, but clearly shouldn't be "saved".
     assert((MI->getNumOperands() <= 3 ||
                 !MI->getOperand(MI->getNumOperands() - 1).isReg() ||
-                MI->getOperand(MI->getNumOperands() - 1).getReg() == Cse523::RFLAGS)
+                MI->getOperand(MI->getNumOperands() - 1).getReg() == Cse523::EFLAGS)
             && "Expected last argument to be EFLAGS");
     unsigned MOVOpc = 10;//Cse523::MOVAPSmr;
     // In the XMM save block, save all the XMM argument registers.
@@ -13873,9 +13873,9 @@ static bool checkAndUpdateEFLAGSKill(MachineBasicBlock::iterator SelectItr,
     MachineBasicBlock::iterator miI(llvm::next(SelectItr));
     for (MachineBasicBlock::iterator miE = BB->end(); miI != miE; ++miI) {
         const MachineInstr& mi = *miI;
-        if (mi.readsRegister(Cse523::RFLAGS))
+        if (mi.readsRegister(Cse523::EFLAGS))
             return false;
-        if (mi.definesRegister(Cse523::RFLAGS))
+        if (mi.definesRegister(Cse523::EFLAGS))
             break; // Should have kill-flag - update below.
     }
 
@@ -13886,14 +13886,14 @@ static bool checkAndUpdateEFLAGSKill(MachineBasicBlock::iterator SelectItr,
                 sEnd = BB->succ_end();
                 sItr != sEnd; ++sItr) {
             MachineBasicBlock* succ = *sItr;
-            if (succ->isLiveIn(Cse523::RFLAGS))
+            if (succ->isLiveIn(Cse523::EFLAGS))
                 return false;
         }
     }
 
     // We found a def, or hit the end of the basic block and EFLAGS wasn't live
     // out. SelectMI should have a kill flag on EFLAGS.
-    SelectItr->addRegisterKilled(Cse523::RFLAGS, TRI);
+    SelectItr->addRegisterKilled(Cse523::EFLAGS, TRI);
     return true;
 }
 
@@ -13927,10 +13927,10 @@ Cse523TargetLowering::EmitLoweredSelect(MachineInstr *MI,
     // If the EFLAGS register isn't dead in the terminator, then claim that it's
     // live into the sink and copy blocks.
     const TargetRegisterInfo* TRI = getTargetMachine().getRegisterInfo();
-    if (!MI->killsRegister(Cse523::RFLAGS) &&
+    if (!MI->killsRegister(Cse523::EFLAGS) &&
             !checkAndUpdateEFLAGSKill(MI, BB, TRI)) {
-        copy0MBB->addLiveIn(Cse523::RFLAGS);
-        sinkMBB->addLiveIn(Cse523::RFLAGS);
+        copy0MBB->addLiveIn(Cse523::EFLAGS);
+        sinkMBB->addLiveIn(Cse523::EFLAGS);
     }
 
     // Transfer the remainder of BB and its successor edges to sinkMBB.
@@ -14096,14 +14096,14 @@ Cse523TargetLowering::EmitLoweredWinAlloca(MachineInstr *MI,
     //        .addReg(Cse523::RSP, RegState::Implicit)
     //        .addReg(Cse523::RAX, RegState::Define | RegState::Implicit)
     //        .addReg(Cse523::RSP, RegState::Define | RegState::Implicit)
-    //        .addReg(Cse523::RFLAGS, RegState::Define | RegState::Implicit);
+    //        .addReg(Cse523::EFLAGS, RegState::Define | RegState::Implicit);
     //} else {
     //    // __chkstk(MSVCRT): does not update stack pointer.
     //    // Clobbers R10, R11 and EFLAGS.
     //    BuildMI(*BB, MI, DL, TII->get(Cse523::W64ALLOCA))
     //        .addExternalSymbol("__chkstk")
     //        .addReg(Cse523::RAX, RegState::Implicit)
-    //        .addReg(Cse523::RFLAGS, RegState::Define | RegState::Implicit);
+    //        .addReg(Cse523::EFLAGS, RegState::Define | RegState::Implicit);
     //    // RAX has the offset to be subtracted from RSP.
     //    BuildMI(*BB, MI, DL, TII->get(Cse523::SUB64rr), Cse523::RSP)
     //        .addReg(Cse523::RSP)
@@ -18284,7 +18284,7 @@ Cse523TargetLowering::getRegForInlineAsmConstraint(const std::string &Constraint
 
         // flags -> EFLAGS
         if (StringRef("{flags}").equals_lower(Constraint)) {
-            Res.first = Cse523::RFLAGS;
+            Res.first = Cse523::EFLAGS;
             Res.second = &Cse523::CCRRegClass;
             return Res;
         }

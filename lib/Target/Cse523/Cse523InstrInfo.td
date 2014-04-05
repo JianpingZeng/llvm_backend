@@ -30,7 +30,7 @@ def SDTCse523Cmov    : SDTypeProfile<1, 4,
                                   [SDTCisSameAs<0, 1>, SDTCisSameAs<1, 2>,
                                    SDTCisVT<3, i8>, SDTCisVT<4, i32>]>;
 
-// Unary and binary operator instructions that set RFLAGS as a side-effect.
+// Unary and binary operator instructions that set EFLAGS as a side-effect.
 def SDTUnaryArithWithFlags : SDTypeProfile<2, 1,
                                            [SDTCisInt<0>, SDTCisVT<1, i32>]>;
 
@@ -39,7 +39,7 @@ def SDTBinaryArithWithFlags : SDTypeProfile<2, 2,
                                              SDTCisSameAs<0, 3>,
                                              SDTCisInt<0>, SDTCisVT<1, i32>]>;
 
-// SDTBinaryArithWithFlagsInOut - RES1, RFLAGS = op LHS, RHS, RFLAGS
+// SDTBinaryArithWithFlagsInOut - RES1, EFLAGS = op LHS, RHS, EFLAGS
 def SDTBinaryArithWithFlagsInOut : SDTypeProfile<2, 3,
                                             [SDTCisSameAs<0, 2>,
                                              SDTCisSameAs<0, 3>,
@@ -925,10 +925,10 @@ def PUSH64i32  : Ii32S<0x68, RawFrm, (outs), (ins i64i32imm:$imm),
                     Requires<[In64BitMode]>;
 }
 
-let Defs = [RSP, RFLAGS], Uses = [RSP], mayLoad = 1, neverHasSideEffects=1 in
+let Defs = [RSP, EFLAGS], Uses = [RSP], mayLoad = 1, neverHasSideEffects=1 in
 def POPF64   : I<0x9D, RawFrm, (outs), (ins), "popfq", [], IIC_POP_FD>,
                OpSize32, Requires<[In64BitMode]>, Sched<[WriteLoad]>;
-let Defs = [RSP], Uses = [RSP, RFLAGS], mayStore = 1, neverHasSideEffects=1 in
+let Defs = [RSP], Uses = [RSP, EFLAGS], mayStore = 1, neverHasSideEffects=1 in
 def PUSHF64    : I<0x9C, RawFrm, (outs), (ins), "pushfq", [], IIC_PUSH_F>,
                  OpSize32, Requires<[In64BitMode]>, Sched<[WriteStore]>;
 
@@ -939,8 +939,8 @@ def BSWAP64r : RI<0xC8, AddRegFrm, (outs GR64:$dst), (ins GR64:$src),
 } // Constraints = "$src = $dst", SchedRW
 
 let SchedRW = [WriteMicrocoded] in {
-// These uses the DF flag in the RFLAGS register to inc or dec EDI and ESI
-let Defs = [RCX,RDI], Uses = [RAX,RCX,RDI,RFLAGS] in
+// These uses the DF flag in the EFLAGS register to inc or dec EDI and ESI
+let Defs = [RCX,RDI], Uses = [RAX,RCX,RDI,EFLAGS] in
 def STOSQ : RI<0xAB, RawFrmDst, (outs dstidx64:$dst), (ins),
                "stosq\t{%rax, $dst|$dst, rax}", [], IIC_STOS>;
 } // SchedRW
@@ -1136,7 +1136,7 @@ let Predicates = [HasMOVBE] in {
 //include "Cse523InstrArithmetic.td"
 //include "Cse523InstrCMovSetCC.td"
 //include "Cse523InstrExtension.td"
-//include "Cse523InstrControl.td"
+include "Cse523InstrControl.td"
 //include "Cse523InstrShiftRotate.td"
 //
 //// X87 Floating Point Stack.
@@ -1165,8 +1165,8 @@ let Predicates = [HasMOVBE] in {
 //// System instructions.
 //include "Cse523InstrSystem.td"
 //
-//// Compiler Pseudo Instructions and Pat Patterns
-//include "Cse523InstrCompiler.td"
+// Compiler Pseudo Instructions and Pat Patterns
+include "Cse523InstrCompiler.td"
 
 //===----------------------------------------------------------------------===//
 // Assembler Mnemonic Aliases

@@ -62,7 +62,7 @@ Cse523TargetMachine::Cse523TargetMachine(const Target &T, StringRef TT,
         CodeGenOpt::Level OL)
     : LLVMTargetMachine(T, TT, CPU, FS, Options, RM, CM, OL),
     Subtarget(TT, CPU, FS, Options.StackAlignmentOverride),
-    //FrameLowering(*this, Subtarget),
+    FrameLowering(*this, Subtarget),
     InstrItins(), //InstrItins(Subtarget.getInstrItineraryData()),
     DL(computeDataLayout()),
     InstrInfo(*this),

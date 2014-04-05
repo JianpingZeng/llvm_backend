@@ -316,7 +316,7 @@ Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
         //{ Cse523::MOV16rr,     Cse523::MOV16mr,       TB_FOLDED_STORE },
         //{ Cse523::MOV32ri,     Cse523::MOV32mi,       TB_FOLDED_STORE },
         //{ Cse523::MOV32rr,     Cse523::MOV32mr,       TB_FOLDED_STORE },
-        //{ Cse523::MOV64ri32,   Cse523::MOV64mi32,     TB_FOLDED_STORE },
+        { Cse523::MOV64ri32,   Cse523::MOV64mi32,     TB_FOLDED_STORE }
         //{ Cse523::MOV64rr,     Cse523::MOV64mr,       TB_FOLDED_STORE },
         //{ Cse523::MOV8ri,      Cse523::MOV8mi,        TB_FOLDED_STORE },
         //{ Cse523::MOV8rr,      Cse523::MOV8mr,        TB_FOLDED_STORE },
@@ -963,11 +963,11 @@ Cse523InstrInfo::isReallyTriviallyReMaterializable(const MachineInstr *MI,
     return true;
 }
 
-/// isSafeToClobberRFLAGS - Return true if it's safe insert an instruction that
-/// would clobber the RFLAGS condition register. Note the result may be
+/// isSafeToClobberEFLAGS - Return true if it's safe insert an instruction that
+/// would clobber the EFLAGS condition register. Note the result may be
 /// conservative. If it cannot definitely determine the safety after visiting
 /// a few instructions in each direction it assumes it's not safe.
-static bool isSafeToClobberRFLAGS(MachineBasicBlock &MBB,
+static bool isSafeToClobberEFLAGS(MachineBasicBlock &MBB,
         MachineBasicBlock::iterator I) {
     MachineBasicBlock::iterator E = MBB.end();
 
@@ -979,11 +979,11 @@ static bool isSafeToClobberRFLAGS(MachineBasicBlock &MBB,
         bool SeenDef = false;
         for (unsigned j = 0, e = Iter->getNumOperands(); j != e; ++j) {
             MachineOperand &MO = Iter->getOperand(j);
-            if (MO.isRegMask() && MO.clobbersPhysReg(Cse523::RFLAGS))
+            if (MO.isRegMask() && MO.clobbersPhysReg(Cse523::EFLAGS))
                 SeenDef = true;
             if (!MO.isReg())
                 continue;
-            if (MO.getReg() == Cse523::RFLAGS) {
+            if (MO.getReg() == Cse523::EFLAGS) {
                 if (MO.isUse())
                     return false;
                 SeenDef = true;
@@ -991,7 +991,7 @@ static bool isSafeToClobberRFLAGS(MachineBasicBlock &MBB,
         }
 
         if (SeenDef)
-            // This instruction defines RFLAGS, no need to look any further.
+            // This instruction defines EFLAGS, no need to look any further.
             return true;
         ++Iter;
         // Skip over DBG_VALUE.
@@ -999,12 +999,12 @@ static bool isSafeToClobberRFLAGS(MachineBasicBlock &MBB,
             ++Iter;
     }
 
-    // It is safe to clobber RFLAGS at the end of a block of no successor has it
+    // It is safe to clobber EFLAGS at the end of a block of no successor has it
     // live in.
     if (Iter == E) {
         for (MachineBasicBlock::succ_iterator SI = MBB.succ_begin(),
                 SE = MBB.succ_end(); SI != SE; ++SI)
-            if ((*SI)->isLiveIn(Cse523::RFLAGS))
+            if ((*SI)->isLiveIn(Cse523::EFLAGS))
                 return false;
         return true;
     }
@@ -1013,9 +1013,9 @@ static bool isSafeToClobberRFLAGS(MachineBasicBlock &MBB,
     Iter = I;
     for (unsigned i = 0; i < 4; ++i) {
         // If we make it to the beginning of the block, it's safe to clobber
-        // RFLAGS iff RFLAGS is not live-in.
+        // EFLAGS iff EFLAGS is not live-in.
         if (Iter == B)
-            return !MBB.isLiveIn(Cse523::RFLAGS);
+            return !MBB.isLiveIn(Cse523::EFLAGS);
 
         --Iter;
         // Skip over DBG_VALUE.
@@ -1025,18 +1025,18 @@ static bool isSafeToClobberRFLAGS(MachineBasicBlock &MBB,
         bool SawKill = false;
         for (unsigned j = 0, e = Iter->getNumOperands(); j != e; ++j) {
             MachineOperand &MO = Iter->getOperand(j);
-            // A register mask may clobber RFLAGS, but we should still look for a
-            // live RFLAGS def.
-            if (MO.isRegMask() && MO.clobbersPhysReg(Cse523::RFLAGS))
+            // A register mask may clobber EFLAGS, but we should still look for a
+            // live EFLAGS def.
+            if (MO.isRegMask() && MO.clobbersPhysReg(Cse523::EFLAGS))
                 SawKill = true;
-            if (MO.isReg() && MO.getReg() == Cse523::RFLAGS) {
+            if (MO.isReg() && MO.getReg() == Cse523::EFLAGS) {
                 if (MO.isDef()) return MO.isDead();
                 if (MO.isKill()) SawKill = true;
             }
         }
 
         if (SawKill)
-            // This instruction kills RFLAGS and doesn't redefine it, so
+            // This instruction kills EFLAGS and doesn't redefine it, so
             // there's no need to look further.
             return true;
     }
@@ -1053,7 +1053,7 @@ void Cse523InstrInfo::reMaterialize(MachineBasicBlock &MBB,
     // MOV32r0 is implemented with a xor which clobbers condition code.
     // Re-materialize it as movri instructions to avoid side effects.
     unsigned Opc = Orig->getOpcode();
-//    if (Opc == Cse523::MOV32r0 && !isSafeToClobberRFLAGS(MBB, I)) {
+//    if (Opc == Cse523::MOV32r0 && !isSafeToClobberEFLAGS(MBB, I)) {
 //        DebugLoc DL = Orig->getDebugLoc();
 //        BuildMI(MBB, I, DL, get(Cse523::MOV32ri)).addOperand(Orig->getOperand(0))
 //            .addImm(0);
@@ -1066,13 +1066,13 @@ void Cse523InstrInfo::reMaterialize(MachineBasicBlock &MBB,
     NewMI->substituteRegister(Orig->getOperand(0).getReg(), DestReg, SubIdx, TRI);
 }
 
-/// hasLiveCondCodeDef - True if MI has a condition code def, e.g. RFLAGS, that
+/// hasLiveCondCodeDef - True if MI has a condition code def, e.g. EFLAGS, that
 /// is not marked dead.
 static bool hasLiveCondCodeDef(MachineInstr *MI) {
     for (unsigned i = 0, e = MI->getNumOperands(); i != e; ++i) {
         MachineOperand &MO = MI->getOperand(i);
         if (MO.isReg() && MO.isDef() &&
-                MO.getReg() == Cse523::RFLAGS && !MO.isDead()) {
+                MO.getReg() == Cse523::EFLAGS && !MO.isDead()) {
             return true;
         }
     }
@@ -2244,7 +2244,7 @@ void Cse523InstrInfo::copyPhysReg(MachineBasicBlock &MBB,
             .addReg(SrcReg, getKillRegState(KillSrc));
         return;
     }
-    // TODO EFLAFS -> RFLAGS code
+    // TODO EFLAFS -> EFLAGS code
 
     DEBUG(dbgs() << "Cannot copy " << RI.getName(SrcReg)
             << " to " << RI.getName(DestReg) << '\n');
@@ -2635,7 +2635,7 @@ optimizeCompareInstr(MachineInstr *CmpInstr, unsigned SrcReg, unsigned SrcReg2,
 //    machineBasicBlock::iterator I = CmpInstr, Def = MI;
 //
 //    // If we are comparing against zero, check whether we can use MI to update
-//    // RFLAGS. If MI is not in the same BB as CmpInstr, do not optimize.
+//    // EFLAGS. If MI is not in the same BB as CmpInstr, do not optimize.
 //    bool IsCmpZero = (SrcReg2 == 0 && CmpValue == 0);
 //    if (IsCmpZero && (MI->getParent() != CmpInstr->getParent() ||
 //                !isDefConvertible(MI)))
@@ -2666,15 +2666,15 @@ optimizeCompareInstr(MachineInstr *CmpInstr, unsigned SrcReg, unsigned SrcReg2,
 //            break;
 //        }
 //
-//        if (Instr->modifiesRegister(Cse523::RFLAGS, TRI) ||
-//                Instr->readsRegister(Cse523::RFLAGS, TRI)) {
-//            // This instruction modifies or uses RFLAGS.
+//        if (Instr->modifiesRegister(Cse523::EFLAGS, TRI) ||
+//                Instr->readsRegister(Cse523::EFLAGS, TRI)) {
+//            // This instruction modifies or uses EFLAGS.
 //
 //            // MOV32r0 etc. are implemented with xor which clobbers condition code.
-//            // They are safe to move up, if the definition to RFLAGS is dead and
-//            // earlier instructions do not read or write RFLAGS.
+//            // They are safe to move up, if the definition to EFLAGS is dead and
+//            // earlier instructions do not read or write EFLAGS.
 //            if (!Movr0Inst && Instr->getOpcode() == Cse523::MOV32r0 &&
-//                    Instr->registerDefIsDead(Cse523::RFLAGS, TRI)) {
+//                    Instr->registerDefIsDead(Cse523::EFLAGS, TRI)) {
 //                Movr0Inst = Instr;
 //                continue;
 //            }
@@ -2691,27 +2691,27 @@ optimizeCompareInstr(MachineInstr *CmpInstr, unsigned SrcReg, unsigned SrcReg2,
 //    bool IsSwapped = (SrcReg2 != 0 && Sub->getOperand(1).getReg() == SrcReg2 &&
 //            Sub->getOperand(2).getReg() == SrcReg);
 //
-//    // Scan forward from the instruction after CmpInstr for uses of RFLAGS.
-//    // It is safe to remove CmpInstr if RFLAGS is redefined or killed.
-//    // If we are done with the basic block, we need to check whether RFLAGS is
+//    // Scan forward from the instruction after CmpInstr for uses of EFLAGS.
+//    // It is safe to remove CmpInstr if EFLAGS is redefined or killed.
+//    // If we are done with the basic block, we need to check whether EFLAGS is
 //    // live-out.
 //    bool IsSafe = false;
 //    smallVector<std::pair<MachineInstr*, unsigned /*NewOpc*/>, 4> OpsToUpdate;
 //    machineBasicBlock::iterator E = CmpInstr->getParent()->end();
 //    for (++I; I != E; ++I) {
 //        const MachineInstr &Instr = *I;
-//        bool ModifyRFLAGS = Instr.modifiesRegister(Cse523::RFLAGS, TRI);
-//        bool UseRFLAGS = Instr.readsRegister(Cse523::RFLAGS, TRI);
-//        // We should check the usage if this instruction uses and updates RFLAGS.
-//        if (!UseRFLAGS && ModifyRFLAGS) {
-//            // It is safe to remove CmpInstr if RFLAGS is updated again.
+//        bool ModifyEFLAGS = Instr.modifiesRegister(Cse523::EFLAGS, TRI);
+//        bool UseEFLAGS = Instr.readsRegister(Cse523::EFLAGS, TRI);
+//        // We should check the usage if this instruction uses and updates EFLAGS.
+//        if (!UseEFLAGS && ModifyEFLAGS) {
+//            // It is safe to remove CmpInstr if EFLAGS is updated again.
 //            IsSafe = true;
 //            break;
 //        }
-//        if (!UseRFLAGS && !ModifyRFLAGS)
+//        if (!UseEFLAGS && !ModifyEFLAGS)
 //            continue;
 //
-//        // RFLAGS is used by this instruction.
+//        // EFLAGS is used by this instruction.
 //        Cse523::CondCode OldCC;
 //        bool OpcIsSET = false;
 //        if (IsCmpZero || IsSwapped) {
@@ -2763,20 +2763,20 @@ optimizeCompareInstr(MachineInstr *CmpInstr, unsigned SrcReg, unsigned SrcReg2,
 //            // instructions will be modified.
 //            OpsToUpdate.push_back(std::make_pair(&*I, NewOpc));
 //        }
-//        if (ModifyRFLAGS || Instr.killsRegister(Cse523::RFLAGS, TRI)) {
-//            // It is safe to remove CmpInstr if RFLAGS is updated again or killed.
+//        if (ModifyEFLAGS || Instr.killsRegister(Cse523::EFLAGS, TRI)) {
+//            // It is safe to remove CmpInstr if EFLAGS is updated again or killed.
 //            IsSafe = true;
 //            break;
 //        }
 //    }
 //
-//    // If RFLAGS is not killed nor re-defined, we should check whether it is
+//    // If EFLAGS is not killed nor re-defined, we should check whether it is
 //    // live-out. If it is live-out, do not optimize.
 //    if ((IsCmpZero || IsSwapped) && !IsSafe) {
 //        MachineBasicBlock *MBB = CmpInstr->getParent();
 //        for (MachineBasicBlock::succ_iterator SI = MBB->succ_begin(),
 //                SE = MBB->succ_end(); SI != SE; ++SI)
-//            if ((*SI)->isLiveIn(Cse523::RFLAGS))
+//            if ((*SI)->isLiveIn(Cse523::EFLAGS))
 //                return false;
 //    }
 //
@@ -2784,15 +2784,15 @@ optimizeCompareInstr(MachineInstr *CmpInstr, unsigned SrcReg, unsigned SrcReg2,
 //    sub = IsCmpZero ? MI : Sub;
 //    // Move Movr0Inst to the appropriate place before Sub.
 //    if (Movr0Inst) {
-//        // Look backwards until we find a def that doesn't use the current RFLAGS.
+//        // Look backwards until we find a def that doesn't use the current EFLAGS.
 //        Def = Sub;
 //        MachineBasicBlock::reverse_iterator
 //            InsertI = MachineBasicBlock::reverse_iterator(++Def),
 //                    InsertE = Sub->getParent()->rend();
 //        for (; InsertI != InsertE; ++InsertI) {
 //            MachineInstr *Instr = &*InsertI;
-//            if (!Instr->readsRegister(Cse523::RFLAGS, TRI) &&
-//                    Instr->modifiesRegister(Cse523::RFLAGS, TRI)) {
+//            if (!Instr->readsRegister(Cse523::EFLAGS, TRI) &&
+//                    Instr->modifiesRegister(Cse523::EFLAGS, TRI)) {
 //                Sub->getParent()->remove(Movr0Inst);
 //                Instr->getParent()->insert(MachineBasicBlock::iterator(Instr),
 //                        Movr0Inst);
@@ -2803,16 +2803,16 @@ optimizeCompareInstr(MachineInstr *CmpInstr, unsigned SrcReg, unsigned SrcReg2,
 //            return false;
 //    }
 //
-//    // Make sure Sub instruction defines RFLAGS and mark the def live.
+//    // Make sure Sub instruction defines EFLAGS and mark the def live.
 //    unsigned i = 0, e = Sub->getNumOperands();
 //    for (; i != e; ++i) {
 //        MachineOperand &MO = Sub->getOperand(i);
-//        if (MO.isReg() && MO.isDef() && MO.getReg() == Cse523::RFLAGS) {
+//        if (MO.isReg() && MO.isDef() && MO.getReg() == Cse523::EFLAGS) {
 //            MO.setIsDead(false);
 //            break;
 //        }
 //    }
-//    assert(i != e && "Unable to locate a def RFLAGS operand");
+//    assert(i != e && "Unable to locate a def EFLAGS operand");
 //
 //    CmpInstr->eraseFromParent();
 //

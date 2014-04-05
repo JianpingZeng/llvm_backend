@@ -59,7 +59,7 @@ def RIP : Cse523Reg<"rip",  0>, DwarfRegNum<[16]>;
 
 
 // Status flags register
-def RFLAGS : Cse523Reg<"flags", 0>;
+def EFLAGS : Cse523Reg<"flags", 0>;
 
 // Segment registers
 def CS : Cse523Reg<"cs", 1>;
@@ -161,7 +161,7 @@ def GR64_NOREX_NOSP : RegisterClass<"Cse523", [i64], 64,
                                     (and GR64_NOREX, GR64_NOSP)>;
 
 // Status flags registers.
-def CCR : RegisterClass<"Cse523", [i64], 64, (add RFLAGS)> {
+def CCR : RegisterClass<"Cse523", [i64], 64, (add EFLAGS)> {
   let CopyCost = -1;  // Don't allow copying of status registers.
   let isAllocatable = 0;
 }
