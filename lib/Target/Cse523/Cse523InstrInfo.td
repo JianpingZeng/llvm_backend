@@ -954,11 +954,11 @@ def MOV64rr : RI<0x89, MRMDestReg, (outs GR64:$dst), (ins GR64:$src),
                  "mov{q}\t{$src, $dst|$dst, $src}", [], IIC_MOV>;
 }
 
-let isReMaterializable = 1, isAsCheapAsAMove = 1 in {
-def MOV64ri32 : RIi32S<0xC7, MRM0r, (outs GR64:$dst), (ins i64i32imm:$src),
-                       "mov{q}\t{$src, $dst|$dst, $src}",
-                       [(set GR64:$dst, i64immSExt32:$src)], IIC_MOV>;
-}
+//let isReMaterializable = 1, isAsCheapAsAMove = 1 in {
+//def MOV64ri32 : RIi32S<0xC7, MRM0r, (outs GR64:$dst), (ins i64i32imm:$src),
+//                       "mov{q}\t{$src, $dst|$dst, $src}",
+//                       [(set GR64:$dst, i64immSExt32:$src)], IIC_MOV>;
+//}
 
 let isReMaterializable = 1 in {
 def MOV64ri : RIi64<0xB8, AddRegFrm, (outs GR64:$dst), (ins i64imm:$src),

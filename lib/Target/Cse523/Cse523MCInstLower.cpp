@@ -339,8 +339,7 @@ static void SimplifyShortMoveForm(Cse523AsmPrinter &Printer, MCInst &Inst,
 
 static unsigned getRetOpcode(const Cse523Subtarget &Subtarget)
 {
-    assert(0);
-    return 10;//Cse523::RETQ;
+    return Cse523::RETQ;
 }
 
 void Cse523MCInstLower::Lower(const MachineInstr *MI, MCInst &OutMI) const {
@@ -384,11 +383,10 @@ void Cse523MCInstLower::Lower(const MachineInstr *MI, MCInst &OutMI) const {
 
         OutMI.addOperand(MCOp);
     }
-    assert(0);
 
     // Handle a few special cases to eliminate operand modifiers.
-//ReSimplify:
-    //switch (OutMI.getOpcode()) {
+ReSimplify:
+    switch (OutMI.getOpcode()) {
     //    case Cse523::LEA64_32r:
     //    case Cse523::LEA64r:
     //    case Cse523::LEA16r:
@@ -469,12 +467,11 @@ void Cse523MCInstLower::Lower(const MachineInstr *MI, MCInst &OutMI) const {
     //                                    break;
     //                                }
 
-    //    case Cse523::EH_RETURN:
-    //    case Cse523::EH_RETURN64: {
-    //                                  OutMI = MCInst();
-    //                                  OutMI.setOpcode(getRetOpcode(AsmPrinter.getSubtarget()));
-    //                                  break;
-    //                              }
+        case Cse523::EH_RETURN64: {
+                                      OutMI = MCInst();
+                                      OutMI.setOpcode(getRetOpcode(AsmPrinter.getSubtarget()));
+                                      break;
+                                  }
 
     //                              // TAILJMPd, TAILJMPd64 - Lower to the correct jump instructions.
     //    case Cse523::TAILJMPr:
@@ -601,7 +598,7 @@ void Cse523MCInstLower::Lower(const MachineInstr *MI, MCInst &OutMI) const {
     //    case Cse523::MOVSX64rr32:
     //                             SimplifyMOVSX(OutMI);
     //                             break;
-    //}
+    }
 }
 
 static void LowerTlsAddr(MCStreamer &OutStreamer,
@@ -756,54 +753,51 @@ static void LowerSTACKMAP(MCStreamer &OS, StackMaps &SM,
 static void LowerPATCHPOINT(MCStreamer &OS, StackMaps &SM,
         const MachineInstr &MI, bool Is64Bit, const MCSubtargetInfo& STI) {
     assert(Is64Bit && "Patchpoint currently only supports Cse523-64");
-    assert(0);
-    //SM.recordPatchPoint(MI);
+    SM.recordPatchPoint(MI);
 
-    //PatchPointOpers opers(&MI);
-    //unsigned ScratchIdx = opers.getNextScratchIdx();
-    //unsigned EncodedBytes = 0;
-    //int64_t CallTarget = opers.getMetaOper(PatchPointOpers::TargetPos).getImm();
-    //if (CallTarget) {
-    //    // Emit MOV to materialize the target address and the CALL to target.
-    //    // This is encoded with 12-13 bytes, depending on which register is used.
-    //    unsigned ScratchReg = MI.getOperand(ScratchIdx).getReg();
-    //    if (Cse523II::isCse523_64ExtendedReg(ScratchReg))
-    //        EncodedBytes = 13;
-    //    else
-    //        EncodedBytes = 12;
-    //    OS.EmitInstruction(MCInstBuilder(Cse523::MOV64ri).addReg(ScratchReg)
-    //            .addImm(CallTarget), STI);
-    //    OS.EmitInstruction(MCInstBuilder(Cse523::CALL64r).addReg(ScratchReg), STI);
-    //}
-    //// Emit padding.
-    //unsigned NumBytes = opers.getMetaOper(PatchPointOpers::NBytesPos).getImm();
-    //assert(NumBytes >= EncodedBytes &&
-    //        "Patchpoint can't request size less than the length of a call.");
+    PatchPointOpers opers(&MI);
+    unsigned ScratchIdx = opers.getNextScratchIdx();
+    unsigned EncodedBytes = 0;
+    int64_t CallTarget = opers.getMetaOper(PatchPointOpers::TargetPos).getImm();
+    if (CallTarget) {
+        // Emit MOV to materialize the target address and the CALL to target.
+        // This is encoded with 12-13 bytes, depending on which register is used.
+        unsigned ScratchReg = MI.getOperand(ScratchIdx).getReg();
+        if (Cse523II::isCse523ExtendedReg(ScratchReg))
+            EncodedBytes = 13;
+        else
+            EncodedBytes = 12;
+        OS.EmitInstruction(MCInstBuilder(Cse523::MOV64ri).addReg(ScratchReg)
+                .addImm(CallTarget), STI);
+        OS.EmitInstruction(MCInstBuilder(Cse523::CALL64r).addReg(ScratchReg), STI);
+    }
+    // Emit padding.
+    unsigned NumBytes = opers.getMetaOper(PatchPointOpers::NBytesPos).getImm();
+    assert(NumBytes >= EncodedBytes &&
+            "Patchpoint can't request size less than the length of a call.");
 
-    //EmitNops(OS, NumBytes - EncodedBytes, Is64Bit, STI);
+    EmitNops(OS, NumBytes - EncodedBytes, Is64Bit, STI);
 }
 
 void Cse523AsmPrinter::EmitInstruction(const MachineInstr *MI) {
     Cse523MCInstLower MCInstLowering(*MF, *this);
-    assert(0);
-    //switch (MI->getOpcode()) {
-    //    case TargetOpcode::DBG_VALUE:
-    //        llvm_unreachable("Should be handled target independently");
+    switch (MI->getOpcode()) {
+        case TargetOpcode::DBG_VALUE:
+            llvm_unreachable("Should be handled target independently");
 
-    //        // Emit nothing here but a comment if we can.
+            // Emit nothing here but a comment if we can.
     //    case Cse523::Int_MemBarrier:
     //        OutStreamer.emitRawComment("MEMBARRIER");
     //        return;
 
 
-    //    case Cse523::EH_RETURN:
-    //    case Cse523::EH_RETURN64: {
-    //                                  // Lower these as normal, but add some comments.
-    //                                  unsigned Reg = MI->getOperand(0).getReg();
-    //                                  OutStreamer.AddComment(StringRef("eh_return, addr: %") +
-    //                                          Cse523ATTInstPrinter::getRegisterName(Reg));
-    //                                  break;
-    //                              }
+        case Cse523::EH_RETURN64: {
+                                      // Lower these as normal, but add some comments.
+                                      unsigned Reg = MI->getOperand(0).getReg();
+                                      OutStreamer.AddComment(StringRef("eh_return, addr: %") +
+                                              Cse523ATTInstPrinter::getRegisterName(Reg));
+                                      break;
+                                  }
     //    case Cse523::TAILJMPr:
     //    case Cse523::TAILJMPd:
     //    case Cse523::TAILJMPd64:
@@ -873,26 +867,26 @@ void Cse523AsmPrinter::EmitInstruction(const MachineInstr *MI) {
     //                              return;
     //                          }
 
-    //    case TargetOpcode::STACKMAP:
-    //                          return LowerSTACKMAP(OutStreamer, SM, *MI, Subtarget->is64Bit(), getSubtargetInfo());
+        case TargetOpcode::STACKMAP:
+                              return LowerSTACKMAP(OutStreamer, SM, *MI, Subtarget->is64Bit(), getSubtargetInfo());
 
-    //    case TargetOpcode::PATCHPOINT:
-    //                          return LowerPATCHPOINT(OutStreamer, SM, *MI, Subtarget->is64Bit(), getSubtargetInfo());
+        case TargetOpcode::PATCHPOINT:
+                              return LowerPATCHPOINT(OutStreamer, SM, *MI, Subtarget->is64Bit(), getSubtargetInfo());
 
-    //    case Cse523::MORESTACK_RET:
-    //                          EmitToStreamer(OutStreamer, MCInstBuilder(getRetOpcode(*Subtarget)));
-    //                          return;
+        case Cse523::MORESTACK_RET:
+                              EmitToStreamer(OutStreamer, MCInstBuilder(getRetOpcode(*Subtarget)));
+                              return;
 
-    //    case Cse523::MORESTACK_RET_RESTORE_R10:
-    //                          // Return, then restore R10.
-    //                          EmitToStreamer(OutStreamer, MCInstBuilder(getRetOpcode(*Subtarget)));
-    //                          EmitToStreamer(OutStreamer, MCInstBuilder(Cse523::MOV64rr)
-    //                                  .addReg(Cse523::R10)
-    //                                  .addReg(Cse523::RAX));
-    //                          return;
-    //}
+        case Cse523::MORESTACK_RET_RESTORE_R10:
+                              // Return, then restore R10.
+                              EmitToStreamer(OutStreamer, MCInstBuilder(getRetOpcode(*Subtarget)));
+                              EmitToStreamer(OutStreamer, MCInstBuilder(Cse523::MOV64rr)
+                                      .addReg(Cse523::R10)
+                                      .addReg(Cse523::RAX));
+                              return;
+    }
 
-    //MCInst TmpInst;
-    //MCInstLowering.Lower(MI, TmpInst);
-    //EmitToStreamer(OutStreamer, TmpInst);
+    MCInst TmpInst;
+    MCInstLowering.Lower(MI, TmpInst);
+    EmitToStreamer(OutStreamer, TmpInst);
 }

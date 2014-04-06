@@ -316,7 +316,7 @@ Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
         //{ Cse523::MOV16rr,     Cse523::MOV16mr,       TB_FOLDED_STORE },
         //{ Cse523::MOV32ri,     Cse523::MOV32mi,       TB_FOLDED_STORE },
         //{ Cse523::MOV32rr,     Cse523::MOV32mr,       TB_FOLDED_STORE },
-        { Cse523::MOV64ri32,   Cse523::MOV64mi32,     TB_FOLDED_STORE }
+        //{ Cse523::MOV64ri32,   Cse523::MOV64mi32,     TB_FOLDED_STORE },
         //{ Cse523::MOV64rr,     Cse523::MOV64mr,       TB_FOLDED_STORE },
         //{ Cse523::MOV8ri,      Cse523::MOV8mi,        TB_FOLDED_STORE },
         //{ Cse523::MOV8rr,      Cse523::MOV8mr,        TB_FOLDED_STORE },
@@ -1050,17 +1050,17 @@ void Cse523InstrInfo::reMaterialize(MachineBasicBlock &MBB,
         unsigned DestReg, unsigned SubIdx,
         const MachineInstr *Orig,
         const TargetRegisterInfo &TRI) const {
-    // MOV32r0 is implemented with a xor which clobbers condition code.
+    // MOV64r0 is implemented with a xor which clobbers condition code.
     // Re-materialize it as movri instructions to avoid side effects.
     unsigned Opc = Orig->getOpcode();
-//    if (Opc == Cse523::MOV32r0 && !isSafeToClobberEFLAGS(MBB, I)) {
-//        DebugLoc DL = Orig->getDebugLoc();
-//        BuildMI(MBB, I, DL, get(Cse523::MOV32ri)).addOperand(Orig->getOperand(0))
-//            .addImm(0);
-//    } else {
-//        MachineInstr *MI = MBB.getParent()->CloneMachineInstr(Orig);
-//        MBB.insert(I, MI);
-//    }
+    if (Opc == Cse523::MOV64r0 && !isSafeToClobberEFLAGS(MBB, I)) {
+        DebugLoc DL = Orig->getDebugLoc();
+        BuildMI(MBB, I, DL, get(Cse523::MOV64ri)).addOperand(Orig->getOperand(0))
+            .addImm(0);
+    } else {
+        MachineInstr *MI = MBB.getParent()->CloneMachineInstr(Orig);
+        MBB.insert(I, MI);
+    }
 
     MachineInstr *NewMI = prior(I);
     NewMI->substituteRegister(Orig->getOperand(0).getReg(), DestReg, SubIdx, TRI);
@@ -1112,6 +1112,8 @@ bool Cse523InstrInfo::classifyLEAReg(MachineInstr *MI, const MachineOperand &Src
         RC = &Cse523::GR64_NOSPRegClass;
     }
     unsigned SrcReg = Src.getReg();
+
+    assert(0);
 
     // For both LEA64 and LEA32 the register already has essentially the right
     // type (32-bit or 64-bit) we may just need to forbid SP.
@@ -1179,6 +1181,8 @@ Cse523InstrInfo::convertToThreeAddressWithLEA(unsigned MIOpc,
         MachineFunction::iterator &MFI,
         MachineBasicBlock::iterator &MBBI,
         LiveVariables *LV) const {
+
+    assert(0);
 //    MachineInstr *MI = MBBI;
 //    unsigned Dest = MI->getOperand(0).getReg();
 //    unsigned Src = MI->getOperand(1).getReg();
@@ -1293,6 +1297,7 @@ Cse523InstrInfo::convertToThreeAddress(MachineFunction::iterator &MFI,
         MachineBasicBlock::iterator &MBBI,
         LiveVariables *LV) const {
     MachineInstr *MI = MBBI;
+    assert(0);
 
     // The following opcodes also sets the condition code register(s). Only
     // convert them to equivalent lea if the condition code register def's
@@ -1591,6 +1596,8 @@ Cse523InstrInfo::convertToThreeAddress(MachineFunction::iterator &MFI,
 ///
 MachineInstr *
 Cse523InstrInfo::commuteInstruction(MachineInstr *MI, bool NewMI) const {
+
+    assert(0);
     switch (MI->getOpcode()) {
 //        case Cse523::SHRD16rri8: // A = SHRD16rri8 B, C, I -> A = SHLD16rri8 C, B, (16-I)
 //        case Cse523::SHLD16rri8: // A = SHLD16rri8 B, C, I -> A = SHRD16rri8 C, B, (16-I)
@@ -1702,6 +1709,7 @@ Cse523InstrInfo::commuteInstruction(MachineInstr *MI, bool NewMI) const {
 }
 
 static Cse523::CondCode getCondFromBranchOpc(unsigned BrOpc) {
+    assert(0);
     switch (BrOpc) {
         default: return Cse523::COND_INVALID;
         //case Cse523::JE_4:  return Cse523::COND_E;
@@ -1725,6 +1733,7 @@ static Cse523::CondCode getCondFromBranchOpc(unsigned BrOpc) {
 
 /// getCondFromSETOpc - return condition code of a SET opcode.
 static Cse523::CondCode getCondFromSETOpc(unsigned Opc) {
+    assert(0);
     switch (Opc) {
         default: return Cse523::COND_INVALID;
         //case Cse523::SETAr:  case Cse523::SETAm:  return Cse523::COND_A;
@@ -1748,6 +1757,7 @@ static Cse523::CondCode getCondFromSETOpc(unsigned Opc) {
 
 /// getCondFromCmovOpc - return condition code of a CMov opcode.
 Cse523::CondCode Cse523::getCondFromCMovOpc(unsigned Opc) {
+    assert(0);
     switch (Opc) {
         default: return Cse523::COND_INVALID;
         //case Cse523::CMOVA16rm:  case Cse523::CMOVA16rr:  case Cse523::CMOVA32rm:
@@ -1802,6 +1812,7 @@ Cse523::CondCode Cse523::getCondFromCMovOpc(unsigned Opc) {
 }
 
 unsigned Cse523::GetCondBranchFromCond(Cse523::CondCode CC) {
+    assert(0);
     switch (CC) {
         default: llvm_unreachable("Illegal condition code!");
         //case Cse523::COND_E:  return Cse523::JE_4;
@@ -1826,6 +1837,7 @@ unsigned Cse523::GetCondBranchFromCond(Cse523::CondCode CC) {
 /// GetOppositeBranchCondition - Return the inverse of the specified condition,
 /// e.g. turning COND_E to COND_NE.
 Cse523::CondCode Cse523::GetOppositeBranchCondition(Cse523::CondCode CC) {
+    assert(0);
     switch (CC) {
         default: llvm_unreachable("Illegal condition code!");
         //case Cse523::COND_E:  return Cse523::COND_NE;
@@ -1870,6 +1882,7 @@ static Cse523::CondCode getSwappedCondition(Cse523::CondCode CC) {
 /// whether it has memory operand.
 static unsigned getSETFromCond(Cse523::CondCode CC,
         bool HasMemoryOperand) {
+    assert(0);
     static const uint16_t Opc[16][2] = {
 //        { Cse523::SETAr,  Cse523::SETAm  },
 //        { Cse523::SETAEr, Cse523::SETAEm },
@@ -1897,6 +1910,7 @@ static unsigned getSETFromCond(Cse523::CondCode CC,
 /// register size in bytes, and operand type.
 static unsigned getCMovFromCond(Cse523::CondCode CC, unsigned RegBytes,
         bool HasMemoryOperand) {
+    assert(0);
     static const uint16_t Opc[32][3] = {
 //        { Cse523::CMOVA16rr,  Cse523::CMOVA32rr,  Cse523::CMOVA64rr  },
 //        { Cse523::CMOVAE16rr, Cse523::CMOVAE32rr, Cse523::CMOVAE64rr },

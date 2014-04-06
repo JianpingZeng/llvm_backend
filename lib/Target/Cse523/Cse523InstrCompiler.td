@@ -148,6 +148,10 @@ let isPseudo = 1 in {
 
 // Alias instruction mapping movr0 to xor.
 // FIXME: remove when we can teach regalloc that xor reg, reg is ok.
+let Defs = [EFLAGS], isReMaterializable = 1, isAsCheapAsAMove = 1,
+    isPseudo = 1 in
+    def MOV64r0  : I<0, Pseudo, (outs GR64:$dst), (ins), "",
+    [(set GR64:$dst, 0)], IIC_ALU_NONMEM>, Sched<[WriteZero]>;
 //let Defs = [EFLAGS], isReMaterializable = 1, isAsCheapAsAMove = 1,
 //    isPseudo = 1 in
 //    def MOV32r0  : I<0, Pseudo, (outs GR32:$dst), (ins), "",

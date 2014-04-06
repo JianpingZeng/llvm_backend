@@ -160,21 +160,18 @@ void emitSPUpdate(MachineBasicBlock &MBB, MachineBasicBlock::iterator &MBBI,
 
     while (Offset) {
         uint64_t ThisVal = (Offset > Chunk) ? Chunk : Offset;
-        if (ThisVal == (Is64Bit ? 8 : 4)) {
+        if (ThisVal == 8) {
             // Use push / pop instead.
             unsigned Reg = isSub
                 ? (unsigned)(Cse523::RAX)
                 : findDeadCallerSavedReg(MBB, MBBI, TRI, Is64Bit);
             if (Reg) {
-                assert(0);
-                //Opc = isSub
-                //    ? (Is64Bit ? Cse523::PUSH64r : Cse523::PUSH32r)
-                //    : (Is64Bit ? Cse523::POP64r  : Cse523::POP32r);
-                //MachineInstr *MI = BuildMI(MBB, MBBI, DL, TII.get(Opc))
-                //    .addReg(Reg, getDefRegState(!isSub) | getUndefRegState(isSub));
-                //if (isSub)
-                //    MI->setFlag(MachineInstr::FrameSetup);
-                //Offset -= ThisVal;
+                Opc = isSub ? (Cse523::PUSH64r) : (Cse523::POP64r);
+                MachineInstr *MI = BuildMI(MBB, MBBI, DL, TII.get(Opc))
+                    .addReg(Reg, getDefRegState(!isSub) | getUndefRegState(isSub));
+                if (isSub)
+                    MI->setFlag(MachineInstr::FrameSetup);
+                Offset -= ThisVal;
                 continue;
             }
         }
@@ -466,235 +463,199 @@ void Cse523FrameLowering::emitPrologue(MachineFunction &MF) const {
     uint64_t NumBytes = 0;
     int stackGrowth = -SlotSize;
 
-    assert(0);
-    //if (HasFP) {
-    //    // Calculate required stack adjustment.
-    //    uint64_t FrameSize = StackSize - SlotSize;
-    //    if (RegInfo->needsStackRealignment(MF)) {
-    //        // Callee-saved registers are pushed on stack before the stack
-    //        // is realigned.
-    //        FrameSize -= Cse523FI->getCalleeSavedFrameSize();
-    //        NumBytes = (FrameSize + MaxAlign - 1) / MaxAlign * MaxAlign;
-    //    } else {
-    //        NumBytes = FrameSize - Cse523FI->getCalleeSavedFrameSize();
-    //    }
+    if (HasFP) {
+        assert(0);
+        // Calculate required stack adjustment.
+        //uint64_t FrameSize = StackSize - SlotSize;
+        //if (RegInfo->needsStackRealignment(MF)) {
+        //    // Callee-saved registers are pushed on stack before the stack
+        //    // is realigned.
+        //    FrameSize -= Cse523FI->getCalleeSavedFrameSize();
+        //    NumBytes = (FrameSize + MaxAlign - 1) / MaxAlign * MaxAlign;
+        //} else {
+        //    NumBytes = FrameSize - Cse523FI->getCalleeSavedFrameSize();
+        //}
 
-    //    // Get the offset of the stack slot for the EBP register, which is
-    //    // guaranteed to be the last slot by processFunctionBeforeFrameFinalized.
-    //    // Update the frame offset adjustment.
-    //    MFI->setOffsetAdjustment(-NumBytes);
+        //// Get the offset of the stack slot for the EBP register, which is
+        //// guaranteed to be the last slot by processFunctionBeforeFrameFinalized.
+        //// Update the frame offset adjustment.
+        //MFI->setOffsetAdjustment(-NumBytes);
 
-    //    // Save EBP/RBP into the appropriate stack slot.
-    //    BuildMI(MBB, MBBI, DL, TII.get(Cse523::PUSH64r))
-    //        .addReg(FramePtr, RegState::Kill)
-    //        .setMIFlag(MachineInstr::FrameSetup);
+        //// Save EBP/RBP into the appropriate stack slot.
+        //BuildMI(MBB, MBBI, DL, TII.get(Cse523::PUSH64r))
+        //    .addReg(FramePtr, RegState::Kill)
+        //    .setMIFlag(MachineInstr::FrameSetup);
 
-    //    if (needsFrameMoves) {
-    //        // Mark the place where EBP/RBP was saved.
-    //        MCSymbol *FrameLabel = MMI.getContext().CreateTempSymbol();
-    //        BuildMI(MBB, MBBI, DL, TII.get(Cse523::PROLOG_LABEL))
-    //            .addSym(FrameLabel);
+        //if (needsFrameMoves) {
+        //    // Mark the place where EBP/RBP was saved.
+        //    MCSymbol *FrameLabel = MMI.getContext().CreateTempSymbol();
+        //    BuildMI(MBB, MBBI, DL, TII.get(Cse523::PROLOG_LABEL))
+        //        .addSym(FrameLabel);
 
-    //        // Define the current CFA rule to use the provided offset.
-    //        assert(StackSize);
-    //        MMI.addFrameInst(
-    //                MCCFIInstruction::createDefCfaOffset(FrameLabel, 2 * stackGrowth));
+        //    // Define the current CFA rule to use the provided offset.
+        //    assert(StackSize);
+        //    MMI.addFrameInst(
+        //            MCCFIInstruction::createDefCfaOffset(FrameLabel, 2 * stackGrowth));
 
-    //        // Change the rule for the FramePtr to be an "offset" rule.
-    //        unsigned DwarfFramePtr = RegInfo->getDwarfRegNum(FramePtr, true);
-    //        MMI.addFrameInst(MCCFIInstruction::createOffset(FrameLabel, DwarfFramePtr,
-    //                    2 * stackGrowth));
-    //    }
+        //    // Change the rule for the FramePtr to be an "offset" rule.
+        //    unsigned DwarfFramePtr = RegInfo->getDwarfRegNum(FramePtr, true);
+        //    MMI.addFrameInst(MCCFIInstruction::createOffset(FrameLabel, DwarfFramePtr,
+        //                2 * stackGrowth));
+        //}
 
-    //    // Update EBP with the new base value.
-    //    BuildMI(MBB, MBBI, DL,
-    //            TII.get(Is64Bit ? Cse523::MOV64rr : Cse523::MOV32rr), FramePtr)
-    //        .addReg(StackPtr)
-    //        .setMIFlag(MachineInstr::FrameSetup);
+        //// Update EBP with the new base value.
+        //BuildMI(MBB, MBBI, DL,
+        //        TII.get(Is64Bit ? Cse523::MOV64rr : Cse523::MOV32rr), FramePtr)
+        //    .addReg(StackPtr)
+        //    .setMIFlag(MachineInstr::FrameSetup);
 
-    //    if (needsFrameMoves) {
-    //        // Mark effective beginning of when frame pointer becomes valid.
-    //        MCSymbol *FrameLabel = MMI.getContext().CreateTempSymbol();
-    //        BuildMI(MBB, MBBI, DL, TII.get(Cse523::PROLOG_LABEL))
-    //            .addSym(FrameLabel);
+        //if (needsFrameMoves) {
+        //    // Mark effective beginning of when frame pointer becomes valid.
+        //    MCSymbol *FrameLabel = MMI.getContext().CreateTempSymbol();
+        //    BuildMI(MBB, MBBI, DL, TII.get(Cse523::PROLOG_LABEL))
+        //        .addSym(FrameLabel);
 
-    //        // Define the current CFA to use the EBP/RBP register.
-    //        unsigned DwarfFramePtr = RegInfo->getDwarfRegNum(FramePtr, true);
-    //        MMI.addFrameInst(
-    //                MCCFIInstruction::createDefCfaRegister(FrameLabel, DwarfFramePtr));
-    //    }
+        //    // Define the current CFA to use the EBP/RBP register.
+        //    unsigned DwarfFramePtr = RegInfo->getDwarfRegNum(FramePtr, true);
+        //    MMI.addFrameInst(
+        //            MCCFIInstruction::createDefCfaRegister(FrameLabel, DwarfFramePtr));
+        //}
 
-    //    // Mark the FramePtr as live-in in every block except the entry.
-    //    for (MachineFunction::iterator I = llvm::next(MF.begin()), E = MF.end();
-    //            I != E; ++I)
-    //        I->addLiveIn(FramePtr);
-    //} else {
-    //    NumBytes = StackSize - Cse523FI->getCalleeSavedFrameSize();
-    //}
+        //// Mark the FramePtr as live-in in every block except the entry.
+        //for (MachineFunction::iterator I = llvm::next(MF.begin()), E = MF.end();
+        //        I != E; ++I)
+        //    I->addLiveIn(FramePtr);
+    } else {
+        NumBytes = StackSize - Cse523FI->getCalleeSavedFrameSize();
+    }
 
-    //// Skip the callee-saved push instructions.
-    //bool PushedRegs = false;
-    //int StackOffset = 2 * stackGrowth;
+    // Skip the callee-saved push instructions.
+    bool PushedRegs = false;
+    int StackOffset = 2 * stackGrowth;
 
-    //while (MBBI != MBB.end() &&
-    //        (MBBI->getOpcode() == Cse523::PUSH32r ||
-    //         MBBI->getOpcode() == Cse523::PUSH64r)) {
-    //    PushedRegs = true;
-    //    MBBI->setFlag(MachineInstr::FrameSetup);
-    //    ++MBBI;
+    while (MBBI != MBB.end() &&
+             (MBBI->getOpcode() == Cse523::PUSH64r)) {
+        PushedRegs = true;
+        MBBI->setFlag(MachineInstr::FrameSetup);
+        ++MBBI;
 
-    //    if (!HasFP && needsFrameMoves) {
-    //        // Mark callee-saved push instruction.
-    //        MCSymbol *Label = MMI.getContext().CreateTempSymbol();
-    //        BuildMI(MBB, MBBI, DL, TII.get(Cse523::PROLOG_LABEL)).addSym(Label);
+        if (!HasFP && needsFrameMoves) {
+            // Mark callee-saved push instruction.
+            MCSymbol *Label = MMI.getContext().CreateTempSymbol();
+            BuildMI(MBB, MBBI, DL, TII.get(Cse523::PROLOG_LABEL)).addSym(Label);
 
-    //        // Define the current CFA rule to use the provided offset.
-    //        assert(StackSize);
-    //        MMI.addFrameInst(
-    //                MCCFIInstruction::createDefCfaOffset(Label, StackOffset));
-    //        StackOffset += stackGrowth;
-    //    }
-    //}
+            // Define the current CFA rule to use the provided offset.
+            assert(StackSize);
+            MMI.addFrameInst(
+                    MCCFIInstruction::createDefCfaOffset(Label, StackOffset));
+            StackOffset += stackGrowth;
+        }
+    }
 
-    //// Realign stack after we pushed callee-saved registers (so that we'll be
-    //// able to calculate their offsets from the frame pointer).
+    // Realign stack after we pushed callee-saved registers (so that we'll be
+    // able to calculate their offsets from the frame pointer).
 
-    //// NOTE: We push the registers before realigning the stack, so
-    //// vector callee-saved (xmm) registers may be saved w/o proper
-    //// alignment in this way. However, currently these regs are saved in
-    //// stack slots (see Cse523FrameLowering::spillCalleeSavedRegisters()), so
-    //// this shouldn't be a problem.
-    //if (RegInfo->needsStackRealignment(MF)) {
-    //    assert(HasFP && "There should be a frame pointer if stack is realigned.");
-    //    MachineInstr *MI =
-    //        BuildMI(MBB, MBBI, DL,
-    //                TII.get(Is64Bit ? Cse523::AND64ri32 : Cse523::AND32ri), StackPtr)
-    //        .addReg(StackPtr)
-    //        .addImm(-MaxAlign)
-    //        .setMIFlag(MachineInstr::FrameSetup);
+    // NOTE: We push the registers before realigning the stack, so
+    // vector callee-saved (xmm) registers may be saved w/o proper
+    // alignment in this way. However, currently these regs are saved in
+    // stack slots (see Cse523FrameLowering::spillCalleeSavedRegisters()), so
+    // this shouldn't be a problem.
+    if (RegInfo->needsStackRealignment(MF)) {
+        assert(HasFP && "There should be a frame pointer if stack is realigned.");
+        assert(0);
+        //MachineInstr *MI =
+        //    BuildMI(MBB, MBBI, DL,
+        //            TII.get(Cse523::AND64ri32, StackPtr)
+        //    .addReg(StackPtr)
+        //    .addImm(-MaxAlign)
+        //    .setMIFlag(MachineInstr::FrameSetup);
 
-    //    // The EFLAGS implicit def is dead.
-    //    MI->getOperand(3).setIsDead();
-    //}
+        // The EFLAGS implicit def is dead.
+        //MI->getOperand(3).setIsDead();
+    }
 
-    //// If there is an SUB32ri of ESP immediately before this instruction, merge
-    //// the two. This can be the case when tail call elimination is enabled and
-    //// the callee has more arguments then the caller.
-    //NumBytes -= mergeSPUpdates(MBB, MBBI, StackPtr, true);
+    // If there is an SUB32ri of ESP immediately before this instruction, merge
+    // the two. This can be the case when tail call elimination is enabled and
+    // the callee has more arguments then the caller.
+    NumBytes -= mergeSPUpdates(MBB, MBBI, StackPtr, true);
 
-    //// If there is an ADD32ri or SUB32ri of ESP immediately after this
-    //// instruction, merge the two instructions.
-    //mergeSPUpdatesDown(MBB, MBBI, StackPtr, &NumBytes);
+    // If there is an ADD32ri or SUB32ri of ESP immediately after this
+    // instruction, merge the two instructions.
+    mergeSPUpdatesDown(MBB, MBBI, StackPtr, &NumBytes);
 
-    //// Adjust stack pointer: ESP -= numbytes.
+    // Adjust stack pointer: ESP -= numbytes.
 
-    //// Windows and cygwin/mingw require a prologue helper routine when allocating
-    //// more than 4K bytes on the stack.  Windows uses __chkstk and cygwin/mingw
-    //// uses __alloca.  __alloca and the 32-bit version of __chkstk will probe the
-    //// stack and adjust the stack pointer in one go.  The 64-bit version of
-    //// __chkstk is only responsible for probing the stack.  The 64-bit prologue is
-    //// responsible for adjusting the stack pointer.  Touching the stack at 4K
-    //// increments is necessary to ensure that the guard pages used by the OS
-    //// virtual memory manager are allocated in correct sequence.
-    //if (NumBytes >= 4096 && STI.isOSWindows() && !STI.isTargetMacho()) {
-    //    const char *StackProbeSymbol;
+    // Windows and cygwin/mingw require a prologue helper routine when allocating
+    // more than 4K bytes on the stack.  Windows uses __chkstk and cygwin/mingw
+    // uses __alloca.  __alloca and the 32-bit version of __chkstk will probe the
+    // stack and adjust the stack pointer in one go.  The 64-bit version of
+    // __chkstk is only responsible for probing the stack.  The 64-bit prologue is
+    // responsible for adjusting the stack pointer.  Touching the stack at 4K
+    // increments is necessary to ensure that the guard pages used by the OS
+    // virtual memory manager are allocated in correct sequence.
+    if (NumBytes >= 4096 && STI.isOSWindows() && !STI.isTargetMacho()) {
+        const char *StackProbeSymbol;
 
-    //    if (Is64Bit) {
-    //        if (STI.isTargetCygMing()) {
-    //            StackProbeSymbol = "___chkstk_ms";
-    //        } else {
-    //            StackProbeSymbol = "__chkstk";
-    //        }
-    //    } else if (STI.isTargetCygMing())
-    //        StackProbeSymbol = "_alloca";
-    //    else
-    //        StackProbeSymbol = "_chkstk";
+        if (STI.isTargetCygMing()) {
+            StackProbeSymbol = "___chkstk_ms";
+        } else {
+            StackProbeSymbol = "__chkstk";
+        }
 
-    //    // Check whether EAX is livein for this function.
-    //    bool isEAXAlive = false;
+        // Handle the 64-bit Windows ABI case where we need to call __chkstk.
+        // Function prologue is responsible for adjusting the stack pointer.
+        BuildMI(MBB, MBBI, DL, TII.get(Cse523::MOV64ri), Cse523::RAX)
+            .addImm(NumBytes)
+            .setMIFlag(MachineInstr::FrameSetup);
 
-    //    if (isEAXAlive) {
-    //        // Sanity check that EAX is not livein for this function.
-    //        // It should not be, so throw an assert.
-    //        assert(!Is64Bit && "EAX is livein in x64 case!");
+        BuildMI(MBB, MBBI, DL,
+                TII.get(Cse523::W64ALLOCA))
+            .addExternalSymbol(StackProbeSymbol)
+            .addReg(StackPtr,    RegState::Define | RegState::Implicit)
+            .addReg(Cse523::EFLAGS, RegState::Define | RegState::Implicit)
+            .setMIFlag(MachineInstr::FrameSetup);
 
-    //        // Save EAX
-    //        BuildMI(MBB, MBBI, DL, TII.get(Cse523::PUSH32r))
-    //            .addReg(Cse523::EAX, RegState::Kill)
-    //            .setMIFlag(MachineInstr::FrameSetup);
-    //    }
+        // MSVC x64's __chkstk and cygwin/mingw's ___chkstk_ms do not adjust %rsp
+        // themself. It also does not clobber %rax so we can reuse it when
+        // adjusting %rsp.
+        assert(0);
+        //BuildMI(MBB, MBBI, DL, TII.get(Cse523::SUB64rr), StackPtr)
+        //    .addReg(StackPtr)
+        //    .addReg(Cse523::RAX)
+        //    .setMIFlag(MachineInstr::FrameSetup);
+    } else if (NumBytes)
+        emitSPUpdate(MBB, MBBI, StackPtr, -(int64_t)NumBytes, Is64Bit, IsLP64,
+                UseLEA, TII, *RegInfo);
 
-    //    if (Is64Bit) {
-    //        // Handle the 64-bit Windows ABI case where we need to call __chkstk.
-    //        // Function prologue is responsible for adjusting the stack pointer.
-    //        BuildMI(MBB, MBBI, DL, TII.get(Cse523::MOV64ri), Cse523::RAX)
-    //            .addImm(NumBytes)
-    //            .setMIFlag(MachineInstr::FrameSetup);
-    //    } else {
-    //        // Allocate NumBytes-4 bytes on stack in case of isEAXAlive.
-    //        // We'll also use 4 already allocated bytes for EAX.
-    //        BuildMI(MBB, MBBI, DL, TII.get(Cse523::MOV32ri), Cse523::EAX)
-    //            .addImm(isEAXAlive ? NumBytes - 4 : NumBytes)
-    //            .setMIFlag(MachineInstr::FrameSetup);
-    //    }
+    // If we need a base pointer, set it up here. It's whatever the value
+    // of the stack pointer is at this point. Any variable size objects
+    // will be allocated after this, so we can still use the base pointer
+    // to reference locals.
+    if (RegInfo->hasBasePointer(MF)) {
+        // Update the frame pointer with the current stack pointer.
+        unsigned Opc = Cse523::MOV64rr;
+        BuildMI(MBB, MBBI, DL, TII.get(Opc), BasePtr)
+            .addReg(StackPtr)
+            .setMIFlag(MachineInstr::FrameSetup);
+    }
 
-    //    BuildMI(MBB, MBBI, DL,
-    //            TII.get(Is64Bit ? Cse523::W64ALLOCA : Cse523::CALLpcrel32))
-    //        .addExternalSymbol(StackProbeSymbol)
-    //        .addReg(StackPtr,    RegState::Define | RegState::Implicit)
-    //        .addReg(Cse523::EFLAGS, RegState::Define | RegState::Implicit)
-    //        .setMIFlag(MachineInstr::FrameSetup);
+    if (( (!HasFP && NumBytes) || PushedRegs) && needsFrameMoves) {
+        // Mark end of stack pointer adjustment.
+        MCSymbol *Label = MMI.getContext().CreateTempSymbol();
+        BuildMI(MBB, MBBI, DL, TII.get(Cse523::PROLOG_LABEL))
+            .addSym(Label);
 
-    //    if (Is64Bit) {
-    //        // MSVC x64's __chkstk and cygwin/mingw's ___chkstk_ms do not adjust %rsp
-    //        // themself. It also does not clobber %rax so we can reuse it when
-    //        // adjusting %rsp.
-    //        BuildMI(MBB, MBBI, DL, TII.get(Cse523::SUB64rr), StackPtr)
-    //            .addReg(StackPtr)
-    //            .addReg(Cse523::RAX)
-    //            .setMIFlag(MachineInstr::FrameSetup);
-    //    }
-    //    if (isEAXAlive) {
-    //        // Restore EAX
-    //        MachineInstr *MI = addRegOffset(BuildMI(MF, DL, TII.get(Cse523::MOV32rm),
-    //                    Cse523::EAX),
-    //                StackPtr, false, NumBytes - 4);
-    //        MI->setFlag(MachineInstr::FrameSetup);
-    //        MBB.insert(MBBI, MI);
-    //    }
-    //} else if (NumBytes)
-    //    emitSPUpdate(MBB, MBBI, StackPtr, -(int64_t)NumBytes, Is64Bit, IsLP64,
-    //            UseLEA, TII, *RegInfo);
+        if (!HasFP && NumBytes) {
+            // Define the current CFA rule to use the provided offset.
+            assert(StackSize);
+            MMI.addFrameInst(MCCFIInstruction::createDefCfaOffset(
+                        Label, -StackSize + stackGrowth));
+        }
 
-    //// If we need a base pointer, set it up here. It's whatever the value
-    //// of the stack pointer is at this point. Any variable size objects
-    //// will be allocated after this, so we can still use the base pointer
-    //// to reference locals.
-    //if (RegInfo->hasBasePointer(MF)) {
-    //    // Update the frame pointer with the current stack pointer.
-    //    unsigned Opc = Is64Bit ? Cse523::MOV64rr : Cse523::MOV32rr;
-    //    BuildMI(MBB, MBBI, DL, TII.get(Opc), BasePtr)
-    //        .addReg(StackPtr)
-    //        .setMIFlag(MachineInstr::FrameSetup);
-    //}
-
-    //if (( (!HasFP && NumBytes) || PushedRegs) && needsFrameMoves) {
-    //    // Mark end of stack pointer adjustment.
-    //    MCSymbol *Label = MMI.getContext().CreateTempSymbol();
-    //    BuildMI(MBB, MBBI, DL, TII.get(Cse523::PROLOG_LABEL))
-    //        .addSym(Label);
-
-    //    if (!HasFP && NumBytes) {
-    //        // Define the current CFA rule to use the provided offset.
-    //        assert(StackSize);
-    //        MMI.addFrameInst(MCCFIInstruction::createDefCfaOffset(
-    //                    Label, -StackSize + stackGrowth));
-    //    }
-
-    //    // Emit DWARF info specifying the offsets of the callee-saved registers.
-    //    if (PushedRegs)
-    //        emitCalleeSavedFrameMoves(MF, Label, HasFP ? FramePtr : StackPtr);
-    //}
+        // Emit DWARF info specifying the offsets of the callee-saved registers.
+        if (PushedRegs)
+            emitCalleeSavedFrameMoves(MF, Label, HasFP ? FramePtr : StackPtr);
+    }
 }
 
 void Cse523FrameLowering::emitEpilogue(MachineFunction &MF,
@@ -744,76 +705,74 @@ void Cse523FrameLowering::emitEpilogue(MachineFunction &MF,
             MaxAlign = MaxAlign ? MaxAlign : 4;
     }
 
-    assert(0);
+    if (hasFP(MF)) {
+        // Calculate required stack adjustment.
+        uint64_t FrameSize = StackSize - SlotSize;
+        if (RegInfo->needsStackRealignment(MF)) {
+            // Callee-saved registers were pushed on stack before the stack
+            // was realigned.
+            FrameSize -= CSSize;
+            NumBytes = (FrameSize + MaxAlign - 1) / MaxAlign * MaxAlign;
+        } else {
+            NumBytes = FrameSize - CSSize;
+        }
 
-    //if (hasFP(MF)) {
-    //    // Calculate required stack adjustment.
-    //    uint64_t FrameSize = StackSize - SlotSize;
-    //    if (RegInfo->needsStackRealignment(MF)) {
-    //        // Callee-saved registers were pushed on stack before the stack
-    //        // was realigned.
-    //        FrameSize -= CSSize;
-    //        NumBytes = (FrameSize + MaxAlign - 1) / MaxAlign * MaxAlign;
-    //    } else {
-    //        NumBytes = FrameSize - CSSize;
-    //    }
+        // Pop EBP.
+        BuildMI(MBB, MBBI, DL,
+                TII.get(Cse523::POP64r), FramePtr);
+    } else {
+        NumBytes = StackSize - CSSize;
+    }
 
-    //    // Pop EBP.
-    //    //BuildMI(MBB, MBBI, DL,
-    //    //        TII.get(Cse523::POP64r), FramePtr);
-    //} else {
-    //    NumBytes = StackSize - CSSize;
-    //}
+    // Skip the callee-saved pop instructions.
+    while (MBBI != MBB.begin()) {
+        MachineBasicBlock::iterator PI = prior(MBBI);
+        unsigned Opc = PI->getOpcode();
 
-    //// Skip the callee-saved pop instructions.
-    //while (MBBI != MBB.begin()) {
-    //    MachineBasicBlock::iterator PI = prior(MBBI);
-    //    unsigned Opc = PI->getOpcode();
+        if (Opc != Cse523::POP64r && Opc != Cse523::DBG_VALUE &&
+                !PI->isTerminator())
+            break;
 
-    //    //if (Opc != Cse523::POP32r && Opc != Cse523::POP64r && Opc != Cse523::DBG_VALUE &&
-    //    //        !PI->isTerminator())
-    //    //    break;
+        --MBBI;
+    }
+    MachineBasicBlock::iterator FirstCSPop = MBBI;
 
-    //    --MBBI;
-    //}
-    //MachineBasicBlock::iterator FirstCSPop = MBBI;
+    DL = MBBI->getDebugLoc();
 
-    //DL = MBBI->getDebugLoc();
+    // If there is an ADD32ri or SUB32ri of ESP immediately before this
+    // instruction, merge the two instructions.
+    if (NumBytes || MFI->hasVarSizedObjects())
+        mergeSPUpdatesUp(MBB, MBBI, StackPtr, &NumBytes);
 
-    //// If there is an ADD32ri or SUB32ri of ESP immediately before this
-    //// instruction, merge the two instructions.
-    //if (NumBytes || MFI->hasVarSizedObjects())
-    //    mergeSPUpdatesUp(MBB, MBBI, StackPtr, &NumBytes);
+    // If dynamic alloca is used, then reset esp to point to the last callee-saved
+    // slot before popping them off! Same applies for the case, when stack was
+    // realigned.
+    if (RegInfo->needsStackRealignment(MF) || MFI->hasVarSizedObjects()) {
+        if (RegInfo->needsStackRealignment(MF))
+            MBBI = FirstCSPop;
+        if (CSSize != 0) {
+            unsigned Opc = getLEArOpcode(IsLP64);
+            addRegOffset(BuildMI(MBB, MBBI, DL, TII.get(Opc), StackPtr),
+                    FramePtr, false, -CSSize);
+        } else {
+            unsigned Opc = Cse523::MOV64rr;
+            BuildMI(MBB, MBBI, DL, TII.get(Opc), StackPtr)
+                .addReg(FramePtr);
+        }
+    } else if (NumBytes) {
+        // Adjust stack pointer back: ESP += numbytes.
+        emitSPUpdate(MBB, MBBI, StackPtr, NumBytes, Is64Bit, IsLP64, UseLEA,
+                TII, *RegInfo);
+    }
 
-    //// If dynamic alloca is used, then reset esp to point to the last callee-saved
-    //// slot before popping them off! Same applies for the case, when stack was
-    //// realigned.
-    //if (RegInfo->needsStackRealignment(MF) || MFI->hasVarSizedObjects()) {
-    //    if (RegInfo->needsStackRealignment(MF))
-    //        MBBI = FirstCSPop;
-    //    if (CSSize != 0) {
-    //        unsigned Opc = getLEArOpcode(IsLP64);
-    //        addRegOffset(BuildMI(MBB, MBBI, DL, TII.get(Opc), StackPtr),
-    //                FramePtr, false, -CSSize);
-    //    } else {
-    //        unsigned Opc = (Is64Bit ? Cse523::MOV64rr : Cse523::MOV32rr);
-    //        BuildMI(MBB, MBBI, DL, TII.get(Opc), StackPtr)
-    //            .addReg(FramePtr);
-    //    }
-    //} else if (NumBytes) {
-    //    // Adjust stack pointer back: ESP += numbytes.
-    //    emitSPUpdate(MBB, MBBI, StackPtr, NumBytes, Is64Bit, IsLP64, UseLEA,
-    //            TII, *RegInfo);
-    //}
-
-    //// We're returning from function via eh_return.
-    //if (RetOpcode == Cse523::EH_RETURN || RetOpcode == Cse523::EH_RETURN64) {
-    //    MBBI = MBB.getLastNonDebugInstr();
-    //    MachineOperand &DestAddr  = MBBI->getOperand(0);
-    //    assert(DestAddr.isReg() && "Offset should be in register!");
-    //    BuildMI(MBB, MBBI, DL,
-    //            TII.get(Is64Bit ? Cse523::MOV64rr : Cse523::MOV32rr),
-    //            StackPtr).addReg(DestAddr.getReg());
+    // We're returning from function via eh_return.
+    if (RetOpcode == Cse523::EH_RETURN64) {
+        MBBI = MBB.getLastNonDebugInstr();
+        MachineOperand &DestAddr  = MBBI->getOperand(0);
+        assert(DestAddr.isReg() && "Offset should be in register!");
+        BuildMI(MBB, MBBI, DL,
+                TII.get(Cse523::MOV64rr),
+                StackPtr).addReg(DestAddr.getReg());
     //} else if (RetOpcode == Cse523::TCRETURNri || RetOpcode == Cse523::TCRETURNdi ||
     //        RetOpcode == Cse523::TCRETURNmi ||
     //        RetOpcode == Cse523::TCRETURNri64 || RetOpcode == Cse523::TCRETURNdi64 ||
@@ -874,18 +833,17 @@ void Cse523FrameLowering::emitEpilogue(MachineFunction &MF,
 
     //    // Delete the pseudo instruction TCRETURN.
     //    MBB.erase(MBBI);
-    //} else if ((RetOpcode == Cse523::RETQ || RetOpcode == Cse523::RETL ||
-    //            RetOpcode == Cse523::RETIQ || RetOpcode == Cse523::RETIL) &&
-    //        (Cse523FI->getTCReturnAddrDelta() < 0)) {
-    //    // Add the return addr area delta back since we are not tail calling.
-    //    int delta = -1*Cse523FI->getTCReturnAddrDelta();
-    //    MBBI = MBB.getLastNonDebugInstr();
+    } else if ((RetOpcode == Cse523::RETQ || RetOpcode == Cse523::RETIQ) &&
+            (Cse523FI->getTCReturnAddrDelta() < 0)) {
+        // Add the return addr area delta back since we are not tail calling.
+        int delta = -1*Cse523FI->getTCReturnAddrDelta();
+        MBBI = MBB.getLastNonDebugInstr();
 
-    //    // Check for possible merge with preceding ADD instruction.
-    //    delta += mergeSPUpdates(MBB, MBBI, StackPtr, true);
-    //    emitSPUpdate(MBB, MBBI, StackPtr, delta, Is64Bit, IsLP64, UseLEA, TII,
-    //            *RegInfo);
-    //}
+        // Check for possible merge with preceding ADD instruction.
+        delta += mergeSPUpdates(MBB, MBBI, StackPtr, true);
+        emitSPUpdate(MBB, MBBI, StackPtr, delta, Is64Bit, IsLP64, UseLEA, TII,
+                *RegInfo);
+    }
 }
 
 int Cse523FrameLowering::getFrameIndexOffset(const MachineFunction &MF, int FI) const {
