@@ -2591,6 +2591,7 @@ bool Cse523InstrInfo::
 optimizeCompareInstr(MachineInstr *CmpInstr, unsigned SrcReg, unsigned SrcReg2,
         int CmpMask, int CmpValue,
         const MachineRegisterInfo *MRI) const {
+    assert(0);
     // Check whether we can replace SUB with CMP.
 //    unsigned NewOpcode = 0;
 //    switch (CmpInstr->getOpcode()) {
@@ -2937,8 +2938,9 @@ bool Cse523InstrInfo::expandPostRAPseudo(MachineBasicBlock::iterator MI) const {
     MachineInstrBuilder MIB(*MI->getParent()->getParent(), MI);
     switch (MI->getOpcode()) {
         default: break;
-//        case Cse523::MOV32r0:
-//            return Expand2AddrUndef(MIB, get(Cse523::XOR32rr));
+        case Cse523::MOV64r0:
+            assert(0);
+            //return Expand2AddrUndef(MIB, get(Cse523::XOR32rr));
 //        case Cse523::SETB_C8r:
 //            return Expand2AddrUndef(MIB, get(Cse523::SBB8rr));
 //        case Cse523::SETB_C16r:
@@ -3029,6 +3031,7 @@ Cse523InstrInfo::foldMemoryOperandImpl(MachineFunction &MF,
         MachineInstr *MI, unsigned i,
         const SmallVectorImpl<MachineOperand> &MOs,
         unsigned Size, unsigned Align) const {
+    assert(0);
 //    const DenseMap<unsigned, std::pair<unsigned,unsigned> > *OpcodeTablePtr = 0;
 //    bool isCallRegIndirect = TM.getSubtarget<Cse523Subtarget>().callRegIndirect();
 //    bool isTwoAddrFold = false;
@@ -3417,6 +3420,7 @@ bool Cse523InstrInfo::canFoldMemoryOperand(const MachineInstr *MI,
         const SmallVectorImpl<unsigned> &Ops) const {
     // Check switch flag
     if (NoFusing) return 0;
+    assert(0);
 
 //    if (Ops.size() == 2 && Ops[0] == 0 && Ops[1] == 1) {
 //        switch (MI->getOpcode()) {
@@ -3471,6 +3475,7 @@ bool Cse523InstrInfo::canFoldMemoryOperand(const MachineInstr *MI,
 bool Cse523InstrInfo::unfoldMemoryOperand(MachineFunction &MF, MachineInstr *MI,
         unsigned Reg, bool UnfoldLoad, bool UnfoldStore,
         SmallVectorImpl<MachineInstr*> &NewMIs) const {
+    assert(0);
 //    DenseMap<unsigned, std::pair<unsigned,unsigned> >::const_iterator I =
 //        MemOp2RegOpTable.find(MI->getOpcode());
 //    if (I == MemOp2RegOpTable.end())
