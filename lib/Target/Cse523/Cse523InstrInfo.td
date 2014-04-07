@@ -21,7 +21,7 @@ def SDTIntShiftDOp: SDTypeProfile<1, 3,
                                   [SDTCisSameAs<0, 1>, SDTCisSameAs<0, 2>,
                                    SDTCisInt<0>, SDTCisInt<3>]>;
 
-def SDTCse523CmpTest : SDTypeProfile<1, 2, [SDTCisVT<0, i32>, SDTCisSameAs<1, 2>]>;
+def SDTCse523CmpTest : SDTypeProfile<1, 2, [SDTCisVT<0, i64>, SDTCisSameAs<1, 2>]>;
 
 def SDTCse523Cmps : SDTypeProfile<1, 3, [SDTCisFP<0>, SDTCisSameAs<1, 2>, SDTCisVT<3, i8>]>;
 //def SDTCse523Cmpss : SDTypeProfile<1, 3, [SDTCisVT<0, f32>, SDTCisSameAs<1, 2>, SDTCisVT<3, i8>]>;
@@ -32,26 +32,26 @@ def SDTCse523Cmov    : SDTypeProfile<1, 4,
 
 // Unary and binary operator instructions that set EFLAGS as a side-effect.
 def SDTUnaryArithWithFlags : SDTypeProfile<2, 1,
-                                           [SDTCisInt<0>, SDTCisVT<1, i32>]>;
+                                           [SDTCisInt<0>, SDTCisVT<1, i64>]>;
 
 def SDTBinaryArithWithFlags : SDTypeProfile<2, 2,
                                             [SDTCisSameAs<0, 2>,
                                              SDTCisSameAs<0, 3>,
-                                             SDTCisInt<0>, SDTCisVT<1, i32>]>;
+                                             SDTCisInt<0>, SDTCisVT<1, i64>]>;
 
 // SDTBinaryArithWithFlagsInOut - RES1, EFLAGS = op LHS, RHS, EFLAGS
 def SDTBinaryArithWithFlagsInOut : SDTypeProfile<2, 3,
                                             [SDTCisSameAs<0, 2>,
                                              SDTCisSameAs<0, 3>,
                                              SDTCisInt<0>,
-                                             SDTCisVT<1, i32>,
-                                             SDTCisVT<4, i32>]>;
+                                             SDTCisVT<1, i64>,
+                                             SDTCisVT<4, i64>]>;
 // RES1, RES2, FLAGS = op LHS, RHS
 def SDT2ResultBinaryArithWithFlags : SDTypeProfile<3, 2,
                                             [SDTCisSameAs<0, 1>,
                                              SDTCisSameAs<0, 2>,
                                              SDTCisSameAs<0, 3>,
-                                             SDTCisInt<0>, SDTCisVT<1, i32>]>;
+                                             SDTCisInt<0>, SDTCisVT<1, i64>]>;
 def SDTCse523BrCond  : SDTypeProfile<0, 3,
                                   [SDTCisVT<0, OtherVT>,
                                    SDTCisVT<1, i8>, SDTCisVT<2, i32>]>;
@@ -1133,7 +1133,7 @@ let Predicates = [HasMOVBE] in {
 // Subsystems.
 //===----------------------------------------------------------------------===//
 
-//include "Cse523InstrArithmetic.td"
+include "Cse523InstrArithmetic.td"
 //include "Cse523InstrCMovSetCC.td"
 //include "Cse523InstrExtension.td"
 include "Cse523InstrControl.td"

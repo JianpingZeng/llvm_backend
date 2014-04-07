@@ -2939,8 +2939,7 @@ bool Cse523InstrInfo::expandPostRAPseudo(MachineBasicBlock::iterator MI) const {
     switch (MI->getOpcode()) {
         default: break;
         case Cse523::MOV64r0:
-            assert(0);
-            //return Expand2AddrUndef(MIB, get(Cse523::XOR32rr));
+            return Expand2AddrUndef(MIB, get(Cse523::XOR64rr));
 //        case Cse523::SETB_C8r:
 //            return Expand2AddrUndef(MIB, get(Cse523::SBB8rr));
 //        case Cse523::SETB_C16r:
