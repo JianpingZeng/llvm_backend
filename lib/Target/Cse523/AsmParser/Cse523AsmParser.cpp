@@ -697,8 +697,8 @@ namespace {
         /// @name Auto-generated Matcher Functions
         /// {
 
-        //#define GET_ASSEMBLER_HEADER
-        //#include "Cse523GenAsmMatcher.inc"
+#define GET_ASSEMBLER_HEADER
+#include "Cse523GenAsmMatcher.inc"
 
         /// }
 
@@ -708,8 +708,7 @@ namespace {
             : MCTargetAsmParser(), STI(sti), Parser(parser), InstInfo(0) {
 
                 // Initialize the set of available features.
-                //setAvailableFeatures(ComputeAvailableFeatures(STI.getFeatureBits()));
-                setAvailableFeatures(10);
+                setAvailableFeatures(ComputeAvailableFeatures(STI.getFeatureBits()));
             }
         virtual bool ParseRegister(unsigned &RegNo, SMLoc &StartLoc, SMLoc &EndLoc);
 
@@ -718,23 +717,13 @@ namespace {
                 SmallVectorImpl<MCParsedAsmOperand*> &Operands);
 
         virtual bool ParseDirective(AsmToken DirectiveID);
-
-        virtual bool mnemonicIsValid(StringRef Mnemonic, unsigned VariantID) {
-            return true;
-        }
-        virtual void convertToMapAndConstraints(unsigned Kind, const SmallVectorImpl<MCParsedAsmOperand*> &Operands) {
-            return;
-        }
     };
 } // end anonymous namespace
 
 /// @name Auto-generated Match Functions
 /// {
 
-static unsigned MatchRegisterName(StringRef Name) {
-    llvm_unreachable("Unexpected path MatchRegisterName()");
-    return 0;
-}
+static unsigned MatchRegisterName(StringRef Name);
 
 /// }
 
@@ -1058,11 +1047,9 @@ namespace {
 
         bool isReg() const { return Kind == Register; }
 
-        bool isGR32orGR64() const {
-            return true;
-            //    return Kind == Register &&
-            //      (Cse523MCRegisterClasses[Cse523::GR32RegClassID].contains(getReg()) ||
-            //      Cse523MCRegisterClasses[Cse523::GR64RegClassID].contains(getReg()));
+        bool isGR64() const {
+            return Kind == Register &&
+                 Cse523MCRegisterClasses[Cse523::GR64RegClassID].contains(getReg());
         }
 
         void addExpr(MCInst &Inst, const MCExpr *Expr) const {
@@ -1206,6 +1193,7 @@ namespace {
 
 static bool CheckBaseRegAndIndexReg(unsigned BaseReg, unsigned IndexReg,
         StringRef &ErrMsg) {
+    assert(0);
     // If we have both a base register and an index register make sure they are
     // both 64-bit or 32-bit registers.
     // To support VSIB, IndexReg can be 128-bit or 256-bit registers.
@@ -1253,10 +1241,6 @@ bool Cse523AsmParser::doSrcDstMatch(Cse523Operand &Op1, Cse523Operand &Op2)
     unsigned diReg = Op1.Mem.BaseReg;
     unsigned siReg = Op2.Mem.BaseReg;
 
-//    if (Cse523MCRegisterClasses[Cse523::GR16RegClassID].contains(siReg))
-//        return Cse523MCRegisterClasses[Cse523::GR16RegClassID].contains(diReg);
-//    if (Cse523MCRegisterClasses[Cse523::GR32RegClassID].contains(siReg))
-//        return Cse523MCRegisterClasses[Cse523::GR32RegClassID].contains(diReg);
     if (Cse523MCRegisterClasses[Cse523::GR64RegClassID].contains(siReg))
         return Cse523MCRegisterClasses[Cse523::GR64RegClassID].contains(diReg);
     // Again, return true and let another error happen.
@@ -1291,36 +1275,7 @@ bool Cse523AsmParser::ParseRegister(unsigned &RegNo,
 
     // Parse "%st" as "%st(0)" and "%st(1)", which is multiple tokens.
     if (RegNo == 0 && (Tok.getString() == "st" || Tok.getString() == "ST")) {
-//        RegNo = Cse523::ST0;
-//        Parser.Lex(); // Eat 'st'
-//
-//        // Check to see if we have '(4)' after %st.
-//        if (getLexer().isNot(AsmToken::LParen))
-//            return false;
-//        // Lex the paren.
-//        getParser().Lex();
-//
-//        const AsmToken &IntTok = Parser.getTok();
-//        if (IntTok.isNot(AsmToken::Integer))
-//            return Error(IntTok.getLoc(), "expected stack index");
-//        switch (IntTok.getIntVal()) {
-//            case 0: RegNo = Cse523::ST0; break;
-//            case 1: RegNo = Cse523::ST1; break;
-//            case 2: RegNo = Cse523::ST2; break;
-//            case 3: RegNo = Cse523::ST3; break;
-//            case 4: RegNo = Cse523::ST4; break;
-//            case 5: RegNo = Cse523::ST5; break;
-//            case 6: RegNo = Cse523::ST6; break;
-//            case 7: RegNo = Cse523::ST7; break;
-//            default: return Error(IntTok.getLoc(), "invalid stack index");
-//        }
-//
-//        if (getParser().Lex().isNot(AsmToken::RParen))
-//            return Error(Parser.getTok().getLoc(), "expected ')'");
-//
-//        EndLoc = Parser.getTok().getEndLoc();
-//        Parser.Lex(); // Eat ')'
-        return false;
+        assert(0);
     }
 
     EndLoc = Parser.getTok().getEndLoc();
@@ -1405,7 +1360,7 @@ Cse523AsmParser::CreateMemForInlineAsm(unsigned SegReg, const MCExpr *Disp,
         // operand to ensure proper matching.  Just pick a GPR based on the size of
         // a pointer.
         if (!Info.IsVarDecl) {
-            unsigned RegNo = 10;//Cse523::RBX;
+            unsigned RegNo = Cse523::RBX;
             return Cse523Operand::CreateReg(RegNo, Start, End, /*AddressOf=*/true,
                     SMLoc(), Identifier, Info.OpDecl);
         }
@@ -1838,7 +1793,7 @@ Cse523Operand *Cse523AsmParser::ParseIntelOffsetOfOperator() {
     // The offset operator will have an 'r' constraint, thus we need to create
     // register operand to ensure proper matching.  Just pick a GPR based on
     // the size of a pointer.
-    unsigned RegNo = 10;//Cse523::RBX;
+    unsigned RegNo = Cse523::RBX;
     return Cse523Operand::CreateReg(RegNo, Start, End, /*GetAddress=*/true,
             OffsetOfLoc, Identifier, Info.OpDecl);
 }
@@ -1980,11 +1935,11 @@ Cse523Operand *Cse523AsmParser::ParseATTOperand() {
                                     unsigned RegNo;
                                     SMLoc Start, End;
                                     if (ParseRegister(RegNo, Start, End)) return 0;
-                                    //if (RegNo == Cse523::RIZ) {
-                                    //    Error(Start, "%riz can only be used as index registers",
-                                    //            SMRange(Start, End));
-                                    //    return 0;
-                                    //}
+                                    if (RegNo == Cse523::RIZ) {
+                                        Error(Start, "%riz can only be used as index registers",
+                                                SMRange(Start, End));
+                                        return 0;
+                                    }
 
                                     // If this is a segment register followed by a ':', then this is the start
                                     // of a memory reference, otherwise this is a normal register reference.
@@ -2075,11 +2030,11 @@ Cse523Operand *Cse523AsmParser::ParseMemOperand(unsigned SegReg, SMLoc MemStart)
         SMLoc StartLoc, EndLoc;
         BaseLoc = Parser.getTok().getLoc();
         if (ParseRegister(BaseReg, StartLoc, EndLoc)) return 0;
-//        if (BaseReg == Cse523::RIZ) {
-//            Error(StartLoc, "eiz and riz can only be used as index registers",
-//                    SMRange(StartLoc, EndLoc));
-//            return 0;
-//        }
+        if (BaseReg == Cse523::RIZ) {
+            Error(StartLoc, "eiz and riz can only be used as index registers",
+                    SMRange(StartLoc, EndLoc));
+            return 0;
+        }
     }
 
     if (getLexer().is(AsmToken::Comma)) {
@@ -2115,12 +2070,6 @@ Cse523Operand *Cse523AsmParser::ParseMemOperand(unsigned SegReg, SMLoc MemStart)
                         return 0;
                     }
 
-                    // Validate the scale amount.
-//                    if (Cse523MCRegisterClasses[Cse523::GR16RegClassID].contains(BaseReg) &&
-//                            ScaleVal != 1) {
-//                        Error(Loc, "scale factor in 16-bit address must be 1");
-//                        return 0;
-//                    }
                     if (ScaleVal != 1 && ScaleVal != 2 && ScaleVal != 4 && ScaleVal != 8){
                         Error(Loc, "scale factor in address must be 1, 2, 4 or 8");
                         return 0;
@@ -2150,22 +2099,6 @@ Cse523Operand *Cse523AsmParser::ParseMemOperand(unsigned SegReg, SMLoc MemStart)
     }
     SMLoc MemEnd = Parser.getTok().getEndLoc();
     Parser.Lex(); // Eat the ')'.
-
-    // Check for use of invalid 16-bit registers. Only BX/BP/SI/DI are allowed,
-    // and then only in non-64-bit modes. Except for DX, which is a special case
-    // because an unofficial form of in/out instructions uses it.
-//    if (Cse523MCRegisterClasses[Cse523::GR16RegClassID].contains(BaseReg) &&
-//            (is64BitMode() || (BaseReg != Cse523::BX && BaseReg != Cse523::BP &&
-//                               BaseReg != Cse523::SI && BaseReg != Cse523::DI)) &&
-//            BaseReg != Cse523::DX) {
-//        Error(BaseLoc, "invalid 16-bit base register");
-//        return 0;
-//    }
-//    if (BaseReg == 0 &&
-//            Cse523MCRegisterClasses[Cse523::GR16RegClassID].contains(IndexReg)) {
-//        Error(IndexLoc, "16-bit memory operand may not include only index register");
-//        return 0;
-//    }
 
     StringRef ErrMsg;
     if (CheckBaseRegAndIndexReg(BaseReg, IndexReg, ErrMsg)) {
@@ -2333,6 +2266,7 @@ ParseInstruction(ParseInstructionInfo &Info, StringRef Name, SMLoc NameLoc,
     if (Name.startswith("ins") && Operands.size() == 1 &&
             (Name == "insb" || Name == "insw" || Name == "insl" ||
              Name == "insd" )) {
+        assert(0);
 //        if (isParsingIntelSyntax()) {
 //            Operands.push_back(Cse523Operand::CreateReg(Cse523::DX, NameLoc, NameLoc));
 //            Operands.push_back(DefaultMemDIOperand(NameLoc));
@@ -2346,6 +2280,7 @@ ParseInstruction(ParseInstructionInfo &Info, StringRef Name, SMLoc NameLoc,
     if (Name.startswith("outs") && Operands.size() == 1 &&
             (Name == "outsb" || Name == "outsw" || Name == "outsl" ||
              Name == "outsd" )) {
+        assert(0);
 //        if (isParsingIntelSyntax()) {
 //            Operands.push_back(DefaultMemSIOperand(NameLoc));
 //            Operands.push_back(Cse523Operand::CreateReg(Cse523::DX, NameLoc, NameLoc));
@@ -2582,10 +2517,7 @@ processInstruction(MCInst &Inst,
     }
 }
 
-static const char *getSubtargetFeatureName(unsigned Val) {
-    return "Cse523";
-}
-
+static const char *getSubtargetFeatureName(unsigned Val);
 bool Cse523AsmParser::
 MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
         SmallVectorImpl<MCParsedAsmOperand*> &Operands,
@@ -2629,7 +2561,6 @@ MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
     bool WasOriginallyInvalidOperand = false;
     MCInst Inst;
 
-#if 0
     // First, try a direct match.
     switch (MatchInstructionImpl(Operands, Inst,
                 ErrorInfo, MatchingInlineAsm,
@@ -2669,7 +2600,6 @@ MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
         case Match_MnemonicFail:
                                    break;
     }
-#endif
 
     // FIXME: Ideally, we would only attempt suffix matches for things which are
     // valid prefixes, and we could just infer the right unambiguous
@@ -2694,7 +2624,7 @@ MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
     // Check for the various suffix matches.
     Tmp[Base.size()] = Suffixes[0];
 
-#if 1
+#if 0
     unsigned ErrorInfoMissingFeature = 0; // Init suppresses compiler warnings.
     unsigned Match1, Match2, Match3, Match4;
     Match1 = Match2 = Match3 = Match4 = 0;
@@ -2918,7 +2848,7 @@ extern "C" void LLVMInitializeCse523AsmParser() {
     RegisterMCAsmParser<Cse523AsmParser> X(TheCse523Target);
 }
 
-//#define GET_REGISTER_MATCHER
-//#define GET_MATCHER_IMPLEMENTATION
-//#define GET_SUBTARGET_FEATURE_NAME
-//#include "Cse523GenAsmMatcher.inc"
+#define GET_REGISTER_MATCHER
+#define GET_MATCHER_IMPLEMENTATION
+#define GET_SUBTARGET_FEATURE_NAME
+#include "Cse523GenAsmMatcher.inc"

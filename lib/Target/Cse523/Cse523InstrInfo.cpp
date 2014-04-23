@@ -3588,103 +3588,103 @@ bool Cse523InstrInfo::unfoldMemoryOperand(MachineFunction &MF, MachineInstr *MI,
     return true;
 }
 
-//bool
-//Cse523InstrInfo::unfoldMemoryOperand(SelectionDAG &DAG, SDNode *N,
-//        SmallVectorImpl<SDNode*> &NewNodes) const {
-//    if (!N->isMachineOpcode())
-//        return false;
-//
-//    DenseMap<unsigned, std::pair<unsigned,unsigned> >::const_iterator I =
-//        MemOp2RegOpTable.find(N->getMachineOpcode());
-//    if (I == MemOp2RegOpTable.end())
-//        return false;
-//    unsigned Opc = I->second.first;
-//    unsigned Index = I->second.second & TB_INDEX_MASK;
-//    bool FoldedLoad = I->second.second & TB_FOLDED_LOAD;
-//    bool FoldedStore = I->second.second & TB_FOLDED_STORE;
-//    const MCInstrDesc &MCID = get(Opc);
-//    MachineFunction &MF = DAG.getMachineFunction();
-//    const TargetRegisterClass *RC = getRegClass(MCID, Index, &RI, MF);
-//    unsigned NumDefs = MCID.NumDefs;
-//    std::vector<SDValue> AddrOps;
-//    std::vector<SDValue> BeforeOps;
-//    std::vector<SDValue> AfterOps;
-//    SDLoc dl(N);
-//    unsigned NumOps = N->getNumOperands();
-//    for (unsigned i = 0; i != NumOps-1; ++i) {
-//        SDValue Op = N->getOperand(i);
-//        if (i >= Index-NumDefs && i < Index-NumDefs + Cse523::AddrNumOperands)
-//            AddrOps.push_back(Op);
-//        else if (i < Index-NumDefs)
-//            BeforeOps.push_back(Op);
-//        else if (i > Index-NumDefs)
-//            AfterOps.push_back(Op);
-//    }
-//    SDValue Chain = N->getOperand(NumOps-1);
-//    AddrOps.push_back(Chain);
-//
-//    // Emit the load instruction.
-//    SDNode *Load = 0;
-//    if (FoldedLoad) {
-//        EVT VT = *RC->vt_begin();
-//        std::pair<MachineInstr::mmo_iterator,
-//            MachineInstr::mmo_iterator> MMOs =
-//                MF.extractLoadMemRefs(cast<MachineSDNode>(N)->memoperands_begin(),
-//                        cast<MachineSDNode>(N)->memoperands_end());
-//
-//        unsigned Alignment = RC->getSize() == 32 ? 32 : 16;
-//        bool isAligned = (*MMOs.first) &&
-//            (*MMOs.first)->getAlignment() >= Alignment;
-//        Load = DAG.getMachineNode(getLoadRegOpcode(0, RC, isAligned, TM), dl,
-//                VT, MVT::Other, AddrOps);
-//        NewNodes.push_back(Load);
-//
-//        // Preserve memory reference information.
-//        cast<MachineSDNode>(Load)->setMemRefs(MMOs.first, MMOs.second);
-//    }
-//
-//    // Emit the data processing instruction.
-//    std::vector<EVT> VTs;
-//    const TargetRegisterClass *DstRC = 0;
-//    if (MCID.getNumDefs() > 0) {
-//        DstRC = getRegClass(MCID, 0, &RI, MF);
-//        VTs.push_back(*DstRC->vt_begin());
-//    }
-//    for (unsigned i = 0, e = N->getNumValues(); i != e; ++i) {
-//        EVT VT = N->getValueType(i);
-//        if (VT != MVT::Other && i >= (unsigned)MCID.getNumDefs())
-//            VTs.push_back(VT);
-//    }
-//    if (Load)
-//        BeforeOps.push_back(SDValue(Load, 0));
-//    std::copy(AfterOps.begin(), AfterOps.end(), std::back_inserter(BeforeOps));
-//    SDNode *NewNode= DAG.getMachineNode(Opc, dl, VTs, BeforeOps);
-//    NewNodes.push_back(NewNode);
-//
-//    // Emit the store instruction.
-//    if (FoldedStore) {
-//        AddrOps.pop_back();
-//        AddrOps.push_back(SDValue(NewNode, 0));
-//        AddrOps.push_back(Chain);
-//        std::pair<MachineInstr::mmo_iterator,
-//            MachineInstr::mmo_iterator> MMOs =
-//                MF.extractStoreMemRefs(cast<MachineSDNode>(N)->memoperands_begin(),
-//                        cast<MachineSDNode>(N)->memoperands_end());
-//
-//        unsigned Alignment = RC->getSize() == 32 ? 32 : 16;
-//        bool isAligned = (*MMOs.first) &&
-//            (*MMOs.first)->getAlignment() >= Alignment;
-//        SDNode *Store = DAG.getMachineNode(getStoreRegOpcode(0, DstRC,
-//                    isAligned, TM),
-//                dl, MVT::Other, AddrOps);
-//        NewNodes.push_back(Store);
-//
-//        // Preserve memory reference information.
-//        cast<MachineSDNode>(Load)->setMemRefs(MMOs.first, MMOs.second);
-//    }
-//
-//    return true;
-//}
+bool
+Cse523InstrInfo::unfoldMemoryOperand(SelectionDAG &DAG, SDNode *N,
+        SmallVectorImpl<SDNode*> &NewNodes) const {
+    if (!N->isMachineOpcode())
+        return false;
+
+    DenseMap<unsigned, std::pair<unsigned,unsigned> >::const_iterator I =
+        MemOp2RegOpTable.find(N->getMachineOpcode());
+    if (I == MemOp2RegOpTable.end())
+        return false;
+    unsigned Opc = I->second.first;
+    unsigned Index = I->second.second & TB_INDEX_MASK;
+    bool FoldedLoad = I->second.second & TB_FOLDED_LOAD;
+    bool FoldedStore = I->second.second & TB_FOLDED_STORE;
+    const MCInstrDesc &MCID = get(Opc);
+    MachineFunction &MF = DAG.getMachineFunction();
+    const TargetRegisterClass *RC = getRegClass(MCID, Index, &RI, MF);
+    unsigned NumDefs = MCID.NumDefs;
+    std::vector<SDValue> AddrOps;
+    std::vector<SDValue> BeforeOps;
+    std::vector<SDValue> AfterOps;
+    SDLoc dl(N);
+    unsigned NumOps = N->getNumOperands();
+    for (unsigned i = 0; i != NumOps-1; ++i) {
+        SDValue Op = N->getOperand(i);
+        if (i >= Index-NumDefs && i < Index-NumDefs + Cse523::AddrNumOperands)
+            AddrOps.push_back(Op);
+        else if (i < Index-NumDefs)
+            BeforeOps.push_back(Op);
+        else if (i > Index-NumDefs)
+            AfterOps.push_back(Op);
+    }
+    SDValue Chain = N->getOperand(NumOps-1);
+    AddrOps.push_back(Chain);
+
+    // Emit the load instruction.
+    SDNode *Load = 0;
+    if (FoldedLoad) {
+        EVT VT = *RC->vt_begin();
+        std::pair<MachineInstr::mmo_iterator,
+            MachineInstr::mmo_iterator> MMOs =
+                MF.extractLoadMemRefs(cast<MachineSDNode>(N)->memoperands_begin(),
+                        cast<MachineSDNode>(N)->memoperands_end());
+
+        unsigned Alignment = RC->getSize() == 32 ? 32 : 16;
+        bool isAligned = (*MMOs.first) &&
+            (*MMOs.first)->getAlignment() >= Alignment;
+        Load = DAG.getMachineNode(getLoadRegOpcode(0, RC, isAligned, TM), dl,
+                VT, MVT::Other, AddrOps);
+        NewNodes.push_back(Load);
+
+        // Preserve memory reference information.
+        cast<MachineSDNode>(Load)->setMemRefs(MMOs.first, MMOs.second);
+    }
+
+    // Emit the data processing instruction.
+    std::vector<EVT> VTs;
+    const TargetRegisterClass *DstRC = 0;
+    if (MCID.getNumDefs() > 0) {
+        DstRC = getRegClass(MCID, 0, &RI, MF);
+        VTs.push_back(*DstRC->vt_begin());
+    }
+    for (unsigned i = 0, e = N->getNumValues(); i != e; ++i) {
+        EVT VT = N->getValueType(i);
+        if (VT != MVT::Other && i >= (unsigned)MCID.getNumDefs())
+            VTs.push_back(VT);
+    }
+    if (Load)
+        BeforeOps.push_back(SDValue(Load, 0));
+    std::copy(AfterOps.begin(), AfterOps.end(), std::back_inserter(BeforeOps));
+    SDNode *NewNode= DAG.getMachineNode(Opc, dl, VTs, BeforeOps);
+    NewNodes.push_back(NewNode);
+
+    // Emit the store instruction.
+    if (FoldedStore) {
+        AddrOps.pop_back();
+        AddrOps.push_back(SDValue(NewNode, 0));
+        AddrOps.push_back(Chain);
+        std::pair<MachineInstr::mmo_iterator,
+            MachineInstr::mmo_iterator> MMOs =
+                MF.extractStoreMemRefs(cast<MachineSDNode>(N)->memoperands_begin(),
+                        cast<MachineSDNode>(N)->memoperands_end());
+
+        unsigned Alignment = RC->getSize() == 32 ? 32 : 16;
+        bool isAligned = (*MMOs.first) &&
+            (*MMOs.first)->getAlignment() >= Alignment;
+        SDNode *Store = DAG.getMachineNode(getStoreRegOpcode(0, DstRC,
+                    isAligned, TM),
+                dl, MVT::Other, AddrOps);
+        NewNodes.push_back(Store);
+
+        // Preserve memory reference information.
+        cast<MachineSDNode>(Load)->setMemRefs(MMOs.first, MMOs.second);
+    }
+
+    return true;
+}
 
 unsigned Cse523InstrInfo::getOpcodeAfterMemoryUnfold(unsigned Opc,
         bool UnfoldLoad, bool UnfoldStore,
@@ -3705,123 +3705,93 @@ unsigned Cse523InstrInfo::getOpcodeAfterMemoryUnfold(unsigned Opc,
     return I->second.first;
 }
 
-//bool
-//Cse523InstrInfo::areLoadsFromSameBasePtr(SDNode *Load1, SDNode *Load2,
-//        int64_t &Offset1, int64_t &Offset2) const {
-//    if (!Load1->isMachineOpcode() || !Load2->isMachineOpcode())
-//        return false;
-//    unsigned Opc1 = Load1->getMachineOpcode();
-//    unsigned Opc2 = Load2->getMachineOpcode();
-//    switch (Opc1) {
-//        default: return false;
-//        case Cse523::MOV8rm:
-//        case Cse523::MOV16rm:
-//        case Cse523::MOV32rm:
-//        case Cse523::MOV64rm:
+bool
+Cse523InstrInfo::areLoadsFromSameBasePtr(SDNode *Load1, SDNode *Load2,
+        int64_t &Offset1, int64_t &Offset2) const {
+    if (!Load1->isMachineOpcode() || !Load2->isMachineOpcode())
+        return false;
+    unsigned Opc1 = Load1->getMachineOpcode();
+    unsigned Opc2 = Load2->getMachineOpcode();
+    switch (Opc1) {
+        default: return false;
+        case Cse523::MOV64rm:
+                 break;
+    }
+    switch (Opc2) {
+        default: return false;
+        case Cse523::MOV64rm:
+                 break;
+    }
+
+    // Check if chain operands and base addresses match.
+    if (Load1->getOperand(0) != Load2->getOperand(0) ||
+            Load1->getOperand(5) != Load2->getOperand(5))
+        return false;
+    // Segment operands should match as well.
+    if (Load1->getOperand(4) != Load2->getOperand(4))
+        return false;
+    // Scale should be 1, Index should be Reg0.
+    if (Load1->getOperand(1) == Load2->getOperand(1) &&
+            Load1->getOperand(2) == Load2->getOperand(2)) {
+        if (cast<ConstantSDNode>(Load1->getOperand(1))->getZExtValue() != 1)
+            return false;
+
+        // Now let's examine the displacements.
+        if (isa<ConstantSDNode>(Load1->getOperand(3)) &&
+                isa<ConstantSDNode>(Load2->getOperand(3))) {
+            Offset1 = cast<ConstantSDNode>(Load1->getOperand(3))->getSExtValue();
+            Offset2 = cast<ConstantSDNode>(Load2->getOperand(3))->getSExtValue();
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Cse523InstrInfo::shouldScheduleLoadsNear(SDNode *Load1, SDNode *Load2,
+        int64_t Offset1, int64_t Offset2,
+        unsigned NumLoads) const {
+    assert(Offset2 > Offset1);
+    if ((Offset2 - Offset1) / 8 > 64)
+        return false;
+
+    unsigned Opc1 = Load1->getMachineOpcode();
+    unsigned Opc2 = Load2->getMachineOpcode();
+    if (Opc1 != Opc2)
+        return false;  // FIXME: overly conservative?
+
+    switch (Opc1) {
+        default: break;
 //        case Cse523::LD_Fp32m:
 //        case Cse523::LD_Fp64m:
 //        case Cse523::LD_Fp80m:
-//        case Cse523::MOVSSrm:
-//        case Cse523::MOVSDrm:
-//        case Cse523::FsMOVAPSrm:
-//        case Cse523::FsMOVAPDrm:
-//        case Cse523::MOVAPSrm:
-//        case Cse523::MOVUPSrm:
-//        case Cse523::MOVAPDrm:
-//        case Cse523::MOVDQArm:
-//        case Cse523::MOVDQUrm:
-//                 break;
-//    }
-//    switch (Opc2) {
-//        default: return false;
-//        case Cse523::MOV8rm:
-//        case Cse523::MOV16rm:
-//        case Cse523::MOV32rm:
-//        case Cse523::MOV64rm:
-//        case Cse523::LD_Fp32m:
-//        case Cse523::LD_Fp64m:
-//        case Cse523::LD_Fp80m:
-//        case Cse523::MOVSSrm:
-//        case Cse523::MOVSDrm:
-//        case Cse523::FsMOVAPSrm:
-//        case Cse523::FsMOVAPDrm:
-//        case Cse523::MOVAPSrm:
-//        case Cse523::MOVUPSrm:
-//        case Cse523::MOVAPDrm:
-//        case Cse523::MOVDQArm:
-//        case Cse523::MOVDQUrm:
-//                 break;
-//    }
-//
-//    // Check if chain operands and base addresses match.
-//    if (Load1->getOperand(0) != Load2->getOperand(0) ||
-//            Load1->getOperand(5) != Load2->getOperand(5))
-//        return false;
-//    // Segment operands should match as well.
-//    if (Load1->getOperand(4) != Load2->getOperand(4))
-//        return false;
-//    // Scale should be 1, Index should be Reg0.
-//    if (Load1->getOperand(1) == Load2->getOperand(1) &&
-//            Load1->getOperand(2) == Load2->getOperand(2)) {
-//        if (cast<ConstantSDNode>(Load1->getOperand(1))->getZExtValue() != 1)
-//            return false;
-//
-//        // Now let's examine the displacements.
-//        if (isa<ConstantSDNode>(Load1->getOperand(3)) &&
-//                isa<ConstantSDNode>(Load2->getOperand(3))) {
-//            Offset1 = cast<ConstantSDNode>(Load1->getOperand(3))->getSExtValue();
-//            Offset2 = cast<ConstantSDNode>(Load2->getOperand(3))->getSExtValue();
-//            return true;
-//        }
-//    }
-//    return false;
-//}
-//
-//bool Cse523InstrInfo::shouldScheduleLoadsNear(SDNode *Load1, SDNode *Load2,
-//        int64_t Offset1, int64_t Offset2,
-//        unsigned NumLoads) const {
-//    assert(Offset2 > Offset1);
-//    if ((Offset2 - Offset1) / 8 > 64)
-//        return false;
-//
-//    unsigned Opc1 = Load1->getMachineOpcode();
-//    unsigned Opc2 = Load2->getMachineOpcode();
-//    if (Opc1 != Opc2)
-//        return false;  // FIXME: overly conservative?
-//
-//    switch (Opc1) {
-//        default: break;
-////        case Cse523::LD_Fp32m:
-////        case Cse523::LD_Fp64m:
-////        case Cse523::LD_Fp80m:
-//                 return false;
-//    }
-//
-//    EVT VT = Load1->getValueType(0);
-//    switch (VT.getSimpleVT().SimpleTy) {
-//        default:
-//            // XMM registers. In 64-bit mode we can be a bit more aggressive since we
-//            // have 16 of them to play with.
-//            if (TM.getSubtargetImpl()->is64Bit()) {
-//                if (NumLoads >= 3)
-//                    return false;
-//            } else if (NumLoads) {
-//                return false;
-//            }
-//            break;
-//        case MVT::i8:
-//        case MVT::i16:
-//        case MVT::i32:
-//        case MVT::i64:
-//        case MVT::f32:
-//        case MVT::f64:
-//            if (NumLoads)
-//                return false;
-//            break;
-//    }
-//
-//    return true;
-//}
+//          return false;
+    }
+
+    EVT VT = Load1->getValueType(0);
+    switch (VT.getSimpleVT().SimpleTy) {
+        default:
+            // XMM registers. In 64-bit mode we can be a bit more aggressive since we
+            // have 16 of them to play with.
+            if (TM.getSubtargetImpl()->is64Bit()) {
+                if (NumLoads >= 3)
+                    return false;
+            } else if (NumLoads) {
+                return false;
+            }
+            break;
+        case MVT::i8:
+        case MVT::i16:
+        case MVT::i32:
+        case MVT::i64:
+        case MVT::f32:
+        case MVT::f64:
+            if (NumLoads)
+                return false;
+            break;
+    }
+
+    return true;
+}
 
 bool Cse523InstrInfo::shouldScheduleAdjacent(MachineInstr* First,
         MachineInstr *Second) const {

@@ -308,8 +308,8 @@ public:
                            unsigned Reg, bool UnfoldLoad, bool UnfoldStore,
                            SmallVectorImpl<MachineInstr*> &NewMIs) const;
 
-//  virtual bool unfoldMemoryOperand(SelectionDAG &DAG, SDNode *N,
-//                           SmallVectorImpl<SDNode*> &NewNodes) const;
+  virtual bool unfoldMemoryOperand(SelectionDAG &DAG, SDNode *N,
+                           SmallVectorImpl<SDNode*> &NewNodes) const;
 
   /// getOpcodeAfterMemoryUnfold - Returns the opcode of the would be new
   /// instruction after load / store are unfolded from an instruction of the
@@ -326,20 +326,20 @@ public:
   /// should only return true if the base pointers are the same and the
   /// only differences between the two addresses are the offset. It also returns
   /// the offsets by reference.
-//  virtual bool areLoadsFromSameBasePtr(SDNode *Load1, SDNode *Load2,
-//                                       int64_t &Offset1, int64_t &Offset2) const;
-//
-//  /// shouldScheduleLoadsNear - This is a used by the pre-regalloc scheduler to
-//  /// determine (in conjunction with areLoadsFromSameBasePtr) if two loads should
-//  /// be scheduled togther. On some targets if two loads are loading from
-//  /// addresses in the same cache line, it's better if they are scheduled
-//  /// together. This function takes two integers that represent the load offsets
-//  /// from the common base address. It returns true if it decides it's desirable
-//  /// to schedule the two loads together. "NumLoads" is the number of loads that
-//  /// have already been scheduled after Load1.
-//  virtual bool shouldScheduleLoadsNear(SDNode *Load1, SDNode *Load2,
-//                                       int64_t Offset1, int64_t Offset2,
-//                                       unsigned NumLoads) const;
+  virtual bool areLoadsFromSameBasePtr(SDNode *Load1, SDNode *Load2,
+                                       int64_t &Offset1, int64_t &Offset2) const;
+
+  /// shouldScheduleLoadsNear - This is a used by the pre-regalloc scheduler to
+  /// determine (in conjunction with areLoadsFromSameBasePtr) if two loads should
+  /// be scheduled togther. On some targets if two loads are loading from
+  /// addresses in the same cache line, it's better if they are scheduled
+  /// together. This function takes two integers that represent the load offsets
+  /// from the common base address. It returns true if it decides it's desirable
+  /// to schedule the two loads together. "NumLoads" is the number of loads that
+  /// have already been scheduled after Load1.
+  virtual bool shouldScheduleLoadsNear(SDNode *Load1, SDNode *Load2,
+                                       int64_t Offset1, int64_t Offset2,
+                                       unsigned NumLoads) const;
 
   virtual bool shouldScheduleAdjacent(MachineInstr* First,
                                       MachineInstr *Second) const LLVM_OVERRIDE;

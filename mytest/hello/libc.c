@@ -2,9 +2,9 @@
 
 // from musl
 
-int __libc_start_main(
-	int (*main)(int, char **, char **), int argc, char **argv,
-	int (*init)(int, char **, char **), void (*fini)(void),
+long __libc_start_main(
+	long (*main)(long, char **, char **), long argc, char **argv,
+	long (*init)(long, char **, char **), void (*fini)(void),
 	void (*ldso_fini)(void))
 {
 	char **envp = argv+argc+1;
@@ -14,7 +14,7 @@ int __libc_start_main(
 	//libc.ldso_fini = ldso_fini;
 	//libc.fini = fini;
 
-	/* Execute constructors (static) linked into the application */
+	/* Execute constructors (static) linked longo the application */
 	//if (init) init(argc, argv, envp);
 
 	/* Pass control to to application */

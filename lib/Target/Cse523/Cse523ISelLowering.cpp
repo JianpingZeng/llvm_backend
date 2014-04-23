@@ -14087,30 +14087,30 @@ Cse523TargetLowering::EmitLoweredWinAlloca(MachineInstr *MI,
     // The lowering is pretty easy: we're just emitting the call to _alloca.  The
     // non-trivial part is impdef of ESP.
 
-    //if (Subtarget->isTargetCygMing()) {
-    //    // ___chkstk(Mingw64):
-    //    // Clobbers R10, R11, RAX and EFLAGS.
-    //    // Updates RSP.
-    //    BuildMI(*BB, MI, DL, TII->get(Cse523::W64ALLOCA))
-    //        .addExternalSymbol("___chkstk")
-    //        .addReg(Cse523::RAX, RegState::Implicit)
-    //        .addReg(Cse523::RSP, RegState::Implicit)
-    //        .addReg(Cse523::RAX, RegState::Define | RegState::Implicit)
-    //        .addReg(Cse523::RSP, RegState::Define | RegState::Implicit)
-    //        .addReg(Cse523::EFLAGS, RegState::Define | RegState::Implicit);
-    //} else {
-    //    // __chkstk(MSVCRT): does not update stack pointer.
-    //    // Clobbers R10, R11 and EFLAGS.
-    //    BuildMI(*BB, MI, DL, TII->get(Cse523::W64ALLOCA))
-    //        .addExternalSymbol("__chkstk")
-    //        .addReg(Cse523::RAX, RegState::Implicit)
-    //        .addReg(Cse523::EFLAGS, RegState::Define | RegState::Implicit);
-    //    // RAX has the offset to be subtracted from RSP.
-    //    BuildMI(*BB, MI, DL, TII->get(Cse523::SUB64rr), Cse523::RSP)
-    //        .addReg(Cse523::RSP)
-    //        .addReg(Cse523::RAX);
-    //}
-
+    if (Subtarget->isTargetCygMing()) {
+        // ___chkstk(Mingw64):
+        // Clobbers R10, R11, RAX and EFLAGS.
+        // Updates RSP.
+        BuildMI(*BB, MI, DL, TII->get(Cse523::W64ALLOCA))
+            .addExternalSymbol("___chkstk")
+            .addReg(Cse523::RAX, RegState::Implicit)
+            .addReg(Cse523::RSP, RegState::Implicit)
+            .addReg(Cse523::RAX, RegState::Define | RegState::Implicit)
+            .addReg(Cse523::RSP, RegState::Define | RegState::Implicit)
+            .addReg(Cse523::EFLAGS, RegState::Define | RegState::Implicit);
+    } else {
+        // __chkstk(MSVCRT): does not update stack pointer.
+        // Clobbers R10, R11 and EFLAGS.
+        BuildMI(*BB, MI, DL, TII->get(Cse523::W64ALLOCA))
+            .addExternalSymbol("__chkstk")
+            .addReg(Cse523::RAX, RegState::Implicit)
+            .addReg(Cse523::EFLAGS, RegState::Define | RegState::Implicit);
+        // RAX has the offset to be subtracted from RSP.
+        BuildMI(*BB, MI, DL, TII->get(Cse523::SUB64rr), Cse523::RSP)
+            .addReg(Cse523::RSP)
+            .addReg(Cse523::RAX);
+    }
+    
     MI->eraseFromParent();   // The pseudo instruction is gone now.
     return BB;
 }
@@ -17803,6 +17803,7 @@ bool Cse523TargetLowering::IsDesirableToPromoteOp(SDValue Op, EVT &PVT) const {
                        }
     }
 
+    assert(0);
     PVT = MVT::i32;
     return Promote;
 }
@@ -18294,14 +18295,23 @@ Cse523TargetLowering::getRegForInlineAsmConstraint(const std::string &Constraint
         if (Constraint == "A") {
             assert(0);
         }
-        return Res;
-    }
 
-    // Otherwise, check to see if this is a register class of the wrong value
-    // type.  For example, we want to map "{ax},i32" -> {eax}, we don't want it to
-    // turn into {ax},{dx}.
-    if (Res.second->hasType(VT))
-        return Res;   // Correct type already, nothing to do.
+        unsigned DestReg = 0;
+
+        if      (StringRef("{ax}").equals_lower(Constraint))  DestReg = Cse523::RAX;
+        else if (StringRef("{bx}").equals_lower(Constraint))  DestReg = Cse523::RBX;
+        else if (StringRef("{cx}").equals_lower(Constraint))  DestReg = Cse523::RCX;
+        else if (StringRef("{dx}").equals_lower(Constraint))  DestReg = Cse523::RDX;
+        else if (StringRef("{si}").equals_lower(Constraint))  DestReg = Cse523::RSI;
+        else if (StringRef("{di}").equals_lower(Constraint))  DestReg = Cse523::RDI;
+        else if (StringRef("{bp}").equals_lower(Constraint))  DestReg = Cse523::RBP;
+        else if (StringRef("{sp}").equals_lower(Constraint))  DestReg = Cse523::RSP;
+
+        if (DestReg) {
+            Res.first = DestReg;
+            Res.second = &Cse523::GR64RegClass;
+        }
+    }
 
     return Res;
 }
