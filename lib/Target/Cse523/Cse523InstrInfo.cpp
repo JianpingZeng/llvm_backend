@@ -1961,142 +1961,141 @@ bool Cse523InstrInfo::AnalyzeBranch(MachineBasicBlock &MBB,
         MachineBasicBlock *&FBB,
         SmallVectorImpl<MachineOperand> &Cond,
         bool AllowModify) const {
-    assert(0);
     // Start from the bottom of the block and work up, examining the
     // terminator instructions.
-//    MachineBasicBlock::iterator I = MBB.end();
-//    MachineBasicBlock::iterator UnCondBrIter = MBB.end();
-//    while (I != MBB.begin()) {
-//        --I;
-//        if (I->isDebugValue())
-//            continue;
-//
-//        // Working from the bottom, when we see a non-terminator instruction, we're
-//        // done.
-//        if (!isUnpredicatedTerminator(I))
-//            break;
-//
-//        // A terminator that isn't a branch can't easily be handled by this
-//        // analysis.
-//        if (!I->isBranch())
-//            return true;
-//
-//        // Handle unconditional branches.
-//        if (I->getOpcode() == Cse523::JMP_4) {
-//            UnCondBrIter = I;
-//
-//            if (!AllowModify) {
-//                TBB = I->getOperand(0).getMBB();
-//                continue;
-//            }
-//
-//            // If the block has any instructions after a JMP, delete them.
-//            while (llvm::next(I) != MBB.end())
-//                llvm::next(I)->eraseFromParent();
-//
-//            Cond.clear();
-//            FBB = 0;
-//
-//            // Delete the JMP if it's equivalent to a fall-through.
-//            if (MBB.isLayoutSuccessor(I->getOperand(0).getMBB())) {
-//                TBB = 0;
-//                I->eraseFromParent();
-//                I = MBB.end();
-//                UnCondBrIter = MBB.end();
-//                continue;
-//            }
-//
-//            // TBB is used to indicate the unconditional destination.
-//            TBB = I->getOperand(0).getMBB();
-//            continue;
-//        }
-//
-//        // Handle conditional branches.
-//        Cse523::CondCode BranchCode = getCondFromBranchOpc(I->getOpcode());
-//        if (BranchCode == Cse523::COND_INVALID)
-//            return true;  // Can't handle indirect branch.
-//
-//        // Working from the bottom, handle the first conditional branch.
-//        if (Cond.empty()) {
-//            MachineBasicBlock *TargetBB = I->getOperand(0).getMBB();
-//            if (AllowModify && UnCondBrIter != MBB.end() &&
-//                    MBB.isLayoutSuccessor(TargetBB)) {
-//                // If we can modify the code and it ends in something like:
-//                //
-//                //     jCC L1
-//                //     jmp L2
-//                //   L1:
-//                //     ...
-//                //   L2:
-//                //
-//                // Then we can change this to:
-//                //
-//                //     jnCC L2
-//                //   L1:
-//                //     ...
-//                //   L2:
-//                //
-//                // Which is a bit more efficient.
-//                // We conditionally jump to the fall-through block.
-//                BranchCode = GetOppositeBranchCondition(BranchCode);
-//                unsigned JNCC = GetCondBranchFromCond(BranchCode);
-//                MachineBasicBlock::iterator OldInst = I;
-//
-//                BuildMI(MBB, UnCondBrIter, MBB.findDebugLoc(I), get(JNCC))
-//                    .addMBB(UnCondBrIter->getOperand(0).getMBB());
-//                BuildMI(MBB, UnCondBrIter, MBB.findDebugLoc(I), get(Cse523::JMP_4))
-//                    .addMBB(TargetBB);
-//
-//                OldInst->eraseFromParent();
-//                UnCondBrIter->eraseFromParent();
-//
-//                // Restart the analysis.
-//                UnCondBrIter = MBB.end();
-//                I = MBB.end();
-//                continue;
-//            }
-//
-//            FBB = TBB;
-//            TBB = I->getOperand(0).getMBB();
-//            Cond.push_back(MachineOperand::CreateImm(BranchCode));
-//            continue;
-//        }
-//
-//        // Handle subsequent conditional branches. Only handle the case where all
-//        // conditional branches branch to the same destination and their condition
-//        // opcodes fit one of the special multi-branch idioms.
-//        assert(Cond.size() == 1);
-//        assert(TBB);
-//
-//        // Only handle the case where all conditional branches branch to the same
-//        // destination.
-//        if (TBB != I->getOperand(0).getMBB())
-//            return true;
-//
-//        // If the conditions are the same, we can leave them alone.
-//        Cse523::CondCode OldBranchCode = (Cse523::CondCode)Cond[0].getImm();
-//        if (OldBranchCode == BranchCode)
-//            continue;
-//
-//        // If they differ, see if they fit one of the known patterns. Theoretically,
-//        // we could handle more patterns here, but we shouldn't expect to see them
-//        // if instruction selection has done a reasonable job.
-//        if ((OldBranchCode == Cse523::COND_NP &&
-//                    BranchCode == Cse523::COND_E) ||
-//                (OldBranchCode == Cse523::COND_E &&
-//                 BranchCode == Cse523::COND_NP))
-//            BranchCode = Cse523::COND_NP_OR_E;
-//        else if ((OldBranchCode == Cse523::COND_P &&
-//                    BranchCode == Cse523::COND_NE) ||
-//                (OldBranchCode == Cse523::COND_NE &&
-//                 BranchCode == Cse523::COND_P))
-//            BranchCode = Cse523::COND_NE_OR_P;
-//        else
-//            return true;
-//
-//        // Update the MachineOperand.
-//        Cond[0].setImm(BranchCode);
-//    }
+    MachineBasicBlock::iterator I = MBB.end();
+    MachineBasicBlock::iterator UnCondBrIter = MBB.end();
+    while (I != MBB.begin()) {
+        --I;
+        if (I->isDebugValue())
+            continue;
+
+        // Working from the bottom, when we see a non-terminator instruction, we're
+        // done.
+        if (!isUnpredicatedTerminator(I))
+            break;
+
+        // A terminator that isn't a branch can't easily be handled by this
+        // analysis.
+        if (!I->isBranch())
+            return true;
+
+        // Handle unconditional branches.
+        if (I->getOpcode() == Cse523::JMP_4) {
+            UnCondBrIter = I;
+
+            if (!AllowModify) {
+                TBB = I->getOperand(0).getMBB();
+                continue;
+            }
+
+            // If the block has any instructions after a JMP, delete them.
+            while (llvm::next(I) != MBB.end())
+                llvm::next(I)->eraseFromParent();
+
+            Cond.clear();
+            FBB = 0;
+
+            // Delete the JMP if it's equivalent to a fall-through.
+            if (MBB.isLayoutSuccessor(I->getOperand(0).getMBB())) {
+                TBB = 0;
+                I->eraseFromParent();
+                I = MBB.end();
+                UnCondBrIter = MBB.end();
+                continue;
+            }
+
+            // TBB is used to indicate the unconditional destination.
+            TBB = I->getOperand(0).getMBB();
+            continue;
+        }
+
+        // Handle conditional branches.
+        Cse523::CondCode BranchCode = getCondFromBranchOpc(I->getOpcode());
+        if (BranchCode == Cse523::COND_INVALID)
+            return true;  // Can't handle indirect branch.
+
+        // Working from the bottom, handle the first conditional branch.
+        if (Cond.empty()) {
+            MachineBasicBlock *TargetBB = I->getOperand(0).getMBB();
+            if (AllowModify && UnCondBrIter != MBB.end() &&
+                    MBB.isLayoutSuccessor(TargetBB)) {
+                // If we can modify the code and it ends in something like:
+                //
+                //     jCC L1
+                //     jmp L2
+                //   L1:
+                //     ...
+                //   L2:
+                //
+                // Then we can change this to:
+                //
+                //     jnCC L2
+                //   L1:
+                //     ...
+                //   L2:
+                //
+                // Which is a bit more efficient.
+                // We conditionally jump to the fall-through block.
+                BranchCode = GetOppositeBranchCondition(BranchCode);
+                unsigned JNCC = GetCondBranchFromCond(BranchCode);
+                MachineBasicBlock::iterator OldInst = I;
+
+                BuildMI(MBB, UnCondBrIter, MBB.findDebugLoc(I), get(JNCC))
+                    .addMBB(UnCondBrIter->getOperand(0).getMBB());
+                BuildMI(MBB, UnCondBrIter, MBB.findDebugLoc(I), get(Cse523::JMP_4))
+                    .addMBB(TargetBB);
+
+                OldInst->eraseFromParent();
+                UnCondBrIter->eraseFromParent();
+
+                // Restart the analysis.
+                UnCondBrIter = MBB.end();
+                I = MBB.end();
+                continue;
+            }
+
+            FBB = TBB;
+            TBB = I->getOperand(0).getMBB();
+            Cond.push_back(MachineOperand::CreateImm(BranchCode));
+            continue;
+        }
+
+        // Handle subsequent conditional branches. Only handle the case where all
+        // conditional branches branch to the same destination and their condition
+        // opcodes fit one of the special multi-branch idioms.
+        assert(Cond.size() == 1);
+        assert(TBB);
+
+        // Only handle the case where all conditional branches branch to the same
+        // destination.
+        if (TBB != I->getOperand(0).getMBB())
+            return true;
+
+        // If the conditions are the same, we can leave them alone.
+        Cse523::CondCode OldBranchCode = (Cse523::CondCode)Cond[0].getImm();
+        if (OldBranchCode == BranchCode)
+            continue;
+
+        // If they differ, see if they fit one of the known patterns. Theoretically,
+        // we could handle more patterns here, but we shouldn't expect to see them
+        // if instruction selection has done a reasonable job.
+        if ((OldBranchCode == Cse523::COND_NP &&
+                    BranchCode == Cse523::COND_E) ||
+                (OldBranchCode == Cse523::COND_E &&
+                 BranchCode == Cse523::COND_NP))
+            BranchCode = Cse523::COND_NP_OR_E;
+        else if ((OldBranchCode == Cse523::COND_P &&
+                    BranchCode == Cse523::COND_NE) ||
+                (OldBranchCode == Cse523::COND_NE &&
+                 BranchCode == Cse523::COND_P))
+            BranchCode = Cse523::COND_NE_OR_P;
+        else
+            return true;
+
+        // Update the MachineOperand.
+        Cond[0].setImm(BranchCode);
+    }
 
     return false;
 }
@@ -2105,20 +2104,19 @@ unsigned Cse523InstrInfo::RemoveBranch(MachineBasicBlock &MBB) const {
     MachineBasicBlock::iterator I = MBB.end();
     unsigned Count = 0;
 
-//    while (I != MBB.begin()) {
-//        --I;
-//        if (I->isDebugValue())
-//            continue;
-//        if (I->getOpcode() != Cse523::JMP_4 &&
-//                getCondFromBranchOpc(I->getOpcode()) == Cse523::COND_INVALID)
-//            break;
-//        // Remove the branch.
-//        I->eraseFromParent();
-//        I = MBB.end();
-//        ++Count;
-//    }
+    while (I != MBB.begin()) {
+        --I;
+        if (I->isDebugValue())
+            continue;
+        if (I->getOpcode() != Cse523::JMP_4 &&
+                getCondFromBranchOpc(I->getOpcode()) == Cse523::COND_INVALID)
+            break;
+        // Remove the branch.
+        I->eraseFromParent();
+        I = MBB.end();
+        ++Count;
+    }
 
-    assert(0);
     return Count;
 }
 
@@ -2132,43 +2130,43 @@ Cse523InstrInfo::InsertBranch(MachineBasicBlock &MBB, MachineBasicBlock *TBB,
     assert((Cond.size() == 1 || Cond.size() == 0) &&
             "Cse523 branch conditions have one component!");
 
-//    if (Cond.empty()) {
-//        // Unconditional branch?
-//        assert(!FBB && "Unconditional branch with multiple successors!");
-//        BuildMI(&MBB, DL, get(Cse523::JMP_4)).addMBB(TBB);
-//        return 1;
-//    }
+    if (Cond.empty()) {
+        // Unconditional branch?
+        assert(!FBB && "Unconditional branch with multiple successors!");
+        BuildMI(&MBB, DL, get(Cse523::JMP_4)).addMBB(TBB);
+        return 1;
+    }
 
     // Conditional branch.
     unsigned Count = 0;
-//    Cse523::CondCode CC = (Cse523::CondCode)Cond[0].getImm();
-//    switch (CC) {
-//        case Cse523::COND_NP_OR_E:
-//            // Synthesize NP_OR_E with two branches.
-//            BuildMI(&MBB, DL, get(Cse523::JNP_4)).addMBB(TBB);
-//            ++Count;
-//            BuildMI(&MBB, DL, get(Cse523::JE_4)).addMBB(TBB);
-//            ++Count;
-//            break;
-//        case Cse523::COND_NE_OR_P:
-//            // Synthesize NE_OR_P with two branches.
-//            BuildMI(&MBB, DL, get(Cse523::JNE_4)).addMBB(TBB);
-//            ++Count;
-//            BuildMI(&MBB, DL, get(Cse523::JP_4)).addMBB(TBB);
-//            ++Count;
-//            break;
-//        default: {
-//                     unsigned Opc = GetCondBranchFromCond(CC);
-//                     BuildMI(&MBB, DL, get(Opc)).addMBB(TBB);
-//                     ++Count;
-//                 }
-//    }
-//    if (FBB) {
-//        // Two-way Conditional branch. Insert the second branch.
-//        BuildMI(&MBB, DL, get(Cse523::JMP_4)).addMBB(FBB);
-//        ++Count;
-//    }
     assert(0);
+    //Cse523::CondCode CC = (Cse523::CondCode)Cond[0].getImm();
+    //switch (CC) {
+    //    case Cse523::COND_NP_OR_E:
+    //        // Synthesize NP_OR_E with two branches.
+    //        BuildMI(&MBB, DL, get(Cse523::JNP_4)).addMBB(TBB);
+    //        ++Count;
+    //        BuildMI(&MBB, DL, get(Cse523::JE_4)).addMBB(TBB);
+    //        ++Count;
+    //        break;
+    //    case Cse523::COND_NE_OR_P:
+    //        // Synthesize NE_OR_P with two branches.
+    //        BuildMI(&MBB, DL, get(Cse523::JNE_4)).addMBB(TBB);
+    //        ++Count;
+    //        BuildMI(&MBB, DL, get(Cse523::JP_4)).addMBB(TBB);
+    //        ++Count;
+    //        break;
+    //    default: {
+    //                 unsigned Opc = GetCondBranchFromCond(CC);
+    //                 BuildMI(&MBB, DL, get(Opc)).addMBB(TBB);
+    //                 ++Count;
+    //             }
+    //}
+    if (FBB) {
+        // Two-way Conditional branch. Insert the second branch.
+        BuildMI(&MBB, DL, get(Cse523::JMP_4)).addMBB(FBB);
+        ++Count;
+    }
     return Count;
 }
 
@@ -3944,9 +3942,9 @@ void Cse523InstrInfo::getNoopForMachoTarget(MCInst &NopInst) const {
 }
 
 bool Cse523InstrInfo::isHighLatencyDef(int opc) const {
-    assert(0);
     switch (opc) {
         default: return false;
+// TODO:
 //        case Cse523::DIVSDrm:
 //        case Cse523::DIVSDrm_Int:
 //        case Cse523::DIVSDrr:

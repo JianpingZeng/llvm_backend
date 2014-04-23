@@ -56,37 +56,18 @@ bool Cse523FrameLowering::hasFP(const MachineFunction &MF) const {
 }
 
 static unsigned getSUBriOpcode(unsigned IsLP64, int64_t Imm) {
-    assert(0);
-    return 10;
-    //if (IsLP64) {
-    //    if (isInt<8>(Imm))
-    //        return Cse523::SUB64ri8;
-    //    return Cse523::SUB64ri32;
-    //} else {
-    //    if (isInt<8>(Imm))
-    //        return Cse523::SUB32ri8;
-    //    return Cse523::SUB32ri;
-    //}
+    assert(IsLP64);
+    return Cse523::SUB64ri32;
 }
 
 static unsigned getADDriOpcode(unsigned IsLP64, int64_t Imm) {
-    assert(0);
-    return 10;
-    //if (IsLP64) {
-    //    if (isInt<8>(Imm))
-    //        return Cse523::ADD64ri8;
-    //    return Cse523::ADD64ri32;
-    //} else {
-    //    if (isInt<8>(Imm))
-    //        return Cse523::ADD32ri8;
-    //    return Cse523::ADD32ri;
-    //}
+    assert(IsLP64);
+    return Cse523::ADD64ri32;
 }
 
 static unsigned getLEArOpcode(unsigned IsLP64) {
-    assert(0);
-    return 10;
-    //return IsLP64 ? Cse523::LEA64r : Cse523::LEA32r;
+    assert(IsLP64);
+    return Cse523::LEA64r;
 }
 
 /// findDeadCallerSavedReg - Return a caller-saved register that isn't live
@@ -203,21 +184,19 @@ void mergeSPUpdatesUp(MachineBasicBlock &MBB, MachineBasicBlock::iterator &MBBI,
 
     MachineBasicBlock::iterator PI = prior(MBBI);
     unsigned Opc = PI->getOpcode();
-    assert(0);
-    //if ((Opc == Cse523::ADD64ri32 || Opc == Cse523::ADD64ri8 ||
-    //            Opc == Cse523::ADD32ri || Opc == Cse523::ADD32ri8 ||
-    //            Opc == Cse523::LEA32r || Opc == Cse523::LEA64_32r) &&
-    //        PI->getOperand(0).getReg() == StackPtr) {
-    //    if (NumBytes)
-    //        *NumBytes += PI->getOperand(2).getImm();
-    //    MBB.erase(PI);
-    //} else if ((Opc == Cse523::SUB64ri32 || Opc == Cse523::SUB64ri8 ||
-    //            Opc == Cse523::SUB32ri || Opc == Cse523::SUB32ri8) &&
-    //        PI->getOperand(0).getReg() == StackPtr) {
-    //    if (NumBytes)
-    //        *NumBytes -= PI->getOperand(2).getImm();
-    //    MBB.erase(PI);
-    //}
+
+    // TODO:
+    if ((Opc == Cse523::ADD64ri32 || Opc == Cse523::LEA64r) &&
+            PI->getOperand(0).getReg() == StackPtr) {
+        if (NumBytes)
+            *NumBytes += PI->getOperand(2).getImm();
+        MBB.erase(PI);
+    } else if ((Opc == Cse523::SUB64ri32) &&
+            PI->getOperand(0).getReg() == StackPtr) {
+        if (NumBytes)
+            *NumBytes -= PI->getOperand(2).getImm();
+        MBB.erase(PI);
+    }
 }
 
 /// mergeSPUpdatesDown - Merge two stack-manipulating instructions lower iterator.
@@ -234,22 +213,19 @@ void mergeSPUpdatesDown(MachineBasicBlock &MBB,
     if (NI == MBB.end()) return;
 
     unsigned Opc = NI->getOpcode();
-    assert(0);
-    //if ((Opc == Cse523::ADD64ri32 || Opc == Cse523::ADD64ri8 ||
-    //            Opc == Cse523::ADD32ri || Opc == Cse523::ADD32ri8) &&
-    //        NI->getOperand(0).getReg() == StackPtr) {
-    //    if (NumBytes)
-    //        *NumBytes -= NI->getOperand(2).getImm();
-    //    MBB.erase(NI);
-    //    MBBI = NI;
-    //} else if ((Opc == Cse523::SUB64ri32 || Opc == Cse523::SUB64ri8 ||
-    //            Opc == Cse523::SUB32ri || Opc == Cse523::SUB32ri8) &&
-    //        NI->getOperand(0).getReg() == StackPtr) {
-    //    if (NumBytes)
-    //        *NumBytes += NI->getOperand(2).getImm();
-    //    MBB.erase(NI);
-    //    MBBI = NI;
-    //}
+    if ((Opc == Cse523::ADD64ri32) &&
+            NI->getOperand(0).getReg() == StackPtr) {
+        if (NumBytes)
+            *NumBytes -= NI->getOperand(2).getImm();
+        MBB.erase(NI);
+        MBBI = NI;
+    } else if ((Opc == Cse523::SUB64ri32) &&
+            NI->getOperand(0).getReg() == StackPtr) {
+        if (NumBytes)
+            *NumBytes += NI->getOperand(2).getImm();
+        MBB.erase(NI);
+        MBBI = NI;
+    }
 }
 
 /// mergeSPUpdates - Checks the instruction before/after the passed
@@ -269,21 +245,18 @@ static int mergeSPUpdates(MachineBasicBlock &MBB,
     unsigned Opc = PI->getOpcode();
     int Offset = 0;
 
-    assert(0);
-    //if ((Opc == Cse523::ADD64ri32 || Opc == Cse523::ADD64ri8 ||
-    //            Opc == Cse523::ADD32ri || Opc == Cse523::ADD32ri8 ||
-    //            Opc == Cse523::LEA32r || Opc == Cse523::LEA64_32r) &&
-    //        PI->getOperand(0).getReg() == StackPtr){
-    //    Offset += PI->getOperand(2).getImm();
-    //    MBB.erase(PI);
-    //    if (!doMergeWithPrevious) MBBI = NI;
-    //} else if ((Opc == Cse523::SUB64ri32 || Opc == Cse523::SUB64ri8 ||
-    //            Opc == Cse523::SUB32ri || Opc == Cse523::SUB32ri8) &&
-    //        PI->getOperand(0).getReg() == StackPtr) {
-    //    Offset -= PI->getOperand(2).getImm();
-    //    MBB.erase(PI);
-    //    if (!doMergeWithPrevious) MBBI = NI;
-    //}
+    // TODO:
+    if ((Opc == Cse523::ADD64ri32 || Opc == Cse523::LEA64r) &&
+            PI->getOperand(0).getReg() == StackPtr){
+        Offset += PI->getOperand(2).getImm();
+        MBB.erase(PI);
+        if (!doMergeWithPrevious) MBBI = NI;
+    } else if ((Opc == Cse523::SUB64ri32) &&
+            PI->getOperand(0).getReg() == StackPtr) {
+        Offset -= PI->getOperand(2).getImm();
+        MBB.erase(PI);
+        if (!doMergeWithPrevious) MBBI = NI;
+    }
 
     return Offset;
 }
@@ -464,67 +437,66 @@ void Cse523FrameLowering::emitPrologue(MachineFunction &MF) const {
     int stackGrowth = -SlotSize;
 
     if (HasFP) {
-        assert(0);
         // Calculate required stack adjustment.
-        //uint64_t FrameSize = StackSize - SlotSize;
-        //if (RegInfo->needsStackRealignment(MF)) {
-        //    // Callee-saved registers are pushed on stack before the stack
-        //    // is realigned.
-        //    FrameSize -= Cse523FI->getCalleeSavedFrameSize();
-        //    NumBytes = (FrameSize + MaxAlign - 1) / MaxAlign * MaxAlign;
-        //} else {
-        //    NumBytes = FrameSize - Cse523FI->getCalleeSavedFrameSize();
-        //}
+        uint64_t FrameSize = StackSize - SlotSize;
+        if (RegInfo->needsStackRealignment(MF)) {
+            // Callee-saved registers are pushed on stack before the stack
+            // is realigned.
+            FrameSize -= Cse523FI->getCalleeSavedFrameSize();
+            NumBytes = (FrameSize + MaxAlign - 1) / MaxAlign * MaxAlign;
+        } else {
+            NumBytes = FrameSize - Cse523FI->getCalleeSavedFrameSize();
+        }
 
-        //// Get the offset of the stack slot for the EBP register, which is
-        //// guaranteed to be the last slot by processFunctionBeforeFrameFinalized.
-        //// Update the frame offset adjustment.
-        //MFI->setOffsetAdjustment(-NumBytes);
+        // Get the offset of the stack slot for the EBP register, which is
+        // guaranteed to be the last slot by processFunctionBeforeFrameFinalized.
+        // Update the frame offset adjustment.
+        MFI->setOffsetAdjustment(-NumBytes);
 
-        //// Save EBP/RBP into the appropriate stack slot.
-        //BuildMI(MBB, MBBI, DL, TII.get(Cse523::PUSH64r))
-        //    .addReg(FramePtr, RegState::Kill)
-        //    .setMIFlag(MachineInstr::FrameSetup);
+        // Save EBP/RBP into the appropriate stack slot.
+        BuildMI(MBB, MBBI, DL, TII.get(Cse523::PUSH64r))
+            .addReg(FramePtr, RegState::Kill)
+            .setMIFlag(MachineInstr::FrameSetup);
 
-        //if (needsFrameMoves) {
-        //    // Mark the place where EBP/RBP was saved.
-        //    MCSymbol *FrameLabel = MMI.getContext().CreateTempSymbol();
-        //    BuildMI(MBB, MBBI, DL, TII.get(Cse523::PROLOG_LABEL))
-        //        .addSym(FrameLabel);
+        if (needsFrameMoves) {
+            // Mark the place where EBP/RBP was saved.
+            MCSymbol *FrameLabel = MMI.getContext().CreateTempSymbol();
+            BuildMI(MBB, MBBI, DL, TII.get(Cse523::PROLOG_LABEL))
+                .addSym(FrameLabel);
 
-        //    // Define the current CFA rule to use the provided offset.
-        //    assert(StackSize);
-        //    MMI.addFrameInst(
-        //            MCCFIInstruction::createDefCfaOffset(FrameLabel, 2 * stackGrowth));
+            // Define the current CFA rule to use the provided offset.
+            assert(StackSize);
+            MMI.addFrameInst(
+                    MCCFIInstruction::createDefCfaOffset(FrameLabel, 2 * stackGrowth));
 
-        //    // Change the rule for the FramePtr to be an "offset" rule.
-        //    unsigned DwarfFramePtr = RegInfo->getDwarfRegNum(FramePtr, true);
-        //    MMI.addFrameInst(MCCFIInstruction::createOffset(FrameLabel, DwarfFramePtr,
-        //                2 * stackGrowth));
-        //}
+            // Change the rule for the FramePtr to be an "offset" rule.
+            unsigned DwarfFramePtr = RegInfo->getDwarfRegNum(FramePtr, true);
+            MMI.addFrameInst(MCCFIInstruction::createOffset(FrameLabel, DwarfFramePtr,
+                        2 * stackGrowth));
+        }
 
-        //// Update EBP with the new base value.
-        //BuildMI(MBB, MBBI, DL,
-        //        TII.get(Is64Bit ? Cse523::MOV64rr : Cse523::MOV32rr), FramePtr)
-        //    .addReg(StackPtr)
-        //    .setMIFlag(MachineInstr::FrameSetup);
+        // Update EBP with the new base value.
+        BuildMI(MBB, MBBI, DL,
+                TII.get(Cse523::MOV64rr), FramePtr)
+            .addReg(StackPtr)
+            .setMIFlag(MachineInstr::FrameSetup);
 
-        //if (needsFrameMoves) {
-        //    // Mark effective beginning of when frame pointer becomes valid.
-        //    MCSymbol *FrameLabel = MMI.getContext().CreateTempSymbol();
-        //    BuildMI(MBB, MBBI, DL, TII.get(Cse523::PROLOG_LABEL))
-        //        .addSym(FrameLabel);
+        if (needsFrameMoves) {
+            // Mark effective beginning of when frame pointer becomes valid.
+            MCSymbol *FrameLabel = MMI.getContext().CreateTempSymbol();
+            BuildMI(MBB, MBBI, DL, TII.get(Cse523::PROLOG_LABEL))
+                .addSym(FrameLabel);
 
-        //    // Define the current CFA to use the EBP/RBP register.
-        //    unsigned DwarfFramePtr = RegInfo->getDwarfRegNum(FramePtr, true);
-        //    MMI.addFrameInst(
-        //            MCCFIInstruction::createDefCfaRegister(FrameLabel, DwarfFramePtr));
-        //}
+            // Define the current CFA to use the EBP/RBP register.
+            unsigned DwarfFramePtr = RegInfo->getDwarfRegNum(FramePtr, true);
+            MMI.addFrameInst(
+                    MCCFIInstruction::createDefCfaRegister(FrameLabel, DwarfFramePtr));
+        }
 
-        //// Mark the FramePtr as live-in in every block except the entry.
-        //for (MachineFunction::iterator I = llvm::next(MF.begin()), E = MF.end();
-        //        I != E; ++I)
-        //    I->addLiveIn(FramePtr);
+        // Mark the FramePtr as live-in in every block except the entry.
+        for (MachineFunction::iterator I = llvm::next(MF.begin()), E = MF.end();
+                I != E; ++I)
+            I->addLiveIn(FramePtr);
     } else {
         NumBytes = StackSize - Cse523FI->getCalleeSavedFrameSize();
     }
@@ -561,8 +533,8 @@ void Cse523FrameLowering::emitPrologue(MachineFunction &MF) const {
     // stack slots (see Cse523FrameLowering::spillCalleeSavedRegisters()), so
     // this shouldn't be a problem.
     if (RegInfo->needsStackRealignment(MF)) {
-        assert(HasFP && "There should be a frame pointer if stack is realigned.");
         assert(0);
+        assert(HasFP && "There should be a frame pointer if stack is realigned.");
         //MachineInstr *MI =
         //    BuildMI(MBB, MBBI, DL,
         //            TII.get(Cse523::AND64ri32, StackPtr)
@@ -618,11 +590,10 @@ void Cse523FrameLowering::emitPrologue(MachineFunction &MF) const {
         // MSVC x64's __chkstk and cygwin/mingw's ___chkstk_ms do not adjust %rsp
         // themself. It also does not clobber %rax so we can reuse it when
         // adjusting %rsp.
-        assert(0);
-        //BuildMI(MBB, MBBI, DL, TII.get(Cse523::SUB64rr), StackPtr)
-        //    .addReg(StackPtr)
-        //    .addReg(Cse523::RAX)
-        //    .setMIFlag(MachineInstr::FrameSetup);
+        BuildMI(MBB, MBBI, DL, TII.get(Cse523::SUB64rr), StackPtr)
+            .addReg(StackPtr)
+            .addReg(Cse523::RAX)
+            .setMIFlag(MachineInstr::FrameSetup);
     } else if (NumBytes)
         emitSPUpdate(MBB, MBBI, StackPtr, -(int64_t)NumBytes, Is64Bit, IsLP64,
                 UseLEA, TII, *RegInfo);
@@ -1136,59 +1107,49 @@ Cse523FrameLowering::adjustForSegmentedStacks(MachineFunction &MF) const {
         report_fatal_error("Segmented stacks not supported on this platform.");
     }
 
+    if (CompareStackPointer)
+        ScratchReg = Cse523::RSP;
+    else
+        BuildMI(checkMBB, DL, TII.get(Cse523::LEA64r), ScratchReg).addReg(Cse523::RSP)
+            .addImm(1).addReg(0).addImm(-StackSize).addReg(0);
+
+    BuildMI(checkMBB, DL, TII.get(Cse523::CMP64rm)).addReg(ScratchReg)
+        .addReg(0).addImm(1).addReg(0).addImm(TlsOffset).addReg(TlsReg);
+
     assert(0);
-    //if (CompareStackPointer)
-    //    ScratchReg = Cse523::RSP;
-    //else
-    //    BuildMI(checkMBB, DL, TII.get(Cse523::LEA64r), ScratchReg).addReg(Cse523::RSP)
-    //        .addImm(1).addReg(0).addImm(-StackSize).addReg(0);
-
-    //BuildMI(checkMBB, DL, TII.get(Cse523::CMP64rm)).addReg(ScratchReg)
-    //    .addReg(0).addImm(1).addReg(0).addImm(TlsOffset).addReg(TlsReg);
-
-    //// This jump is taken if SP >= (Stacklet Limit + Stack Space required).
-    //// It jumps to normal execution of the function body.
+    // This jump is taken if SP >= (Stacklet Limit + Stack Space required).
+    // It jumps to normal execution of the function body.
     //BuildMI(checkMBB, DL, TII.get(Cse523::JA_4)).addMBB(&prologueMBB);
 
-    //// On 32 bit we first push the arguments size and then the frame size. On 64
-    //// bit, we pass the stack frame size in r10 and the argument size in r11.
-    //if (Is64Bit) {
-    //    // Functions with nested arguments use R10, so it needs to be saved across
-    //    // the call to _morestack
+    // On 32 bit we first push the arguments size and then the frame size. On 64
+    // bit, we pass the stack frame size in r10 and the argument size in r11.
 
-    //    if (IsNested)
-    //        BuildMI(allocMBB, DL, TII.get(Cse523::MOV64rr), Cse523::RAX).addReg(Cse523::R10);
+    // Functions with nested arguments use R10, so it needs to be saved across
+    // the call to _morestack
 
-    //    BuildMI(allocMBB, DL, TII.get(Cse523::MOV64ri), Cse523::R10)
-    //        .addImm(StackSize);
-    //    BuildMI(allocMBB, DL, TII.get(Cse523::MOV64ri), Cse523::R11)
-    //        .addImm(Cse523FI->getArgumentStackSize());
-    //    MF.getRegInfo().setPhysRegUsed(Cse523::R10);
-    //    MF.getRegInfo().setPhysRegUsed(Cse523::R11);
-    //} else {
-    //    BuildMI(allocMBB, DL, TII.get(Cse523::PUSHi32))
-    //        .addImm(Cse523FI->getArgumentStackSize());
-    //    BuildMI(allocMBB, DL, TII.get(Cse523::PUSHi32))
-    //        .addImm(StackSize);
-    //}
+    if (IsNested)
+        BuildMI(allocMBB, DL, TII.get(Cse523::MOV64rr), Cse523::RAX).addReg(Cse523::R10);
 
-    //// __morestack is in libgcc
-    //if (Is64Bit)
-    //    BuildMI(allocMBB, DL, TII.get(Cse523::CALL64pcrel32))
-    //        .addExternalSymbol("__morestack");
-    //else
-    //    BuildMI(allocMBB, DL, TII.get(Cse523::CALLpcrel32))
-    //        .addExternalSymbol("__morestack");
+    BuildMI(allocMBB, DL, TII.get(Cse523::MOV64ri), Cse523::R10)
+        .addImm(StackSize);
+    BuildMI(allocMBB, DL, TII.get(Cse523::MOV64ri), Cse523::R11)
+        .addImm(Cse523FI->getArgumentStackSize());
+    MF.getRegInfo().setPhysRegUsed(Cse523::R10);
+    MF.getRegInfo().setPhysRegUsed(Cse523::R11);
 
-    //if (IsNested)
-    //    BuildMI(allocMBB, DL, TII.get(Cse523::MORESTACK_RET_RESTORE_R10));
-    //else
-    //    BuildMI(allocMBB, DL, TII.get(Cse523::MORESTACK_RET));
+    // __morestack is in libgcc
+    BuildMI(allocMBB, DL, TII.get(Cse523::CALL64pcrel32))
+        .addExternalSymbol("__morestack");
 
-    //allocMBB->addSuccessor(&prologueMBB);
+    if (IsNested)
+        BuildMI(allocMBB, DL, TII.get(Cse523::MORESTACK_RET_RESTORE_R10));
+    else
+        BuildMI(allocMBB, DL, TII.get(Cse523::MORESTACK_RET));
 
-    //checkMBB->addSuccessor(allocMBB);
-    //checkMBB->addSuccessor(&prologueMBB);
+    allocMBB->addSuccessor(&prologueMBB);
+
+    checkMBB->addSuccessor(allocMBB);
+    checkMBB->addSuccessor(&prologueMBB);
 
 #ifdef XDEBUG
     MF.verify();

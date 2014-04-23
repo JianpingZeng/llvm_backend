@@ -806,10 +806,10 @@ void Cse523AsmPrinter::EmitInstruction(const MachineInstr *MI) {
     //                              break;
 
     //    case Cse523::TLS_addr32:
-    //    case Cse523::TLS_addr64:
+        case Cse523::TLS_addr64:
     //    case Cse523::TLS_base_addr32:
-    //    case Cse523::TLS_base_addr64:
-    //                              return LowerTlsAddr(OutStreamer, MCInstLowering, *MI, getSubtargetInfo());
+        case Cse523::TLS_base_addr64:
+                                  return LowerTlsAddr(OutStreamer, MCInstLowering, *MI, getSubtargetInfo());
 
     //    case Cse523::MOVPC32r: {
     //                               // This is a pseudo op for a two instruction sequence with a label, which
