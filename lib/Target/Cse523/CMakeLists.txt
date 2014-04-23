@@ -6,7 +6,7 @@ tablegen(LLVM Cse523GenAsmWriter.inc -gen-asm-writer)
 tablegen(LLVM Cse523GenAsmWriter1.inc -gen-asm-writer -asmwriternum=1)
 tablegen(LLVM Cse523GenAsmMatcher.inc -gen-asm-matcher)
 tablegen(LLVM Cse523GenDAGISel.inc -gen-dag-isel)
-tablegen(LLVM Cse523GenFastISel.inc -gen-fast-isel)
+tablegen(LLVM Cse523GenFaeq_starttISel.inc -gen-fast-isel)
 tablegen(LLVM Cse523GenCallingConv.inc -gen-callingconv)
 tablegen(LLVM Cse523GenSubtargetInfo.inc -gen-subtarget)
 add_public_tablegen_target(Cse523CommonTableGen)
@@ -15,6 +15,7 @@ set(sources
   Cse523AsmPrinter.cpp
   Cse523COFFMachineModuleInfo.cpp
   Cse523CodeEmitter.cpp
+  Cse523FastISel.cpp
   Cse523FrameLowering.cpp
   Cse523ISelDAGToDAG.cpp
   Cse523ISelLowering.cpp

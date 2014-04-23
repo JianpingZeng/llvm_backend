@@ -161,10 +161,10 @@ let Defs = [EFLAGS], isReMaterializable = 1, isAsCheapAsAMove = 1,
 //// encoding and avoid partial register updates.
 //def : Pat<(i8 0), (EXTRACT_SUBREG (MOV32r0), sub_8bit)>;
 //def : Pat<(i16 0), (EXTRACT_SUBREG (MOV32r0), sub_16bit)>;
-//def : Pat<(i64 0), (SUBREG_TO_REG (i64 0), (MOV32r0), sub_32bit)> {
-//          let AddedComplexity = 20;
-//      }
-//
+//def : Pat<(i64 0), (SUBREG_TO_REG (i64 0), (MOV64r0), sub_32bit)> {
+//    let AddedComplexity = 20;
+//}
+
 //// Materialize i64 constant where top 32-bits are zero. This could theoretically
 //// use MOV32ri with a SUBREG_TO_REG to represent the zero-extension, however
 //// that would make it more difficult to rematerialize.
@@ -182,36 +182,22 @@ let Defs = [EFLAGS], isReMaterializable = 1, isAsCheapAsAMove = 1,
 //def : Pat<(i64 mov64imm32:$src),
 //    (SUBREG_TO_REG (i64 0), (MOV32ri64 mov64imm32:$src), sub_32bit)>;
 //
-//// Use sbb to materialize carry bit.
-//let Uses = [EFLAGS], Defs = [EFLAGS], isPseudo = 1, SchedRW = [WriteALU] in {
-//    // FIXME: These are pseudo ops that should be replaced with Pat<> patterns.
-//    // However, Pat<> can't replicate the destination reg into the inputs of the
-//    // result.
-//    def SETB_C8r : I<0, Pseudo, (outs GR8:$dst), (ins), "",
-//        [(set GR8:$dst, (Cse523setcc_c Cse523_COND_B, EFLAGS))]>;
-//    def SETB_C16r : I<0, Pseudo, (outs GR16:$dst), (ins), "",
-//        [(set GR16:$dst, (Cse523setcc_c Cse523_COND_B, EFLAGS))]>;
-//    def SETB_C32r : I<0, Pseudo, (outs GR32:$dst), (ins), "",
-//        [(set GR32:$dst, (Cse523setcc_c Cse523_COND_B, EFLAGS))]>;
-//    def SETB_C64r : I<0, Pseudo, (outs GR64:$dst), (ins), "",
-//        [(set GR64:$dst, (Cse523setcc_c Cse523_COND_B, EFLAGS))]>;
-//} // isCodeGenOnly
-//
-//
-//def : Pat<(i16 (anyext (i8 (Cse523setcc_c Cse523_COND_B, EFLAGS)))),
-//    (SETB_C16r)>;
-//def : Pat<(i32 (anyext (i8 (Cse523setcc_c Cse523_COND_B, EFLAGS)))),
-//    (SETB_C32r)>;
-//def : Pat<(i64 (anyext (i8 (Cse523setcc_c Cse523_COND_B, EFLAGS)))),
-//    (SETB_C64r)>;
-//
-//def : Pat<(i16 (sext (i8 (Cse523setcc_c Cse523_COND_B, EFLAGS)))),
-//    (SETB_C16r)>;
-//def : Pat<(i32 (sext (i8 (Cse523setcc_c Cse523_COND_B, EFLAGS)))),
-//    (SETB_C32r)>;
-//def : Pat<(i64 (sext (i8 (Cse523setcc_c Cse523_COND_B, EFLAGS)))),
-//    (SETB_C64r)>;
-//
+// Use sbb to materialize carry bit.
+let Uses = [EFLAGS], Defs = [EFLAGS], isPseudo = 1, SchedRW = [WriteALU] in {
+    // FIXME: These are pseudo ops that should be replaced with Pat<> patterns.
+    // However, Pat<> can't replicate the destination reg into the inputs of the
+    // result.
+    def SETB_C64r : I<0, Pseudo, (outs GR64:$dst), (ins), "",
+        [(set GR64:$dst, (Cse523setcc_c Cse523_COND_B, EFLAGS))]>;
+} // isCodeGenOnly
+  
+  
+def : Pat<(i64 (anyext (i8 (Cse523setcc_c Cse523_COND_B, EFLAGS)))),
+    (SETB_C64r)>;
+
+def : Pat<(i64 (sext (i8 (Cse523setcc_c Cse523_COND_B, EFLAGS)))),
+    (SETB_C64r)>;
+
 //// We canonicalize 'setb' to "(and (sbb reg,reg), 1)" on the hope that the and
 //// will be eliminated and that the sbb can be extended up to a wider type.  When
 //// this happens, it is great.  However, if we are left with an 8-bit sbb and an
@@ -220,162 +206,83 @@ let Defs = [EFLAGS], isReMaterializable = 1, isAsCheapAsAMove = 1,
 //    (SETBr)>;
 //
 //// (add OP, SETB) -> (adc OP, 0)
-//def : Pat<(add (and (i8 (Cse523setcc_c Cse523_COND_B, EFLAGS)), 1), GR8:$op),
-//    (ADC8ri GR8:$op, 0)>;
-//def : Pat<(add (and (i32 (Cse523setcc_c Cse523_COND_B, EFLAGS)), 1), GR32:$op),
-//    (ADC32ri8 GR32:$op, 0)>;
 //def : Pat<(add (and (i64 (Cse523setcc_c Cse523_COND_B, EFLAGS)), 1), GR64:$op),
 //    (ADC64ri8 GR64:$op, 0)>;
 //
 //// (sub OP, SETB) -> (sbb OP, 0)
-//def : Pat<(sub GR8:$op, (and (i8 (Cse523setcc_c Cse523_COND_B, EFLAGS)), 1)),
-//    (SBB8ri GR8:$op, 0)>;
-//def : Pat<(sub GR32:$op, (and (i32 (Cse523setcc_c Cse523_COND_B, EFLAGS)), 1)),
-//    (SBB32ri8 GR32:$op, 0)>;
 //def : Pat<(sub GR64:$op, (and (i64 (Cse523setcc_c Cse523_COND_B, EFLAGS)), 1)),
 //    (SBB64ri8 GR64:$op, 0)>;
 //
 //// (sub OP, SETCC_CARRY) -> (adc OP, 0)
-//def : Pat<(sub GR8:$op, (i8 (Cse523setcc_c Cse523_COND_B, EFLAGS))),
-//    (ADC8ri GR8:$op, 0)>;
-//def : Pat<(sub GR32:$op, (i32 (Cse523setcc_c Cse523_COND_B, EFLAGS))),
-//    (ADC32ri8 GR32:$op, 0)>;
 //def : Pat<(sub GR64:$op, (i64 (Cse523setcc_c Cse523_COND_B, EFLAGS))),
 //    (ADC64ri8 GR64:$op, 0)>;
 //
-////===----------------------------------------------------------------------===//
-//// String Pseudo Instructions
-////
-//let SchedRW = [WriteMicrocoded] in {
-//    let Defs = [ECX,EDI,ESI], Uses = [ECX,EDI,ESI], isCodeGenOnly = 1 in {
-//        def REP_MOVSB_32 : I<0xA4, RawFrm, (outs), (ins), "{rep;movsb|rep movsb}",
-//            [(Cse523rep_movs i8)], IIC_REP_MOVS>, REP,
-//            Requires<[Not64BitMode]>;
-//        def REP_MOVSW_32 : I<0xA5, RawFrm, (outs), (ins), "{rep;movsw|rep movsw}",
-//            [(Cse523rep_movs i16)], IIC_REP_MOVS>, REP, OpSize16,
-//            Requires<[Not64BitMode]>;
-//        def REP_MOVSD_32 : I<0xA5, RawFrm, (outs), (ins), "{rep;movsl|rep movsd}",
-//            [(Cse523rep_movs i32)], IIC_REP_MOVS>, REP, OpSize32,
-//            Requires<[Not64BitMode]>;
-//    }
+//===----------------------------------------------------------------------===//
+// String Pseudo Instructions
 //
-//    let Defs = [RCX,RDI,RSI], Uses = [RCX,RDI,RSI], isCodeGenOnly = 1 in {
-//        def REP_MOVSB_64 : I<0xA4, RawFrm, (outs), (ins), "{rep;movsb|rep movsb}",
-//            [(Cse523rep_movs i8)], IIC_REP_MOVS>, REP,
-//            Requires<[In64BitMode]>;
-//        def REP_MOVSW_64 : I<0xA5, RawFrm, (outs), (ins), "{rep;movsw|rep movsw}",
-//            [(Cse523rep_movs i16)], IIC_REP_MOVS>, REP, OpSize16,
-//            Requires<[In64BitMode]>;
-//        def REP_MOVSD_64 : I<0xA5, RawFrm, (outs), (ins), "{rep;movsl|rep movsd}",
-//            [(Cse523rep_movs i32)], IIC_REP_MOVS>, REP, OpSize32,
-//            Requires<[In64BitMode]>;
-//        def REP_MOVSQ_64 : RI<0xA5, RawFrm, (outs), (ins), "{rep;movsq|rep movsq}",
-//            [(Cse523rep_movs i64)], IIC_REP_MOVS>, REP,
-//            Requires<[In64BitMode]>;
-//    }
+let SchedRW = [WriteMicrocoded] in {
+    let Defs = [RCX,RDI,RSI], Uses = [RCX,RDI,RSI], isCodeGenOnly = 1 in {
+        def REP_MOVSB_64 : I<0xA4, RawFrm, (outs), (ins), "{rep;movsb|rep movsb}",
+            [(Cse523rep_movs i8)], IIC_REP_MOVS>, REP,
+            Requires<[In64BitMode]>;
+        def REP_MOVSW_64 : I<0xA5, RawFrm, (outs), (ins), "{rep;movsw|rep movsw}",
+            [(Cse523rep_movs i16)], IIC_REP_MOVS>, REP, OpSize16,
+            Requires<[In64BitMode]>;
+        def REP_MOVSD_64 : I<0xA5, RawFrm, (outs), (ins), "{rep;movsl|rep movsd}",
+            [(Cse523rep_movs i32)], IIC_REP_MOVS>, REP, OpSize32,
+            Requires<[In64BitMode]>;
+        def REP_MOVSQ_64 : RI<0xA5, RawFrm, (outs), (ins), "{rep;movsq|rep movsq}",
+            [(Cse523rep_movs i64)], IIC_REP_MOVS>, REP,
+            Requires<[In64BitMode]>;
+    }
+
+    let Defs = [RCX,RDI], isCodeGenOnly = 1 in {
+        let Uses = [RAX,RCX,RDI] in
+            def REP_STOSD_64 : I<0xAB, RawFrm, (outs), (ins), "{rep;stosl|rep stosd}",
+                [(Cse523rep_stos i32)], IIC_REP_STOS>, REP, OpSize32,
+                Requires<[In64BitMode]>;
+
+        let Uses = [RAX,RCX,RDI] in
+            def REP_STOSQ_64 : RI<0xAB, RawFrm, (outs), (ins), "{rep;stosq|rep stosq}",
+                [(Cse523rep_stos i64)], IIC_REP_STOS>, REP,
+                Requires<[In64BitMode]>;
+    }
+} // SchedRW
+
+//===----------------------------------------------------------------------===//
+// Thread Local Storage Instructions
 //
-//    // FIXME: Should use "(Cse523rep_stos AL)" as the pattern.
-//    let Defs = [ECX,EDI], isCodeGenOnly = 1 in {
-//        let Uses = [AL,ECX,EDI] in
-//            def REP_STOSB_32 : I<0xAA, RawFrm, (outs), (ins), "{rep;stosb|rep stosb}",
-//                [(Cse523rep_stos i8)], IIC_REP_STOS>, REP,
-//                Requires<[Not64BitMode]>;
-//        let Uses = [AX,ECX,EDI] in
-//            def REP_STOSW_32 : I<0xAB, RawFrm, (outs), (ins), "{rep;stosw|rep stosw}",
-//                [(Cse523rep_stos i16)], IIC_REP_STOS>, REP, OpSize16,
-//                Requires<[Not64BitMode]>;
-//        let Uses = [EAX,ECX,EDI] in
-//            def REP_STOSD_32 : I<0xAB, RawFrm, (outs), (ins), "{rep;stosl|rep stosd}",
-//                [(Cse523rep_stos i32)], IIC_REP_STOS>, REP, OpSize32,
-//                Requires<[Not64BitMode]>;
-//    }
-//
-//    let Defs = [RCX,RDI], isCodeGenOnly = 1 in {
-//        let Uses = [AL,RCX,RDI] in
-//            def REP_STOSB_64 : I<0xAA, RawFrm, (outs), (ins), "{rep;stosb|rep stosb}",
-//                [(Cse523rep_stos i8)], IIC_REP_STOS>, REP,
-//                Requires<[In64BitMode]>;
-//        let Uses = [AX,RCX,RDI] in
-//            def REP_STOSW_64 : I<0xAB, RawFrm, (outs), (ins), "{rep;stosw|rep stosw}",
-//                [(Cse523rep_stos i16)], IIC_REP_STOS>, REP, OpSize16,
-//                Requires<[In64BitMode]>;
-//        let Uses = [RAX,RCX,RDI] in
-//            def REP_STOSD_64 : I<0xAB, RawFrm, (outs), (ins), "{rep;stosl|rep stosd}",
-//                [(Cse523rep_stos i32)], IIC_REP_STOS>, REP, OpSize32,
-//                Requires<[In64BitMode]>;
-//
-//        let Uses = [RAX,RCX,RDI] in
-//            def REP_STOSQ_64 : RI<0xAB, RawFrm, (outs), (ins), "{rep;stosq|rep stosq}",
-//                [(Cse523rep_stos i64)], IIC_REP_STOS>, REP,
-//                Requires<[In64BitMode]>;
-//    }
-//} // SchedRW
-//
-////===----------------------------------------------------------------------===//
-//// Thread Local Storage Instructions
-////
-//
-//// ELF TLS Support
-//// All calls clobber the non-callee saved registers. ESP is marked as
-//// a use to prevent stack-pointer assignments that appear immediately
-//// before calls from potentially appearing dead.
-//let Defs = [EAX, ECX, EDX, FP0, FP1, FP2, FP3, FP4, FP5, FP6, ST0,
-//    MM0, MM1, MM2, MM3, MM4, MM5, MM6, MM7,
-//    XMM0, XMM1, XMM2, XMM3, XMM4, XMM5, XMM6, XMM7,
-//    XMM8, XMM9, XMM10, XMM11, XMM12, XMM13, XMM14, XMM15, EFLAGS],
-//    Uses = [ESP] in {
-//        def TLS_addr32 : I<0, Pseudo, (outs), (ins i32mem:$sym),
-//        "# TLS_addr32",
-//        [(Cse523tlsaddr tls32addr:$sym)]>,
-//        Requires<[Not64BitMode]>;
-//        def TLS_base_addr32 : I<0, Pseudo, (outs), (ins i32mem:$sym),
-//            "# TLS_base_addr32",
-//            [(Cse523tlsbaseaddr tls32baseaddr:$sym)]>,
-//            Requires<[Not64BitMode]>;
-//    }
-//
-//// All calls clobber the non-callee saved registers. RSP is marked as
-//// a use to prevent stack-pointer assignments that appear immediately
-//// before calls from potentially appearing dead.
-//let Defs = [RAX, RCX, RDX, RSI, RDI, R8, R9, R10, R11,
-//    FP0, FP1, FP2, FP3, FP4, FP5, FP6, ST0, ST1,
-//    MM0, MM1, MM2, MM3, MM4, MM5, MM6, MM7,
-//    XMM0, XMM1, XMM2, XMM3, XMM4, XMM5, XMM6, XMM7,
-//    XMM8, XMM9, XMM10, XMM11, XMM12, XMM13, XMM14, XMM15, EFLAGS],
-//    Uses = [RSP] in {
-//        def TLS_addr64 : I<0, Pseudo, (outs), (ins i64mem:$sym),
-//        "# TLS_addr64",
-//        [(Cse523tlsaddr tls64addr:$sym)]>,
-//        Requires<[In64BitMode]>;
-//        def TLS_base_addr64 : I<0, Pseudo, (outs), (ins i64mem:$sym),
-//            "# TLS_base_addr64",
-//            [(Cse523tlsbaseaddr tls64baseaddr:$sym)]>,
-//            Requires<[In64BitMode]>;
-//    }
-//
-//// Darwin TLS Support
-//// For i386, the address of the thunk is passed on the stack, on return the
-//// address of the variable is in %eax.  %ecx is trashed during the function
-//// call.  All other registers are preserved.
-//let Defs = [EAX, ECX, EFLAGS],
-//    Uses = [ESP],
-//    usesCustomInserter = 1 in
-//    def TLSCall_32 : I<0, Pseudo, (outs), (ins i32mem:$sym),
-//    "# TLSCall_32",
-//    [(Cse523TLSCall addr:$sym)]>,
-//    Requires<[Not64BitMode]>;
-//
-//// For cse523_64, the address of the thunk is passed in %rdi, on return
-//// the address of the variable is in %rax.  All other registers are preserved.
-//let Defs = [RAX, EFLAGS],
-//    Uses = [RSP, RDI],
-//    usesCustomInserter = 1 in
-//    def TLSCall_64 : I<0, Pseudo, (outs), (ins i64mem:$sym),
-//    "# TLSCall_64",
-//    [(Cse523TLSCall addr:$sym)]>,
-//    Requires<[In64BitMode]>;
-//
-//
+
+// ELF TLS Support
+
+// All calls clobber the non-callee saved registers. RSP is marked as
+// a use to prevent stack-pointer assignments that appear immediately
+// before calls from potentially appearing dead.
+let Defs = [RAX, RCX, RDX, RSI, RDI, R8, R9, R10, R11, EFLAGS],
+    Uses = [RSP] in {
+        def TLS_addr64 : I<0, Pseudo, (outs), (ins i64mem:$sym),
+        "# TLS_addr64",
+        [(Cse523tlsaddr tls64addr:$sym)]>,
+        Requires<[In64BitMode]>;
+        def TLS_base_addr64 : I<0, Pseudo, (outs), (ins i64mem:$sym),
+            "# TLS_base_addr64",
+            [(Cse523tlsbaseaddr tls64baseaddr:$sym)]>,
+            Requires<[In64BitMode]>;
+    }
+
+// Darwin TLS Support
+
+// For cse523_64, the address of the thunk is passed in %rdi, on return
+// the address of the variable is in %rax.  All other registers are preserved.
+let Defs = [RAX, EFLAGS],
+    Uses = [RSP, RDI],
+    usesCustomInserter = 1 in
+    def TLSCall_64 : I<0, Pseudo, (outs), (ins i64mem:$sym),
+    "# TLSCall_64",
+    [(Cse523TLSCall addr:$sym)]>,
+    Requires<[In64BitMode]>;
+
+
 ////===----------------------------------------------------------------------===//
 //// Conditional Move Pseudo Instructions
 //
@@ -745,10 +652,10 @@ let Defs = [EFLAGS], isReMaterializable = 1, isAsCheapAsAMove = 1,
 //def ACQUIRE_MOV32rm : I<0, Pseudo, (outs GR32:$dst), (ins i32mem:$src),
 //    "#ACQUIRE_MOV PSEUDO!",
 //    [(set GR32:$dst, (atomic_load_32 addr:$src))]>;
-//def ACQUIRE_MOV64rm : I<0, Pseudo, (outs GR64:$dst), (ins i64mem:$src),
-//    "#ACQUIRE_MOV PSEUDO!",
-//    [(set GR64:$dst, (atomic_load_64 addr:$src))]>;
-//
+def ACQUIRE_MOV64rm : I<0, Pseudo, (outs GR64:$dst), (ins i64mem:$src),
+    "#ACQUIRE_MOV PSEUDO!",
+    [(set GR64:$dst, (atomic_load_64 addr:$src))]>;
+
 //def RELEASE_MOV8mr  : I<0, Pseudo, (outs), (ins i8mem :$dst, GR8 :$src),
 //    "#RELEASE_MOV PSEUDO!",
 //    [(atomic_store_8  addr:$dst, GR8 :$src)]>;
@@ -758,10 +665,10 @@ let Defs = [EFLAGS], isReMaterializable = 1, isAsCheapAsAMove = 1,
 //def RELEASE_MOV32mr : I<0, Pseudo, (outs), (ins i32mem:$dst, GR32:$src),
 //    "#RELEASE_MOV PSEUDO!",
 //    [(atomic_store_32 addr:$dst, GR32:$src)]>;
-//def RELEASE_MOV64mr : I<0, Pseudo, (outs), (ins i64mem:$dst, GR64:$src),
-//    "#RELEASE_MOV PSEUDO!",
-//    [(atomic_store_64 addr:$dst, GR64:$src)]>;
-//
+def RELEASE_MOV64mr : I<0, Pseudo, (outs), (ins i64mem:$dst, GR64:$src),
+    "#RELEASE_MOV PSEUDO!",
+    [(atomic_store_64 addr:$dst, GR64:$src)]>;
+
 ////===----------------------------------------------------------------------===//
 //// Conditional Move Pseudo Instructions.
 ////===----------------------------------------------------------------------===//
@@ -835,8 +742,8 @@ let Defs = [EFLAGS], isReMaterializable = 1, isAsCheapAsAMove = 1,
 //                (v16f32 (Cse523cmov VR512:$t, VR512:$f, imm:$cond,
 //                         EFLAGS)))]>;
 //}
-//
-//
+
+
 ////===----------------------------------------------------------------------===//
 //// DAG Pattern Matching Rules
 ////===----------------------------------------------------------------------===//
@@ -867,146 +774,121 @@ let Defs = [EFLAGS], isReMaterializable = 1, isAsCheapAsAMove = 1,
 //def : Pat<(store (i32 (Cse523Wrapper tblockaddress:$src)), addr:$dst),
 //    (MOV32mi addr:$dst, tblockaddress:$src)>;
 //
-//// ConstantPool GlobalAddress, ExternalSymbol, and JumpTable when not in small
-//// code model mode, should use 'movabs'.  FIXME: This is really a hack, the
-////  'movabs' predicate should handle this sort of thing.
-//def : Pat<(i64 (Cse523Wrapper tconstpool  :$dst)),
-//    (MOV64ri tconstpool  :$dst)>, Requires<[FarData]>;
-//def : Pat<(i64 (Cse523Wrapper tjumptable  :$dst)),
-//    (MOV64ri tjumptable  :$dst)>, Requires<[FarData]>;
-//def : Pat<(i64 (Cse523Wrapper tglobaladdr :$dst)),
-//    (MOV64ri tglobaladdr :$dst)>, Requires<[FarData]>;
-//def : Pat<(i64 (Cse523Wrapper texternalsym:$dst)),
-//    (MOV64ri texternalsym:$dst)>, Requires<[FarData]>;
-//def : Pat<(i64 (Cse523Wrapper tblockaddress:$dst)),
-//    (MOV64ri tblockaddress:$dst)>, Requires<[FarData]>;
+// ConstantPool GlobalAddress, ExternalSymbol, and JumpTable when not in small
+// code model mode, should use 'movabs'.  FIXME: This is really a hack, the
+//  'movabs' predicate should handle this sort of thing.
+def : Pat<(i64 (Cse523Wrapper tconstpool  :$dst)),
+    (MOV64ri tconstpool  :$dst)>, Requires<[FarData]>;
+def : Pat<(i64 (Cse523Wrapper tjumptable  :$dst)),
+    (MOV64ri tjumptable  :$dst)>, Requires<[FarData]>;
+def : Pat<(i64 (Cse523Wrapper tglobaladdr :$dst)),
+    (MOV64ri tglobaladdr :$dst)>, Requires<[FarData]>;
+def : Pat<(i64 (Cse523Wrapper texternalsym:$dst)),
+    (MOV64ri texternalsym:$dst)>, Requires<[FarData]>;
+def : Pat<(i64 (Cse523Wrapper tblockaddress:$dst)),
+    (MOV64ri tblockaddress:$dst)>, Requires<[FarData]>;
+
+// In kernel code model, we can get the address of a label
+// into a register with 'movq'.  FIXME: This is a hack, the 'imm' predicate of
+// the MOV64ri32 should accept these.
+def : Pat<(i64 (Cse523Wrapper tconstpool  :$dst)),
+    (MOV64ri32 tconstpool  :$dst)>, Requires<[KernelCode]>;
+def : Pat<(i64 (Cse523Wrapper tjumptable  :$dst)),
+    (MOV64ri32 tjumptable  :$dst)>, Requires<[KernelCode]>;
+def : Pat<(i64 (Cse523Wrapper tglobaladdr :$dst)),
+    (MOV64ri32 tglobaladdr :$dst)>, Requires<[KernelCode]>;
+def : Pat<(i64 (Cse523Wrapper texternalsym:$dst)),
+    (MOV64ri32 texternalsym:$dst)>, Requires<[KernelCode]>;
+def : Pat<(i64 (Cse523Wrapper tblockaddress:$dst)),
+    (MOV64ri32 tblockaddress:$dst)>, Requires<[KernelCode]>;
+
+// If we have small model and -static mode, it is safe to store global addresses
+// directly as immediates.  FIXME: This is really a hack, the 'imm' predicate
+// for MOV64mi32 should handle this sort of thing.
+def : Pat<(store (i64 (Cse523Wrapper tconstpool:$src)), addr:$dst),
+    (MOV64mi32 addr:$dst, tconstpool:$src)>,
+    Requires<[NearData, IsStatic]>;
+def : Pat<(store (i64 (Cse523Wrapper tjumptable:$src)), addr:$dst),
+    (MOV64mi32 addr:$dst, tjumptable:$src)>,
+    Requires<[NearData, IsStatic]>;
+def : Pat<(store (i64 (Cse523Wrapper tglobaladdr:$src)), addr:$dst),
+    (MOV64mi32 addr:$dst, tglobaladdr:$src)>,
+    Requires<[NearData, IsStatic]>;
+def : Pat<(store (i64 (Cse523Wrapper texternalsym:$src)), addr:$dst),
+    (MOV64mi32 addr:$dst, texternalsym:$src)>,
+    Requires<[NearData, IsStatic]>;
+def : Pat<(store (i64 (Cse523Wrapper tblockaddress:$src)), addr:$dst),
+    (MOV64mi32 addr:$dst, tblockaddress:$src)>,
+    Requires<[NearData, IsStatic]>;
+
+// Calls
+
+// tls has some funny stuff here...
+// This corresponds to movabs $foo@tpoff, %rax
+def : Pat<(i64 (Cse523Wrapper tglobaltlsaddr :$dst)),
+    (MOV64ri32 tglobaltlsaddr :$dst)>;
+// This corresponds to add $foo@tpoff, %rax
+def : Pat<(add GR64:$src1, (Cse523Wrapper tglobaltlsaddr :$dst)),
+    (ADD64ri32 GR64:$src1, tglobaltlsaddr :$dst)>;
+
+
+// Direct PC relative function call for small code model. 32-bit displacement
+// sign extended to 64-bit.
+def : Pat<(Cse523call (i64 tglobaladdr:$dst)),
+    (CALL64pcrel32 tglobaladdr:$dst)>;
+def : Pat<(Cse523call (i64 texternalsym:$dst)),
+    (CALL64pcrel32 texternalsym:$dst)>;
+
+// Tailcall stuff. The TCRETURN instructions execute after the epilog, so they
+// can never use callee-saved registers. That is the purpose of the GR64_TC
+// register classes.
 //
-//// In kernel code model, we can get the address of a label
-//// into a register with 'movq'.  FIXME: This is a hack, the 'imm' predicate of
-//// the MOV64ri32 should accept these.
-//def : Pat<(i64 (Cse523Wrapper tconstpool  :$dst)),
-//    (MOV64ri32 tconstpool  :$dst)>, Requires<[KernelCode]>;
-//def : Pat<(i64 (Cse523Wrapper tjumptable  :$dst)),
-//    (MOV64ri32 tjumptable  :$dst)>, Requires<[KernelCode]>;
-//def : Pat<(i64 (Cse523Wrapper tglobaladdr :$dst)),
-//    (MOV64ri32 tglobaladdr :$dst)>, Requires<[KernelCode]>;
-//def : Pat<(i64 (Cse523Wrapper texternalsym:$dst)),
-//    (MOV64ri32 texternalsym:$dst)>, Requires<[KernelCode]>;
-//def : Pat<(i64 (Cse523Wrapper tblockaddress:$dst)),
-//    (MOV64ri32 tblockaddress:$dst)>, Requires<[KernelCode]>;
+// The only volatile register that is never used by the calling convention is
+// %r11. This happens when calling a vararg function with 6 arguments.
 //
-//// If we have small model and -static mode, it is safe to store global addresses
-//// directly as immediates.  FIXME: This is really a hack, the 'imm' predicate
-//// for MOV64mi32 should handle this sort of thing.
-//def : Pat<(store (i64 (Cse523Wrapper tconstpool:$src)), addr:$dst),
-//    (MOV64mi32 addr:$dst, tconstpool:$src)>,
-//    Requires<[NearData, IsStatic]>;
-//def : Pat<(store (i64 (Cse523Wrapper tjumptable:$src)), addr:$dst),
-//    (MOV64mi32 addr:$dst, tjumptable:$src)>,
-//    Requires<[NearData, IsStatic]>;
-//def : Pat<(store (i64 (Cse523Wrapper tglobaladdr:$src)), addr:$dst),
-//    (MOV64mi32 addr:$dst, tglobaladdr:$src)>,
-//    Requires<[NearData, IsStatic]>;
-//def : Pat<(store (i64 (Cse523Wrapper texternalsym:$src)), addr:$dst),
-//    (MOV64mi32 addr:$dst, texternalsym:$src)>,
-//    Requires<[NearData, IsStatic]>;
-//def : Pat<(store (i64 (Cse523Wrapper tblockaddress:$src)), addr:$dst),
-//    (MOV64mi32 addr:$dst, tblockaddress:$src)>,
-//    Requires<[NearData, IsStatic]>;
-//
-//// Calls
-//
-//// tls has some funny stuff here...
-//// This corresponds to movabs $foo@tpoff, %rax
-//def : Pat<(i64 (Cse523Wrapper tglobaltlsaddr :$dst)),
-//    (MOV64ri32 tglobaltlsaddr :$dst)>;
-//// This corresponds to add $foo@tpoff, %rax
-//def : Pat<(add GR64:$src1, (Cse523Wrapper tglobaltlsaddr :$dst)),
-//    (ADD64ri32 GR64:$src1, tglobaltlsaddr :$dst)>;
-//
-//
-//// Direct PC relative function call for small code model. 32-bit displacement
-//// sign extended to 64-bit.
-//def : Pat<(Cse523call (i64 tglobaladdr:$dst)),
-//    (CALL64pcrel32 tglobaladdr:$dst)>;
-//def : Pat<(Cse523call (i64 texternalsym:$dst)),
-//    (CALL64pcrel32 texternalsym:$dst)>;
-//
-//// Tailcall stuff. The TCRETURN instructions execute after the epilog, so they
-//// can never use callee-saved registers. That is the purpose of the GR64_TC
-//// register classes.
-////
-//// The only volatile register that is never used by the calling convention is
-//// %r11. This happens when calling a vararg function with 6 arguments.
-////
-//// Match an Cse523tcret that uses less than 7 volatile registers.
-//def Cse523tcret_6regs : PatFrag<(ops node:$ptr, node:$off),
-//    (Cse523tcret node:$ptr, node:$off), [{
-//        // Cse523tcret args: (*chain, ptr, imm, regs..., glue)
-//        unsigned NumRegs = 0;
-//        for (unsigned i = 3, e = N->getNumOperands(); i != e; ++i)
-//            if (isa<RegisterSDNode>(N->getOperand(i)) && ++NumRegs > 6)
-//                return false;
-//        return true;
-//    }]>;
-//
-//def : Pat<(Cse523tcret ptr_rc_tailcall:$dst, imm:$off),
-//    (TCRETURNri ptr_rc_tailcall:$dst, imm:$off)>,
-//    Requires<[Not64BitMode]>;
-//
-//// FIXME: This is disabled for 32-bit PIC mode because the global base
-//// register which is part of the address mode may be assigned a
-//// callee-saved register.
-//def : Pat<(Cse523tcret (load addr:$dst), imm:$off),
-//    (TCRETURNmi addr:$dst, imm:$off)>,
-//    Requires<[Not64BitMode, IsNotPIC]>;
-//
-//def : Pat<(Cse523tcret (i32 tglobaladdr:$dst), imm:$off),
-//    (TCRETURNdi texternalsym:$dst, imm:$off)>,
-//    Requires<[Not64BitMode]>;
-//
-//def : Pat<(Cse523tcret (i32 texternalsym:$dst), imm:$off),
-//    (TCRETURNdi texternalsym:$dst, imm:$off)>,
-//    Requires<[Not64BitMode]>;
-//
-//def : Pat<(Cse523tcret ptr_rc_tailcall:$dst, imm:$off),
-//    (TCRETURNri64 ptr_rc_tailcall:$dst, imm:$off)>,
-//    Requires<[In64BitMode]>;
-//
-//// Don't fold loads into Cse523tcret requiring more than 6 regs.
-//// There wouldn't be enough scratch registers for base+index.
-//def : Pat<(Cse523tcret_6regs (load addr:$dst), imm:$off),
-//    (TCRETURNmi64 addr:$dst, imm:$off)>,
-//    Requires<[In64BitMode]>;
-//
-//def : Pat<(Cse523tcret (i64 tglobaladdr:$dst), imm:$off),
-//    (TCRETURNdi64 tglobaladdr:$dst, imm:$off)>,
-//    Requires<[In64BitMode]>;
-//
-//def : Pat<(Cse523tcret (i64 texternalsym:$dst), imm:$off),
-//    (TCRETURNdi64 texternalsym:$dst, imm:$off)>,
-//    Requires<[In64BitMode]>;
-//
-//// Normal calls, with various flavors of addresses.
+// Match an Cse523tcret that uses less than 7 volatile registers.
+def Cse523tcret_6regs : PatFrag<(ops node:$ptr, node:$off),
+    (Cse523tcret node:$ptr, node:$off), [{
+        // Cse523tcret args: (*chain, ptr, imm, regs..., glue)
+        unsigned NumRegs = 0;
+        for (unsigned i = 3, e = N->getNumOperands(); i != e; ++i)
+            if (isa<RegisterSDNode>(N->getOperand(i)) && ++NumRegs > 6)
+                return false;
+        return true;
+    }]>;
+
+def : Pat<(Cse523tcret ptr_rc_tailcall:$dst, imm:$off),
+    (TCRETURNri64 ptr_rc_tailcall:$dst, imm:$off)>,
+    Requires<[In64BitMode]>;
+
+// Don't fold loads into Cse523tcret requiring more than 6 regs.
+// There wouldn't be enough scratch registers for base+index.
+def : Pat<(Cse523tcret_6regs (load addr:$dst), imm:$off),
+    (TCRETURNmi64 addr:$dst, imm:$off)>,
+    Requires<[In64BitMode]>;
+
+def : Pat<(Cse523tcret (i64 tglobaladdr:$dst), imm:$off),
+    (TCRETURNdi64 tglobaladdr:$dst, imm:$off)>,
+    Requires<[In64BitMode]>;
+
+def : Pat<(Cse523tcret (i64 texternalsym:$dst), imm:$off),
+    (TCRETURNdi64 texternalsym:$dst, imm:$off)>,
+    Requires<[In64BitMode]>;
+
+// Normal calls, with various flavors of addresses.
 //def : Pat<(Cse523call (i32 tglobaladdr:$dst)),
 //    (CALLpcrel32 tglobaladdr:$dst)>;
 //def : Pat<(Cse523call (i32 texternalsym:$dst)),
 //    (CALLpcrel32 texternalsym:$dst)>;
 //def : Pat<(Cse523call (i32 imm:$dst)),
 //    (CALLpcrel32 imm:$dst)>, Requires<[CallImmAddr]>;
-//
-//// Comparisons.
-//
-//// TEST R,R is smaller than CMP R,0
-//def : Pat<(Cse523cmp GR8:$src1, 0),
-//    (TEST8rr GR8:$src1, GR8:$src1)>;
-//def : Pat<(Cse523cmp GR16:$src1, 0),
-//    (TEST16rr GR16:$src1, GR16:$src1)>;
-//def : Pat<(Cse523cmp GR32:$src1, 0),
-//    (TEST32rr GR32:$src1, GR32:$src1)>;
-//def : Pat<(Cse523cmp GR64:$src1, 0),
-//    (TEST64rr GR64:$src1, GR64:$src1)>;
-//
+
+// Comparisons.
+
+// TEST R,R is smaller than CMP R,0
+def : Pat<(Cse523cmp GR64:$src1, 0),
+    (TEST64rr GR64:$src1, GR64:$src1)>;
+
 //// Conditional moves with folded loads with operands swapped and conditions
 //// inverted.
 //multiclass CMOVmr<PatLeaf InvertedCond, Instruction Inst16, Instruction Inst32,
@@ -1447,21 +1329,18 @@ let Defs = [EFLAGS], isReMaterializable = 1, isAsCheapAsAMove = 1,
 //    Requires<[In64BitMode]>;
 //
 //
-//// (shl x, 1) ==> (add x, x)
-//// Note that if x is undef (immediate or otherwise), we could theoretically
-//// end up with the two uses of x getting different values, producing a result
-//// where the least significant bit is not 0. However, the probability of this
-//// happening is considered low enough that this is officially not a
-//// "real problem".
-//def : Pat<(shl GR8 :$src1, (i8 1)), (ADD8rr  GR8 :$src1, GR8 :$src1)>;
-//def : Pat<(shl GR16:$src1, (i8 1)), (ADD16rr GR16:$src1, GR16:$src1)>;
-//def : Pat<(shl GR32:$src1, (i8 1)), (ADD32rr GR32:$src1, GR32:$src1)>;
-//def : Pat<(shl GR64:$src1, (i8 1)), (ADD64rr GR64:$src1, GR64:$src1)>;
-//
-//// Helper imms that check if a mask doesn't change significant shift bits.
+// (shl x, 1) ==> (add x, x)
+// Note that if x is undef (immediate or otherwise), we could theoretically
+// end up with the two uses of x getting different values, producing a result
+// where the least significant bit is not 0. However, the probability of this
+// happening is considered low enough that this is officially not a
+// "real problem".
+def : Pat<(shl GR64:$src1, (i64 1)), (ADD64rr GR64:$src1, GR64:$src1)>;
+
+// Helper imms that check if a mask doesn't change significant shift bits.
 //def immShift32 : ImmLeaf<i8, [{ return CountTrailingOnes_32(Imm) >= 5; }]>;
-//def immShift64 : ImmLeaf<i8, [{ return CountTrailingOnes_32(Imm) >= 6; }]>;
-//
+def immShift64 : ImmLeaf<i64, [{ return CountTrailingOnes_32(Imm) >= 6; }]>;
+
 //// (shl x (and y, 31)) ==> (shl x, y)
 //def : Pat<(shl GR8:$src1, (and CL, immShift32)),
 //    (SHL8rCL GR8:$src1)>;
@@ -1502,22 +1381,22 @@ let Defs = [EFLAGS], isReMaterializable = 1, isAsCheapAsAMove = 1,
 //def : Pat<(store (sra (loadi32 addr:$dst), (and CL, immShift32)), addr:$dst),
 //    (SAR32mCL addr:$dst)>;
 //
-//// (shl x (and y, 63)) ==> (shl x, y)
-//def : Pat<(shl GR64:$src1, (and CL, immShift64)),
-//    (SHL64rCL GR64:$src1)>;
+// (shl x (and y, 63)) ==> (shl x, y)
+def : Pat<(shl GR64:$src1, (and RCX, immShift64)),
+    (SHL64rCL GR64:$src1)>;
 //def : Pat<(store (shl (loadi64 addr:$dst), (and CL, 63)), addr:$dst),
 //    (SHL64mCL addr:$dst)>;
 //
-//def : Pat<(srl GR64:$src1, (and CL, immShift64)),
+//def : Pat<(srl GR64:$src1, (and RCX, immShift64)),
 //    (SHR64rCL GR64:$src1)>;
 //def : Pat<(store (srl (loadi64 addr:$dst), (and CL, 63)), addr:$dst),
 //    (SHR64mCL addr:$dst)>;
 //
-//def : Pat<(sra GR64:$src1, (and CL, immShift64)),
+//def : Pat<(sra GR64:$src1, (and RCX, immShift64)),
 //    (SAR64rCL GR64:$src1)>;
 //def : Pat<(store (sra (loadi64 addr:$dst), (and CL, 63)), addr:$dst),
 //    (SAR64mCL addr:$dst)>;
-//
+
 //
 //// (anyext (setcc_carry)) -> (setcc_carry)
 //def : Pat<(i16 (anyext (i8 (Cse523setcc_c Cse523_COND_B, EFLAGS)))),
@@ -1526,9 +1405,6 @@ let Defs = [EFLAGS], isReMaterializable = 1, isAsCheapAsAMove = 1,
 //    (SETB_C32r)>;
 //def : Pat<(i32 (anyext (i16 (Cse523setcc_c Cse523_COND_B, EFLAGS)))),
 //    (SETB_C32r)>;
-//
-//
-//
 //
 ////===----------------------------------------------------------------------===//
 //// EFLAGS-defining Patterns
@@ -1581,11 +1457,8 @@ let Defs = [EFLAGS], isReMaterializable = 1, isAsCheapAsAMove = 1,
 //def : Pat<(sub GR32:$src1, i32immSExt8:$src2),
 //    (SUB32ri8 GR32:$src1, i32immSExt8:$src2)>;
 //
-//// sub 0, reg
-//def : Pat<(Cse523sub_flag 0, GR8 :$src), (NEG8r  GR8 :$src)>;
-//def : Pat<(Cse523sub_flag 0, GR16:$src), (NEG16r GR16:$src)>;
-//def : Pat<(Cse523sub_flag 0, GR32:$src), (NEG32r GR32:$src)>;
-//def : Pat<(Cse523sub_flag 0, GR64:$src), (NEG64r GR64:$src)>;
+// sub 0, reg
+def : Pat<(Cse523sub_flag 0, GR64:$src), (NEG64r GR64:$src)>;
 //
 //// mul reg, reg
 //def : Pat<(mul GR16:$src1, GR16:$src2),
@@ -1619,155 +1492,70 @@ let Defs = [EFLAGS], isReMaterializable = 1, isAsCheapAsAMove = 1,
 //def : Pat<(mul (loadi32 addr:$src1), i32immSExt8:$src2),
 //    (IMUL32rmi8 addr:$src1, i32immSExt8:$src2)>;
 //
-//// Patterns for nodes that do not produce flags, for instructions that do.
-//
-//// addition
-//def : Pat<(add GR64:$src1, GR64:$src2),
-//    (ADD64rr GR64:$src1, GR64:$src2)>;
-//def : Pat<(add GR64:$src1, i64immSExt8:$src2),
-//    (ADD64ri8 GR64:$src1, i64immSExt8:$src2)>;
-//def : Pat<(add GR64:$src1, i64immSExt32:$src2),
-//    (ADD64ri32 GR64:$src1, i64immSExt32:$src2)>;
-//def : Pat<(add GR64:$src1, (loadi64 addr:$src2)),
-//    (ADD64rm GR64:$src1, addr:$src2)>;
-//
-//// subtraction
-//def : Pat<(sub GR64:$src1, GR64:$src2),
-//    (SUB64rr GR64:$src1, GR64:$src2)>;
-//def : Pat<(sub GR64:$src1, (loadi64 addr:$src2)),
-//    (SUB64rm GR64:$src1, addr:$src2)>;
-//def : Pat<(sub GR64:$src1, i64immSExt8:$src2),
-//    (SUB64ri8 GR64:$src1, i64immSExt8:$src2)>;
-//def : Pat<(sub GR64:$src1, i64immSExt32:$src2),
-//    (SUB64ri32 GR64:$src1, i64immSExt32:$src2)>;
-//
-//// Multiply
-//def : Pat<(mul GR64:$src1, GR64:$src2),
-//    (IMUL64rr GR64:$src1, GR64:$src2)>;
-//def : Pat<(mul GR64:$src1, (loadi64 addr:$src2)),
-//    (IMUL64rm GR64:$src1, addr:$src2)>;
-//def : Pat<(mul GR64:$src1, i64immSExt8:$src2),
-//    (IMUL64rri8 GR64:$src1, i64immSExt8:$src2)>;
-//def : Pat<(mul GR64:$src1, i64immSExt32:$src2),
-//    (IMUL64rri32 GR64:$src1, i64immSExt32:$src2)>;
-//def : Pat<(mul (loadi64 addr:$src1), i64immSExt8:$src2),
-//    (IMUL64rmi8 addr:$src1, i64immSExt8:$src2)>;
-//def : Pat<(mul (loadi64 addr:$src1), i64immSExt32:$src2),
-//    (IMUL64rmi32 addr:$src1, i64immSExt32:$src2)>;
-//
-//// Increment reg.
-//def : Pat<(add GR8 :$src, 1), (INC8r     GR8 :$src)>;
-//def : Pat<(add GR16:$src, 1), (INC16r    GR16:$src)>, Requires<[Not64BitMode]>;
-//def : Pat<(add GR16:$src, 1), (INC64_16r GR16:$src)>, Requires<[In64BitMode]>;
-//def : Pat<(add GR32:$src, 1), (INC32r    GR32:$src)>, Requires<[Not64BitMode]>;
-//def : Pat<(add GR32:$src, 1), (INC64_32r GR32:$src)>, Requires<[In64BitMode]>;
-//def : Pat<(add GR64:$src, 1), (INC64r    GR64:$src)>;
-//
-//// Decrement reg.
-//def : Pat<(add GR8 :$src, -1), (DEC8r     GR8 :$src)>;
-//def : Pat<(add GR16:$src, -1), (DEC16r    GR16:$src)>, Requires<[Not64BitMode]>;
-//def : Pat<(add GR16:$src, -1), (DEC64_16r GR16:$src)>, Requires<[In64BitMode]>;
-//def : Pat<(add GR32:$src, -1), (DEC32r    GR32:$src)>, Requires<[Not64BitMode]>;
-//def : Pat<(add GR32:$src, -1), (DEC64_32r GR32:$src)>, Requires<[In64BitMode]>;
-//def : Pat<(add GR64:$src, -1), (DEC64r    GR64:$src)>;
-//
-//// or reg/reg.
-//def : Pat<(or GR8 :$src1, GR8 :$src2), (OR8rr  GR8 :$src1, GR8 :$src2)>;
-//def : Pat<(or GR16:$src1, GR16:$src2), (OR16rr GR16:$src1, GR16:$src2)>;
-//def : Pat<(or GR32:$src1, GR32:$src2), (OR32rr GR32:$src1, GR32:$src2)>;
-//def : Pat<(or GR64:$src1, GR64:$src2), (OR64rr GR64:$src1, GR64:$src2)>;
-//
-//// or reg/mem
-//def : Pat<(or GR8:$src1, (loadi8 addr:$src2)),
-//    (OR8rm GR8:$src1, addr:$src2)>;
-//def : Pat<(or GR16:$src1, (loadi16 addr:$src2)),
-//    (OR16rm GR16:$src1, addr:$src2)>;
-//def : Pat<(or GR32:$src1, (loadi32 addr:$src2)),
-//    (OR32rm GR32:$src1, addr:$src2)>;
-//def : Pat<(or GR64:$src1, (loadi64 addr:$src2)),
-//    (OR64rm GR64:$src1, addr:$src2)>;
-//
-//// or reg/imm
-//def : Pat<(or GR8:$src1 , imm:$src2), (OR8ri  GR8 :$src1, imm:$src2)>;
-//def : Pat<(or GR16:$src1, imm:$src2), (OR16ri GR16:$src1, imm:$src2)>;
-//def : Pat<(or GR32:$src1, imm:$src2), (OR32ri GR32:$src1, imm:$src2)>;
-//def : Pat<(or GR16:$src1, i16immSExt8:$src2),
-//    (OR16ri8 GR16:$src1, i16immSExt8:$src2)>;
-//def : Pat<(or GR32:$src1, i32immSExt8:$src2),
-//    (OR32ri8 GR32:$src1, i32immSExt8:$src2)>;
-//def : Pat<(or GR64:$src1, i64immSExt8:$src2),
-//    (OR64ri8 GR64:$src1, i64immSExt8:$src2)>;
-//def : Pat<(or GR64:$src1, i64immSExt32:$src2),
-//    (OR64ri32 GR64:$src1, i64immSExt32:$src2)>;
-//
-//// xor reg/reg
-//def : Pat<(xor GR8 :$src1, GR8 :$src2), (XOR8rr  GR8 :$src1, GR8 :$src2)>;
-//def : Pat<(xor GR16:$src1, GR16:$src2), (XOR16rr GR16:$src1, GR16:$src2)>;
-//def : Pat<(xor GR32:$src1, GR32:$src2), (XOR32rr GR32:$src1, GR32:$src2)>;
-//def : Pat<(xor GR64:$src1, GR64:$src2), (XOR64rr GR64:$src1, GR64:$src2)>;
-//
-//// xor reg/mem
-//def : Pat<(xor GR8:$src1, (loadi8 addr:$src2)),
-//    (XOR8rm GR8:$src1, addr:$src2)>;
-//def : Pat<(xor GR16:$src1, (loadi16 addr:$src2)),
-//    (XOR16rm GR16:$src1, addr:$src2)>;
-//def : Pat<(xor GR32:$src1, (loadi32 addr:$src2)),
-//    (XOR32rm GR32:$src1, addr:$src2)>;
-//def : Pat<(xor GR64:$src1, (loadi64 addr:$src2)),
-//    (XOR64rm GR64:$src1, addr:$src2)>;
-//
-//// xor reg/imm
-//def : Pat<(xor GR8:$src1, imm:$src2),
-//    (XOR8ri GR8:$src1, imm:$src2)>;
-//def : Pat<(xor GR16:$src1, imm:$src2),
-//    (XOR16ri GR16:$src1, imm:$src2)>;
-//def : Pat<(xor GR32:$src1, imm:$src2),
-//    (XOR32ri GR32:$src1, imm:$src2)>;
-//def : Pat<(xor GR16:$src1, i16immSExt8:$src2),
-//    (XOR16ri8 GR16:$src1, i16immSExt8:$src2)>;
-//def : Pat<(xor GR32:$src1, i32immSExt8:$src2),
-//    (XOR32ri8 GR32:$src1, i32immSExt8:$src2)>;
-//def : Pat<(xor GR64:$src1, i64immSExt8:$src2),
-//    (XOR64ri8 GR64:$src1, i64immSExt8:$src2)>;
-//def : Pat<(xor GR64:$src1, i64immSExt32:$src2),
-//    (XOR64ri32 GR64:$src1, i64immSExt32:$src2)>;
-//
-//// and reg/reg
-//def : Pat<(and GR8 :$src1, GR8 :$src2), (AND8rr  GR8 :$src1, GR8 :$src2)>;
-//def : Pat<(and GR16:$src1, GR16:$src2), (AND16rr GR16:$src1, GR16:$src2)>;
-//def : Pat<(and GR32:$src1, GR32:$src2), (AND32rr GR32:$src1, GR32:$src2)>;
-//def : Pat<(and GR64:$src1, GR64:$src2), (AND64rr GR64:$src1, GR64:$src2)>;
-//
-//// and reg/mem
-//def : Pat<(and GR8:$src1, (loadi8 addr:$src2)),
-//    (AND8rm GR8:$src1, addr:$src2)>;
-//def : Pat<(and GR16:$src1, (loadi16 addr:$src2)),
-//    (AND16rm GR16:$src1, addr:$src2)>;
-//def : Pat<(and GR32:$src1, (loadi32 addr:$src2)),
-//    (AND32rm GR32:$src1, addr:$src2)>;
-//def : Pat<(and GR64:$src1, (loadi64 addr:$src2)),
-//    (AND64rm GR64:$src1, addr:$src2)>;
-//
-//// and reg/imm
-//def : Pat<(and GR8:$src1, imm:$src2),
-//    (AND8ri GR8:$src1, imm:$src2)>;
-//def : Pat<(and GR16:$src1, imm:$src2),
-//    (AND16ri GR16:$src1, imm:$src2)>;
-//def : Pat<(and GR32:$src1, imm:$src2),
-//    (AND32ri GR32:$src1, imm:$src2)>;
-//def : Pat<(and GR16:$src1, i16immSExt8:$src2),
-//    (AND16ri8 GR16:$src1, i16immSExt8:$src2)>;
-//def : Pat<(and GR32:$src1, i32immSExt8:$src2),
-//    (AND32ri8 GR32:$src1, i32immSExt8:$src2)>;
-//def : Pat<(and GR64:$src1, i64immSExt8:$src2),
-//    (AND64ri8 GR64:$src1, i64immSExt8:$src2)>;
-//def : Pat<(and GR64:$src1, i64immSExt32:$src2),
-//    (AND64ri32 GR64:$src1, i64immSExt32:$src2)>;
-//
-//// Bit scan instruction patterns to match explicit zero-undef behavior.
-//def : Pat<(cttz_zero_undef GR16:$src), (BSF16rr GR16:$src)>;
-//def : Pat<(cttz_zero_undef GR32:$src), (BSF32rr GR32:$src)>;
-//def : Pat<(cttz_zero_undef GR64:$src), (BSF64rr GR64:$src)>;
-//def : Pat<(cttz_zero_undef (loadi16 addr:$src)), (BSF16rm addr:$src)>;
-//def : Pat<(cttz_zero_undef (loadi32 addr:$src)), (BSF32rm addr:$src)>;
-//def : Pat<(cttz_zero_undef (loadi64 addr:$src)), (BSF64rm addr:$src)>;
+// Patterns for nodes that do not produce flags, for instructions that do.
+
+// addition
+def : Pat<(add GR64:$src1, GR64:$src2),
+    (ADD64rr GR64:$src1, GR64:$src2)>;
+def : Pat<(add GR64:$src1, i64immSExt32:$src2),
+    (ADD64ri32 GR64:$src1, i64immSExt32:$src2)>;
+def : Pat<(add GR64:$src1, (loadi64 addr:$src2)),
+    (ADD64rm GR64:$src1, addr:$src2)>;
+
+// subtraction
+def : Pat<(sub GR64:$src1, GR64:$src2),
+    (SUB64rr GR64:$src1, GR64:$src2)>;
+def : Pat<(sub GR64:$src1, (loadi64 addr:$src2)),
+    (SUB64rm GR64:$src1, addr:$src2)>;
+def : Pat<(sub GR64:$src1, i64immSExt32:$src2),
+    (SUB64ri32 GR64:$src1, i64immSExt32:$src2)>;
+
+// Multiply
+def : Pat<(mul GR64:$src1, GR64:$src2),
+    (IMUL64rr GR64:$src1, GR64:$src2)>;
+def : Pat<(mul GR64:$src1, (loadi64 addr:$src2)),
+    (IMUL64rm GR64:$src1, addr:$src2)>;
+def : Pat<(mul GR64:$src1, i64immSExt32:$src2),
+    (IMUL64rri32 GR64:$src1, i64immSExt32:$src2)>;
+def : Pat<(mul (loadi64 addr:$src1), i64immSExt32:$src2),
+    (IMUL64rmi32 addr:$src1, i64immSExt32:$src2)>;
+
+// Increment reg.
+def : Pat<(add GR64:$src, 1), (INC64r    GR64:$src)>;
+
+// Decrement reg.
+def : Pat<(add GR64:$src, -1), (DEC64r    GR64:$src)>;
+
+// or reg/reg.
+def : Pat<(or GR64:$src1, GR64:$src2), (OR64rr GR64:$src1, GR64:$src2)>;
+
+// or reg/mem
+def : Pat<(or GR64:$src1, (loadi64 addr:$src2)),
+    (OR64rm GR64:$src1, addr:$src2)>;
+
+// or reg/imm
+def : Pat<(or GR64:$src1, i64immSExt32:$src2),
+    (OR64ri32 GR64:$src1, i64immSExt32:$src2)>;
+
+// xor reg/reg
+def : Pat<(xor GR64:$src1, GR64:$src2), (XOR64rr GR64:$src1, GR64:$src2)>;
+
+// xor reg/mem
+def : Pat<(xor GR64:$src1, (loadi64 addr:$src2)),
+    (XOR64rm GR64:$src1, addr:$src2)>;
+
+// xor reg/imm
+def : Pat<(xor GR64:$src1, i64immSExt32:$src2),
+    (XOR64ri32 GR64:$src1, i64immSExt32:$src2)>;
+
+// and reg/reg
+def : Pat<(and GR64:$src1, GR64:$src2), (AND64rr GR64:$src1, GR64:$src2)>;
+
+// and reg/mem
+def : Pat<(and GR64:$src1, (loadi64 addr:$src2)),
+    (AND64rm GR64:$src1, addr:$src2)>;
+
+// and reg/imm
+def : Pat<(and GR64:$src1, i64immSExt32:$src2),
+    (AND64ri32 GR64:$src1, i64immSExt32:$src2)>;
+

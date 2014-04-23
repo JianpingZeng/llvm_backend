@@ -117,9 +117,9 @@ namespace {
                 dbgs() << "nul";
             dbgs() << " Disp " << Disp << '\n'
                 << "GV <commented> ";
-            //if (GV)
-            //    GV->dump();
-            //else
+            if (GV)
+                GV->dump();
+            else
                 dbgs() << "nul";
             dbgs() << " CP ";
             if (CP)
@@ -561,8 +561,7 @@ void Cse523DAGToDAGISel::EmitSpecialCodeForMain(MachineBasicBlock *BB,
         MachineFrameInfo *MFI) {
     const TargetInstrInfo *TII = TM.getInstrInfo();
     if (Subtarget->isTargetCygMing()) {
-        assert(0);
-        unsigned CallOp = 10;//Cse523::CALL64pcrel32;
+        unsigned CallOp = Cse523::CALL64pcrel32;
         BuildMI(BB, DebugLoc(),
                 TII->get(CallOp)).addExternalSymbol("__main");
     }
@@ -792,7 +791,7 @@ static bool FoldMaskAndShiftToExtract(SelectionDAG &DAG, SDValue N,
     SDValue NewMask = DAG.getConstant(0xff, VT);
     SDValue Srl = DAG.getNode(ISD::SRL, DL, VT, X, Eight);
     SDValue And = DAG.getNode(ISD::AND, DL, VT, Srl, NewMask);
-    SDValue ShlCount = DAG.getConstant(ScaleLog, MVT::i8);
+    SDValue ShlCount = DAG.getConstant(ScaleLog, MVT::i64);
     SDValue Shl = DAG.getNode(ISD::SHL, DL, VT, And, ShlCount);
 
     // Insert the new nodes into the topological ordering. We must do this in
@@ -944,7 +943,7 @@ static bool FoldMaskAndShiftToScale(SelectionDAG &DAG, SDValue N,
     SDLoc DL(N);
     SDValue NewSRLAmt = DAG.getConstant(ShiftAmt + AMShiftAmt, MVT::i8);
     SDValue NewSRL = DAG.getNode(ISD::SRL, DL, VT, X, NewSRLAmt);
-    SDValue NewSHLAmt = DAG.getConstant(AMShiftAmt, MVT::i8);
+    SDValue NewSHLAmt = DAG.getConstant(AMShiftAmt, MVT::i64);
     SDValue NewSHL = DAG.getNode(ISD::SHL, DL, VT, NewSRL, NewSHLAmt);
 
     // Insert the new nodes into the topological ordering. We must do this in
@@ -2011,16 +2010,10 @@ static bool isLoadIncOrDecStore(StoreSDNode *StoreNode, unsigned Opc,
 /// increment or decrement. Opc should be Cse523ISD::DEC or Cse523ISD::INC.
 static unsigned getFusedLdStOpcode(EVT &LdVT, unsigned Opc) {
     if (Opc == Cse523ISD::DEC) {
-//        if (LdVT == MVT::i64) return Cse523::DEC64m;
-//        if (LdVT == MVT::i32) return Cse523::DEC32m;
-//        if (LdVT == MVT::i16) return Cse523::DEC16m;
-//        if (LdVT == MVT::i8)  return Cse523::DEC8m;
+        if (LdVT == MVT::i64) return Cse523::DEC64m;
     } else {
         assert(Opc == Cse523ISD::INC && "unrecognized opcode");
-//        if (LdVT == MVT::i64) return Cse523::INC64m;
-//        if (LdVT == MVT::i32) return Cse523::INC32m;
-//        if (LdVT == MVT::i16) return Cse523::INC16m;
-//        if (LdVT == MVT::i8)  return Cse523::INC8m;
+        if (LdVT == MVT::i64) return Cse523::INC64m;
     }
     llvm_unreachable("unrecognized size for LdVT");
 }
@@ -2091,6 +2084,7 @@ SDNode *Cse523DAGToDAGISel::Select(SDNode *Node) {
         case Cse523ISD::ATOMUMIN64_DAG:
         case Cse523ISD::ATOMSWAP64_DAG: {
                                             unsigned Opc;
+                                            assert(0);
                                             switch (Opcode) {
                                                 default: llvm_unreachable("Impossible opcode");
                                                 //case Cse523ISD::ATOMOR64_DAG:   Opc = Cse523::ATOMOR6432;   break;
@@ -2105,7 +2099,6 @@ SDNode *Cse523DAGToDAGISel::Select(SDNode *Node) {
                                                 //case Cse523ISD::ATOMUMIN64_DAG: Opc = Cse523::ATOMUMIN6432; break;
                                                 //case Cse523ISD::ATOMSWAP64_DAG: Opc = Cse523::ATOMSWAP6432; break;
                                             }
-                                            assert(0);
                                             SDNode *RetVal = SelectAtomic64(Node, Opc);
                                             if (RetVal)
                                                 return RetVal;
@@ -2126,6 +2119,7 @@ SDNode *Cse523DAGToDAGISel::Select(SDNode *Node) {
         case ISD::XOR: {
                            // For operations of the form (x << C1) op C2, check if we can use a smaller
                            // encoding for C2 by transforming it into (x op (C2>>C1)) << C1.
+                           assert(0);
                        //    SDValue N0 = Node->getOperand(0);
                        //    SDValue N1 = Node->getOperand(1);
 
@@ -2200,176 +2194,164 @@ SDNode *Cse523DAGToDAGISel::Select(SDNode *Node) {
                        }
                        break;
         case Cse523ISD::UMUL: {
-                       //           SDValue N0 = Node->getOperand(0);
-                       //           SDValue N1 = Node->getOperand(1);
+                                  SDValue N0 = Node->getOperand(0);
+                                  SDValue N1 = Node->getOperand(1);
 
-                       //       unsigned LoReg;
-                       //           switch (NVT.SimpleTy) {
-                       //               case MVT::i8:
-                       //               case MVT::i16:
-                       //               case MVT::i32:
-                       //               default: llvm_unreachable("Unsupported VT!");
+                                  unsigned LoReg;
+                                  switch (NVT.SimpleTy) {
+                                      case MVT::i8:
+                                      case MVT::i16:
+                                      case MVT::i32:
+                                      default: llvm_unreachable("Unsupported VT!");
 
-                       //               //case MVT::i64: LoReg = Cse523::RAX; Opc = Cse523::MUL64r; break;
-                       //           }
+                                      case MVT::i64: LoReg = Cse523::RAX; Opc = Cse523::MUL64r; break;
+                                  }
 
-                       //           SDValue InFlag = CurDAG->getCopyToReg(CurDAG->getEntryNode(), dl, LoReg,
-                       //                   N0, SDValue()).getValue(1);
+                                  SDValue InFlag = CurDAG->getCopyToReg(CurDAG->getEntryNode(), dl, LoReg,
+                                          N0, SDValue()).getValue(1);
 
-                       //           SDVTList VTs = CurDAG->getVTList(NVT, NVT, MVT::i32);
-                       //           SDValue Ops[] = {N1, InFlag};
-                       //           SDNode *CNode = CurDAG->getMachineNode(Opc, dl, VTs, Ops);
+                                  SDVTList VTs = CurDAG->getVTList(NVT, NVT, MVT::i32);
+                                  SDValue Ops[] = {N1, InFlag};
+                                  SDNode *CNode = CurDAG->getMachineNode(Opc, dl, VTs, Ops);
 
-                       //           ReplaceUses(SDValue(Node, 0), SDValue(CNode, 0));
-                       //           ReplaceUses(SDValue(Node, 1), SDValue(CNode, 1));
-                       //           ReplaceUses(SDValue(Node, 2), SDValue(CNode, 2));
-                       //           return NULL;
+                                  ReplaceUses(SDValue(Node, 0), SDValue(CNode, 0));
+                                  ReplaceUses(SDValue(Node, 1), SDValue(CNode, 1));
+                                  ReplaceUses(SDValue(Node, 2), SDValue(CNode, 2));
+                                  return NULL;
                              }
                              break;
 
         case ISD::SMUL_LOHI:
         case ISD::UMUL_LOHI: {
-                             //    SDValue N0 = Node->getOperand(0);
-                             //    SDValue N1 = Node->getOperand(1);
+                                 SDValue N0 = Node->getOperand(0);
+                                 SDValue N1 = Node->getOperand(1);
 
-                             //    bool isSigned = Opcode == ISD::SMUL_LOHI;
-                             //    bool hasBMI2 = Subtarget->hasBMI2();
-                             //    if (!isSigned) {
-                             //        switch (NVT.SimpleTy) {
-                             //            default: llvm_unreachable("Unsupported VT!");
-                             //            //case MVT::i8:  Opc = Cse523::MUL8r;  MOpc = Cse523::MUL8m;  break;
-                             //            //case MVT::i16: Opc = Cse523::MUL16r; MOpc = Cse523::MUL16m; break;
-                             //            //case MVT::i32: Opc = hasBMI2 ? Cse523::MULX32rr : Cse523::MUL32r;
-                             //            //               MOpc = hasBMI2 ? Cse523::MULX32rm : Cse523::MUL32m; break;
-                             //            //case MVT::i64: Opc = hasBMI2 ? Cse523::MULX64rr : Cse523::MUL64r;
-                             //            //               MOpc = hasBMI2 ? Cse523::MULX64rm : Cse523::MUL64m; break;
-                             //        }
-                             //    } else {
-                             //        switch (NVT.SimpleTy) {
-                             //            default: llvm_unreachable("Unsupported VT!");
-                             //            //case MVT::i8:  Opc = Cse523::IMUL8r;  MOpc = Cse523::IMUL8m;  break;
-                             //            //case MVT::i16: Opc = Cse523::IMUL16r; MOpc = Cse523::IMUL16m; break;
-                             //            //case MVT::i32: Opc = Cse523::IMUL32r; MOpc = Cse523::IMUL32m; break;
-                             //            //case MVT::i64: Opc = Cse523::IMUL64r; MOpc = Cse523::IMUL64m; break;
-                             //        }
-                             //    }
+                                 bool isSigned = Opcode == ISD::SMUL_LOHI;
+                                 bool hasBMI2 = Subtarget->hasBMI2();
+                                 if (!isSigned) {
+                                     switch (NVT.SimpleTy) {
+                                         default: llvm_unreachable("Unsupported VT!");
+                                         case MVT::i64: Opc = hasBMI2 ? Cse523::MULX64rr : Cse523::MUL64r;
+                                                        MOpc = hasBMI2 ? Cse523::MULX64rm : Cse523::MUL64m; break;
+                                     }
+                                 } else {
+                                     switch (NVT.SimpleTy) {
+                                         default: llvm_unreachable("Unsupported VT!");
+                                         case MVT::i64: Opc = Cse523::IMUL64r; MOpc = Cse523::IMUL64m; break;
+                                     }
+                                 }
 
-                             //    unsigned SrcReg, LoReg, HiReg;
-                             //    switch (Opc) {
-                             //        case Cse523::IMUL8r:
-                             //        case Cse523::MUL8r:
-                             //        case Cse523::IMUL16r:
-                             //        case Cse523::MUL16r:
-                             //        case Cse523::IMUL32r:
-                             //        case Cse523::MUL32r:
-                             //        case Cse523::MULX32rr:
-                             //        default: llvm_unreachable("Unknown MUL opcode!");
+                                 unsigned SrcReg, LoReg, HiReg;
+                                 switch (Opc) {
+                                     default: llvm_unreachable("Unknown MUL opcode!");
 
-                             //        case Cse523::IMUL64r:
-                             //        case Cse523::MUL64r:
-                             //                 //SrcReg = LoReg = Cse523::RAX; HiReg = Cse523::RDX;
-                             //                 break;
-                             //        case Cse523::MULX64rr:
-                             //                 //SrcReg = Cse523::RDX; LoReg = HiReg = 0;
-                             //                 break;
-                             //    }
+                                     case Cse523::IMUL64r:
+                                     case Cse523::MUL64r:
+                                              SrcReg = LoReg = Cse523::RAX; HiReg = Cse523::RDX;
+                                              break;
+                                     case Cse523::MULX64rr:
+                                              SrcReg = Cse523::RDX; LoReg = HiReg = 0;
+                                              break;
+                                 }
 
-                             //    SDValue Tmp0, Tmp1, Tmp2, Tmp3, Tmp4;
-                             //    bool foldedLoad = TryFoldLoad(Node, N1, Tmp0, Tmp1, Tmp2, Tmp3, Tmp4);
-                             //    // Multiply is commmutative.
-                             //    if (!foldedLoad) {
-                             //        foldedLoad = TryFoldLoad(Node, N0, Tmp0, Tmp1, Tmp2, Tmp3, Tmp4);
-                             //        if (foldedLoad)
-                             //            std::swap(N0, N1);
-                             //    }
+                                 SDValue Tmp0, Tmp1, Tmp2, Tmp3, Tmp4;
+                                 bool foldedLoad = TryFoldLoad(Node, N1, Tmp0, Tmp1, Tmp2, Tmp3, Tmp4);
+                                 // Multiply is commmutative.
+                                 if (!foldedLoad) {
+                                     foldedLoad = TryFoldLoad(Node, N0, Tmp0, Tmp1, Tmp2, Tmp3, Tmp4);
+                                     if (foldedLoad)
+                                         std::swap(N0, N1);
+                                 }
 
-                             //    SDValue InFlag = CurDAG->getCopyToReg(CurDAG->getEntryNode(), dl, SrcReg,
-                             //            N0, SDValue()).getValue(1);
-                             //    SDValue ResHi, ResLo;
+                                 SDValue InFlag = CurDAG->getCopyToReg(CurDAG->getEntryNode(), dl, SrcReg,
+                                         N0, SDValue()).getValue(1);
+                                 SDValue ResHi, ResLo;
 
-                             //    if (foldedLoad) {
-                             //        SDValue Chain;
-                             //        SDValue Ops[] = { Tmp0, Tmp1, Tmp2, Tmp3, Tmp4, N1.getOperand(0),
-                             //            InFlag };
-                             //        if (MOpc == Cse523::MULX32rm || MOpc == Cse523::MULX64rm) {
-                             //            SDVTList VTs = CurDAG->getVTList(NVT, NVT, MVT::Other, MVT::Glue);
-                             //            SDNode *CNode = CurDAG->getMachineNode(MOpc, dl, VTs, Ops);
-                             //            ResHi = SDValue(CNode, 0);
-                             //            ResLo = SDValue(CNode, 1);
-                             //            Chain = SDValue(CNode, 2);
-                             //            InFlag = SDValue(CNode, 3);
-                             //        } else {
-                             //            SDVTList VTs = CurDAG->getVTList(MVT::Other, MVT::Glue);
-                             //            SDNode *CNode = CurDAG->getMachineNode(MOpc, dl, VTs, Ops);
-                             //            Chain = SDValue(CNode, 0);
-                             //            InFlag = SDValue(CNode, 1);
-                             //        }
+                                 if (foldedLoad) {
+                                     SDValue Chain;
+                                     SDValue Ops[] = { Tmp0, Tmp1, Tmp2, Tmp3, Tmp4, N1.getOperand(0),
+                                         InFlag };
+                                     if (MOpc == Cse523::MULX64rm) {
+                                         SDVTList VTs = CurDAG->getVTList(NVT, NVT, MVT::Other, MVT::Glue);
+                                         SDNode *CNode = CurDAG->getMachineNode(MOpc, dl, VTs, Ops);
+                                         ResHi = SDValue(CNode, 0);
+                                         ResLo = SDValue(CNode, 1);
+                                         Chain = SDValue(CNode, 2);
+                                         InFlag = SDValue(CNode, 3);
+                                     } else {
+                                         SDVTList VTs = CurDAG->getVTList(MVT::Other, MVT::Glue);
+                                         SDNode *CNode = CurDAG->getMachineNode(MOpc, dl, VTs, Ops);
+                                         Chain = SDValue(CNode, 0);
+                                         InFlag = SDValue(CNode, 1);
+                                     }
 
-                             //        // Update the chain.
-                             //        ReplaceUses(N1.getValue(1), Chain);
-                             //    } else {
-                             //        SDValue Ops[] = { N1, InFlag };
-                             //        if (Opc == Cse523::MULX32rr || Opc == Cse523::MULX64rr) {
-                             //            SDVTList VTs = CurDAG->getVTList(NVT, NVT, MVT::Glue);
-                             //            SDNode *CNode = CurDAG->getMachineNode(Opc, dl, VTs, Ops);
-                             //            ResHi = SDValue(CNode, 0);
-                             //            ResLo = SDValue(CNode, 1);
-                             //            InFlag = SDValue(CNode, 2);
-                             //        } else {
-                             //            SDVTList VTs = CurDAG->getVTList(MVT::Glue);
-                             //            SDNode *CNode = CurDAG->getMachineNode(Opc, dl, VTs, Ops);
-                             //            InFlag = SDValue(CNode, 0);
-                             //        }
-                             //    }
+                                     // Update the chain.
+                                     ReplaceUses(N1.getValue(1), Chain);
+                                 } else {
+                                     SDValue Ops[] = { N1, InFlag };
+                                     if (Opc == Cse523::MULX64rr) {
+                                         SDVTList VTs = CurDAG->getVTList(NVT, NVT, MVT::Glue);
+                                         SDNode *CNode = CurDAG->getMachineNode(Opc, dl, VTs, Ops);
+                                         ResHi = SDValue(CNode, 0);
+                                         ResLo = SDValue(CNode, 1);
+                                         InFlag = SDValue(CNode, 2);
+                                     } else {
+                                         SDVTList VTs = CurDAG->getVTList(MVT::Glue);
+                                         SDNode *CNode = CurDAG->getMachineNode(Opc, dl, VTs, Ops);
+                                         InFlag = SDValue(CNode, 0);
+                                     }
+                                 }
 
-                             //    // Prevent use of AH in a REX instruction by referencing AX instead.
-                             //    if (HiReg == Cse523::AH && Subtarget->is64Bit() &&
-                             //            !SDValue(Node, 1).use_empty()) {
-                             //        SDValue Result = CurDAG->getCopyFromReg(CurDAG->getEntryNode(), dl,
-                             //                Cse523::AX, MVT::i16, InFlag);
-                             //        InFlag = Result.getValue(2);
-                             //        // Get the low part if needed. Don't use getCopyFromReg for aliasing
-                             //        // registers.
-                             //        if (!SDValue(Node, 0).use_empty())
-                             //            ReplaceUses(SDValue(Node, 1),
-                             //                    CurDAG->getTargetExtractSubreg(Cse523::sub_8bit, dl, MVT::i8, Result));
+                                 assert(0);
+                                 // Prevent use of AH in a REX instruction by referencing AX instead.
+                                 //if (HiReg == Cse523::AH && Subtarget->is64Bit() &&
+                                 //        !SDValue(Node, 1).use_empty()) {
+                                 //    SDValue Result = CurDAG->getCopyFromReg(CurDAG->getEntryNode(), dl,
+                                 //            Cse523::AX, MVT::i16, InFlag);
+                                 //    InFlag = Result.getValue(2);
+                                 //    // Get the low part if needed. Don't use getCopyFromReg for aliasing
+                                 //    // registers.
+                                 //    if (!SDValue(Node, 0).use_empty())
+                                 //        ReplaceUses(SDValue(Node, 1),
+                                 //                CurDAG->getTargetExtractSubreg(Cse523::sub_8bit, dl, MVT::i8, Result));
 
-                             //        // Shift AX down 8 bits.
-                             //        Result = SDValue(CurDAG->getMachineNode(Cse523::SHR16ri, dl, MVT::i16,
-                             //                    Result,
-                             //                    CurDAG->getTargetConstant(8, MVT::i8)), 0);
-                             //        // Then truncate it down to i8.
-                             //        ReplaceUses(SDValue(Node, 1),
-                             //                CurDAG->getTargetExtractSubreg(Cse523::sub_8bit, dl, MVT::i8, Result));
-                             //    }
-                             //    // Copy the low half of the result, if it is needed.
-                             //    if (!SDValue(Node, 0).use_empty()) {
-                             //        if (ResLo.getNode() == 0) {
-                             //            assert(LoReg && "Register for low half is not defined!");
-                             //            ResLo = CurDAG->getCopyFromReg(CurDAG->getEntryNode(), dl, LoReg, NVT,
-                             //                    InFlag);
-                             //            InFlag = ResLo.getValue(2);
-                             //        }
-                             //        ReplaceUses(SDValue(Node, 0), ResLo);
-                             //        DEBUG(dbgs() << "=> "; ResLo.getNode()->dump(CurDAG); dbgs() << '\n');
-                             //    }
-                             //    // Copy the high half of the result, if it is needed.
-                             //    if (!SDValue(Node, 1).use_empty()) {
-                             //        if (ResHi.getNode() == 0) {
-                             //            assert(HiReg && "Register for high half is not defined!");
-                             //            ResHi = CurDAG->getCopyFromReg(CurDAG->getEntryNode(), dl, HiReg, NVT,
-                             //                    InFlag);
-                             //            InFlag = ResHi.getValue(2);
-                             //        }
-                             //        ReplaceUses(SDValue(Node, 1), ResHi);
-                             //        DEBUG(dbgs() << "=> "; ResHi.getNode()->dump(CurDAG); dbgs() << '\n');
-                             //    }
+                                 //    // Shift AX down 8 bits.
+                                 //    Result = SDValue(CurDAG->getMachineNode(Cse523::SHR16ri, dl, MVT::i16,
+                                 //                Result,
+                                 //                CurDAG->getTargetConstant(8, MVT::i8)), 0);
+                                 //    // Then truncate it down to i8.
+                                 //    ReplaceUses(SDValue(Node, 1),
+                                 //            CurDAG->getTargetExtractSubreg(Cse523::sub_8bit, dl, MVT::i8, Result));
+                                 //}
+                                 // Copy the low half of the result, if it is needed.
+                                 if (!SDValue(Node, 0).use_empty()) {
+                                     if (ResLo.getNode() == 0) {
+                                         assert(LoReg && "Register for low half is not defined!");
+                                         ResLo = CurDAG->getCopyFromReg(CurDAG->getEntryNode(), dl, LoReg, NVT,
+                                                 InFlag);
+                                         InFlag = ResLo.getValue(2);
+                                     }
+                                     ReplaceUses(SDValue(Node, 0), ResLo);
+                                     DEBUG(dbgs() << "=> "; ResLo.getNode()->dump(CurDAG); dbgs() << '\n');
+                                 }
+                                 // Copy the high half of the result, if it is needed.
+                                 if (!SDValue(Node, 1).use_empty()) {
+                                     if (ResHi.getNode() == 0) {
+                                         assert(HiReg && "Register for high half is not defined!");
+                                         ResHi = CurDAG->getCopyFromReg(CurDAG->getEntryNode(), dl, HiReg, NVT,
+                                                 InFlag);
+                                         InFlag = ResHi.getValue(2);
+                                     }
+                                     ReplaceUses(SDValue(Node, 1), ResHi);
+                                     DEBUG(dbgs() << "=> "; ResHi.getNode()->dump(CurDAG); dbgs() << '\n');
+                                 }
 
                                  return NULL;
                              }
 
         case ISD::SDIVREM:
         case ISD::UDIVREM: {
+                                assert(0);
                              //  SDValue N0 = Node->getOperand(0);
                              //  SDValue N1 = Node->getOperand(1);
 
@@ -2538,6 +2520,7 @@ SDNode *Cse523DAGToDAGISel::Select(SDNode *Node) {
 
         case Cse523ISD::CMP:
         case Cse523ISD::SUB: {
+                                assert(0);
                                  // Sometimes a SUB is used to perform comparison.
                              //    if (Opcode == Cse523ISD::SUB && Node->hasAnyUseOfValue(0))
                              //        // This node is not a CMP.
@@ -2677,6 +2660,7 @@ SDNode *Cse523DAGToDAGISel::Select(SDNode *Node) {
                                  break;
                              }
         case ISD::STORE: {
+                                assert(0);
                              // Change a chain of {load; incr or dec; store} of the same value into
                              // a simple increment or decrement through memory of that value, if the
                              // uses of the modified value and its address are suitable.

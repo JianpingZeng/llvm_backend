@@ -1289,9 +1289,9 @@ Cse523TargetLowering::LowerCallResult(SDValue Chain, SDValue InFlag,
 //                        // This truncation won't change the value.
 //                        DAG.getIntPtrConstant(1));
 //        } else {
-//            Chain = DAG.getCopyFromReg(Chain, dl, VA.getLocReg(),
-//                    CopyVT, InFlag).getValue(1);
-//            Val = Chain.getValue(0);
+            Chain = DAG.getCopyFromReg(Chain, dl, VA.getLocReg(),
+                    CopyVT, InFlag).getValue(1);
+            Val = Chain.getValue(0);
 //        }
         InFlag = Chain.getValue(2);
         InVals.push_back(Val);
@@ -1353,7 +1353,7 @@ static SDValue
 CreateCopyOfByValArgument(SDValue Src, SDValue Dst, SDValue Chain,
         ISD::ArgFlagsTy Flags, SelectionDAG &DAG,
         SDLoc dl) {
-    SDValue SizeNode = DAG.getConstant(Flags.getByValSize(), MVT::i32);
+    SDValue SizeNode = DAG.getConstant(Flags.getByValSize(), MVT::i64);
 
     return DAG.getMemcpy(Chain, dl, Dst, Src, SizeNode, Flags.getByValAlign(),
             /*isVolatile*/false, /*AlwaysInline=*/true,
@@ -2247,13 +2247,12 @@ bool MatchingStackOffset(SDValue Arg, unsigned Offset, ISD::ArgFlagsTy Flags,
             if (!TII->isLoadFromStackSlot(Def, FI))
                 return false;
         } else {
-            assert(0);
-            //unsigned Opcode = Def->getOpcode();
-            //if ((Opcode == Cse523::LEA32r || Opcode == Cse523::LEA64r) &&
-            //        Def->getOperand(1).isFI()) {
-            //    FI = Def->getOperand(1).getIndex();
-            //    Bytes = Flags.getByValSize();
-            //} else
+            unsigned Opcode = Def->getOpcode();
+            if ((Opcode == Cse523::LEA64r) &&
+                    Def->getOperand(1).isFI()) {
+                FI = Def->getOperand(1).getIndex();
+                Bytes = Flags.getByValSize();
+            } else
                 return false;
         }
     } else if (LoadSDNode *Ld = dyn_cast<LoadSDNode>(Arg)) {
@@ -2490,9 +2489,7 @@ Cse523TargetLowering::IsEligibleForTailCallOptimization(SDValue Callee,
 FastISel *
 Cse523TargetLowering::createFastISel(FunctionLoweringInfo &funcInfo,
         const TargetLibraryInfo *libInfo) const {
-    assert(0);
-    return NULL;
-    //return Cse523::createFastISel(funcInfo, libInfo);
+    return Cse523::createFastISel(funcInfo, libInfo);
 }
 
 //===----------------------------------------------------------------------===//
@@ -13037,8 +13034,10 @@ Cse523TargetLowering::EmitAtomicLoadArith(MachineInstr *MI,
     MachineBasicBlock *origMainMBB = mainMBB;
 
     // Add a PHI.
-//    MachineInstr *Phi = BuildMI(mainMBB, DL, TII->get(Cse523::PHI), t4)
-//        .addReg(t1).addMBB(thisMBB).addReg(t3).addMBB(mainMBB);
+    MachineInstr *Phi = BuildMI(mainMBB, DL, TII->get(Cse523::PHI), t4)
+        .addReg(t1).addMBB(thisMBB).addReg(t3).addMBB(mainMBB);
+
+    assert(0);
 //
 //    unsigned Opc = MI->getOpcode();
 //    switch (Opc) {
@@ -13248,6 +13247,8 @@ Cse523TargetLowering::EmitAtomicLoadArith6432(MachineInstr *MI,
     CurOp += Cse523::AddrNumOperands;
     SrcLoReg = MI->getOperand(CurOp++).getReg();
     SrcHiReg = MI->getOperand(CurOp++).getReg();
+
+    assert(0);
 
 //    const TargetRegisterClass *RC = &Cse523::GR32RegClass;
 //    const TargetRegisterClass *RC8 = &Cse523::GR8RegClass;
@@ -13502,16 +13503,16 @@ static MachineBasicBlock * EmitMonitor(MachineInstr *MI, MachineBasicBlock *BB,
         const Cse523Subtarget* Subtarget) {
     DebugLoc dl = MI->getDebugLoc();
 
-    // Address into RAX, other two args into ECX, EDX.
+    // TODO: Address into RAX, other two args into ECX, EDX.
     assert(0);
-    unsigned MemOpc = 10;//Cse523::LEA64r;
+    unsigned MemOpc = Cse523::LEA64r;
     unsigned MemReg = Cse523::RAX;
     MachineInstrBuilder MIB = BuildMI(*BB, MI, dl, TII->get(MemOpc), MemReg);
     for (int i = 0; i < Cse523::AddrNumOperands; ++i)
         MIB.addOperand(MI->getOperand(i));
 
     unsigned ValOps = Cse523::AddrNumOperands;
-    BuildMI(*BB, MI, dl, TII->get(TargetOpcode::COPY), Cse523::RCX) //TODO: Replaced
+    BuildMI(*BB, MI, dl, TII->get(TargetOpcode::COPY), Cse523::RCX)
         .addReg(MI->getOperand(ValOps).getReg());
     BuildMI(*BB, MI, dl, TII->get(TargetOpcode::COPY), Cse523::RDX)
         .addReg(MI->getOperand(ValOps+1).getReg());
@@ -13823,8 +13824,8 @@ Cse523TargetLowering::EmitVAStartSaveXMMRegsWithCustomInserter(
     int64_t RegSaveFrameIndex = MI->getOperand(1).getImm();
     int64_t VarArgsFPOffset = MI->getOperand(2).getImm();
 
-    assert(0);
     if (!Subtarget->isTargetWin64()) {
+        assert(0);
         // If %al is 0, branch around the XMM save block.
         //BuildMI(MBB, DL, TII->get(Cse523::TEST8rr)).addReg(CountReg).addReg(CountReg);
         //BuildMI(MBB, DL, TII->get(Cse523::JE_4)).addMBB(EndMBB);

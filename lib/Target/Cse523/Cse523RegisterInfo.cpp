@@ -120,7 +120,7 @@ Cse523RegisterInfo::getMatchingSuperRegClass(const TargetRegisterClass *A,
 }
 
 const TargetRegisterClass*
-Cse523RegisterInfo::getLargestLegalSuperClass(const TargetRegisterClass *RC) const{
+Cse523RegisterInfo::getLargestLegalSuperClass(const TargetRegisterClass *RC) const {
     // Don't allow super-classes of GR8_NOREX.  This class is only used after
     // extrating sub_8bit_hi sub-registers.  The H sub-registers cannot be copied
     // to the full GR8 register class in 64-bit mode, so we cannot allow the
@@ -129,9 +129,18 @@ Cse523RegisterInfo::getLargestLegalSuperClass(const TargetRegisterClass *RC) con
     // The GR8_NOREX class is always used in a way that won't be constrained to a
     // sub-class, so sub-classes like GR8_ABCD_L are allowed to expand to the
     // full GR8 class.
-
-    llvm_unreachable("Calls invalid getLargestLegalSuperClass()");
-
+    const TargetRegisterClass *Super = RC;
+    TargetRegisterClass::sc_iterator I = RC->getSuperClasses();
+    do {
+        switch (Super->getID()) {
+            case Cse523::GR64RegClassID:
+                // Don't return a super-class that would shrink the spill size.
+                // That can happen with the vector and float classes.
+                if (Super->getSize() == RC->getSize())
+                    return Super;
+        }
+        Super = *I++;
+    } while (Super);
     return RC;
 }
 

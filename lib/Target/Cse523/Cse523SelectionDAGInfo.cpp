@@ -197,6 +197,7 @@ Cse523SelectionDAGInfo::EmitTargetCodeForMemcpy(SelectionDAG &DAG, SDLoc dl,
     // the register.  Fall back to generic code.
     const Cse523RegisterInfo *TRI =
         static_cast<const Cse523RegisterInfo *>(DAG.getTarget().getRegisterInfo());
+    assert(0);
 //    if (TRI->hasBasePointer(DAG.getMachineFunction()) &&
 //            TRI->getBaseRegister() == Cse523::ESI)
 //        return SDValue();

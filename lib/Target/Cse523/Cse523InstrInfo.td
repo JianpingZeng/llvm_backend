@@ -54,14 +54,14 @@ def SDT2ResultBinaryArithWithFlags : SDTypeProfile<3, 2,
                                              SDTCisInt<0>, SDTCisVT<1, i64>]>;
 def SDTCse523BrCond  : SDTypeProfile<0, 3,
                                   [SDTCisVT<0, OtherVT>,
-                                   SDTCisVT<1, i8>, SDTCisVT<2, i32>]>;
+                                   SDTCisVT<1, i8>, SDTCisVT<2, i64>]>;
 
 def SDTCse523SetCC   : SDTypeProfile<1, 2,
                                   [SDTCisVT<0, i8>,
-                                   SDTCisVT<1, i8>, SDTCisVT<2, i32>]>;
+                                   SDTCisVT<1, i8>, SDTCisVT<2, i64>]>;
 def SDTCse523SetCC_C : SDTypeProfile<1, 2,
                                   [SDTCisInt<0>,
-                                   SDTCisVT<1, i8>, SDTCisVT<2, i32>]>;
+                                   SDTCisVT<1, i8>, SDTCisVT<2, i64>]>;
 
 def SDTCse523sahf : SDTypeProfile<1, 1, [SDTCisVT<0, i32>, SDTCisVT<1, i8>]>;
 
@@ -954,11 +954,11 @@ def MOV64rr : RI<0x89, MRMDestReg, (outs GR64:$dst), (ins GR64:$src),
                  "mov{q}\t{$src, $dst|$dst, $src}", [], IIC_MOV>;
 }
 
-//let isReMaterializable = 1, isAsCheapAsAMove = 1 in {
-//def MOV64ri32 : RIi32S<0xC7, MRM0r, (outs GR64:$dst), (ins i64i32imm:$src),
-//                       "mov{q}\t{$src, $dst|$dst, $src}",
-//                       [(set GR64:$dst, i64immSExt32:$src)], IIC_MOV>;
-//}
+let isReMaterializable = 1, isAsCheapAsAMove = 1 in {
+def MOV64ri32 : RIi32S<0xC7, MRM0r, (outs GR64:$dst), (ins i64i32imm:$src),
+                       "mov{q}\t{$src, $dst|$dst, $src}",
+                       [(set GR64:$dst, i64immSExt32:$src)], IIC_MOV>;
+}
 
 let isReMaterializable = 1 in {
 def MOV64ri : RIi64<0xB8, AddRegFrm, (outs GR64:$dst), (ins i64imm:$src),
@@ -969,15 +969,6 @@ def MOV64ri : RIi64<0xB8, AddRegFrm, (outs GR64:$dst), (ins i64imm:$src),
 } // SchedRW
 
 let SchedRW = [WriteStore] in {
-def MOV8mi  : Ii8 <0xC6, MRM0m, (outs), (ins i8mem :$dst, i8imm :$src),
-                   "mov{b}\t{$src, $dst|$dst, $src}",
-                   [(store (i8 imm:$src), addr:$dst)], IIC_MOV_MEM>;
-def MOV16mi : Ii16<0xC7, MRM0m, (outs), (ins i16mem:$dst, i16imm:$src),
-                   "mov{w}\t{$src, $dst|$dst, $src}",
-                   [(store (i16 imm:$src), addr:$dst)], IIC_MOV_MEM>, OpSize16;
-def MOV32mi : Ii32<0xC7, MRM0m, (outs), (ins i32mem:$dst, i32imm:$src),
-                   "mov{l}\t{$src, $dst|$dst, $src}",
-                   [(store (i32 imm:$src), addr:$dst)], IIC_MOV_MEM>, OpSize32;
 def MOV64mi32 : RIi32S<0xC7, MRM0m, (outs), (ins i64mem:$dst, i64i32imm:$src),
                        "mov{q}\t{$src, $dst|$dst, $src}",
                        [(store i64immSExt32:$src, addr:$dst)], IIC_MOV_MEM>;
@@ -1137,7 +1128,7 @@ include "Cse523InstrArithmetic.td"
 //include "Cse523InstrCMovSetCC.td"
 //include "Cse523InstrExtension.td"
 include "Cse523InstrControl.td"
-//include "Cse523InstrShiftRotate.td"
+include "Cse523InstrShiftRotate.td"
 //
 //// X87 Floating Point Stack.
 //include "Cse523InstrFPStack.td"
@@ -1163,7 +1154,7 @@ include "Cse523InstrControl.td"
 //include "Cse523InstrTSX.td"
 //
 //// System instructions.
-//include "Cse523InstrSystem.td"
+include "Cse523InstrSystem.td"
 //
 // Compiler Pseudo Instructions and Pat Patterns
 include "Cse523InstrCompiler.td"
@@ -1410,12 +1401,12 @@ defm : IntegerCondCodeMnemonicAlias<"cmov", "", "intel">;
 //def : InstAlias<"lcall *$dst",      (FARCALL32m opaque48mem:$dst)>, Requires<[Not16BitMode]>;
 //def : InstAlias<"ljmp *$dst",       (FARJMP32m  opaque48mem:$dst)>, Requires<[Not16BitMode]>;
 //
-//def : InstAlias<"call *$dst",       (CALL64m i16mem:$dst)>, Requires<[In64BitMode]>;
-//def : InstAlias<"jmp *$dst",        (JMP64m  i16mem:$dst)>, Requires<[In64BitMode]>;
+def : InstAlias<"call *$dst",       (CALL64m i16mem:$dst)>, Requires<[In64BitMode]>;
+def : InstAlias<"jmp *$dst",        (JMP64m  i16mem:$dst)>, Requires<[In64BitMode]>;
 //
 //
 //// "imul <imm>, B" is an alias for "imul <imm>, B, B".
-//def : InstAlias<"imulq $imm, $r",(IMUL64rri32 GR64:$r, GR64:$r,i64i32imm:$imm)>;
+def : InstAlias<"imulq $imm, $r",(IMUL64rri32 GR64:$r, GR64:$r,i64i32imm:$imm)>;
 //def : InstAlias<"imulq $imm, $r", (IMUL64rri8 GR64:$r, GR64:$r, i64i8imm:$imm)>;
 //
 //// inb %dx -> inb %al, %dx
@@ -1441,8 +1432,8 @@ defm : IntegerCondCodeMnemonicAlias<"cmov", "", "intel">;
 //def : InstAlias<"mov $mem, $seg", (MOV32sm SEGMENT_REG:$seg, i32mem:$mem)>;
 //def : InstAlias<"mov $seg, $mem", (MOV32ms i32mem:$mem, SEGMENT_REG:$seg)>;
 //
-//// Match 'movq <largeimm>, <reg>' as an alias for movabsq.
-//def : InstAlias<"movq $imm, $reg", (MOV64ri GR64:$reg, i64imm:$imm)>;
+// Match 'movq <largeimm>, <reg>' as an alias for movabsq.
+def : InstAlias<"movq $imm, $reg", (MOV64ri GR64:$reg, i64imm:$imm)>;
 //
 //// outb %dx -> outb %al, %dx
 //def : InstAlias<"outb\t{%dx|dx}", (OUT8rr), 0>;
@@ -1456,26 +1447,26 @@ defm : IntegerCondCodeMnemonicAlias<"cmov", "", "intel">;
 //// effect (both store to a 16-bit mem).  Force to sldtw to avoid ambiguity
 //// errors, since its encoding is the most compact.
 //def : InstAlias<"sldt $mem", (SLDT16m i16mem:$mem)>;
-//
+
 //// shld/shrd op,op -> shld op, op, CL
 //def : InstAlias<"shld{q}\t{$r2, $r1|$r1, $r2}", (SHLD64rrCL GR64:$r1, GR64:$r2), 0>;
 //def : InstAlias<"shrd{q}\t{$r2, $r1|$r1, $r2}", (SHRD64rrCL GR64:$r1, GR64:$r2), 0>;
 //
 //def : InstAlias<"shld{q}\t{$reg, $mem|$mem, $reg}", (SHLD64mrCL i64mem:$mem, GR64:$reg), 0>;
 //def : InstAlias<"shrd{q}\t{$reg, $mem|$mem, $reg}", (SHRD64mrCL i64mem:$mem, GR64:$reg), 0>;
-//
+
 ///*  FIXME: This is disabled because the asm matcher is currently incapable of
 // *  matching a fixed immediate like $1.
 //// "shl X, $1" is an alias for "shl X".
 //multiclass ShiftRotateByOneAlias<string Mnemonic, string Opc> {
-// def : InstAlias<!strconcat(Mnemonic, "q $op, $$1"),
-//                 (!cast<Instruction>(!strconcat(Opc, "64r1")) GR64:$op)>;
-// def : InstAlias<!strconcat(Mnemonic, "b $op, $$1"),
-//                 (!cast<Instruction>(!strconcat(Opc, "8m1")) i8mem:$op)>;
-// def : InstAlias<!strconcat(Mnemonic, "w $op, $$1"),
-//                 (!cast<Instruction>(!strconcat(Opc, "16m1")) i16mem:$op)>;
-// def : InstAlias<!strconcat(Mnemonic, "l $op, $$1"),
-//                 (!cast<Instruction>(!strconcat(Opc, "32m1")) i32mem:$op)>;
+//// def : InstAlias<!strconcat(Mnemonic, "q $op, $$1"),
+////                 (!cast<Instruction>(!strconcat(Opc, "64r1")) GR64:$op)>;
+//// def : InstAlias<!strconcat(Mnemonic, "b $op, $$1"),
+////                 (!cast<Instruction>(!strconcat(Opc, "8m1")) i8mem:$op)>;
+//// def : InstAlias<!strconcat(Mnemonic, "w $op, $$1"),
+////                 (!cast<Instruction>(!strconcat(Opc, "16m1")) i16mem:$op)>;
+//// def : InstAlias<!strconcat(Mnemonic, "l $op, $$1"),
+////                 (!cast<Instruction>(!strconcat(Opc, "32m1")) i32mem:$op)>;
 // def : InstAlias<!strconcat(Mnemonic, "q $op, $$1"),
 //                 (!cast<Instruction>(!strconcat(Opc, "64m1")) i64mem:$op)>;
 //}
@@ -1486,8 +1477,8 @@ defm : IntegerCondCodeMnemonicAlias<"cmov", "", "intel">;
 //defm : ShiftRotateByOneAlias<"ror", "ROR">;
 //FIXME */
 //
-//// test: We accept "testX <reg>, <mem>" and "testX <mem>, <reg>" as synonyms.
-//def : InstAlias<"test{q}\t{$val, $mem|$mem, $val}", (TEST64rm GR64:$val, i64mem:$mem)>;
+// test: We accept "testX <reg>, <mem>" and "testX <mem>, <reg>" as synonyms.
+def : InstAlias<"test{q}\t{$val, $mem|$mem, $val}", (TEST64rm GR64:$val, i64mem:$mem)>;
 //
 //// xchg: We accept "xchgX <reg>, <mem>" and "xchgX <mem>, <reg>" as synonyms.
 //def : InstAlias<"xchg{q}\t{$mem, $val|$val, $mem}", (XCHG64rm GR64:$val, i64mem:$mem)>;

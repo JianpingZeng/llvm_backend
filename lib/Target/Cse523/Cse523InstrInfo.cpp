@@ -97,8 +97,7 @@ void Cse523InstrInfo::anchor() {}
 
 Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
     : Cse523GenInstrInfo (
-        0, 0
-        //Cse523::ADJCALLSTACKDOWN64, Cse523::ADJCALLSTACKUP64
+        Cse523::ADJCALLSTACKDOWN64, Cse523::ADJCALLSTACKUP64
     ),
     TM(tm), RI(tm)
 {
@@ -403,7 +402,7 @@ Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
         //{ Cse523::Int_UCOMISSrr,   Cse523::Int_UCOMISSrm,       0 },
         //{ Cse523::MOV16rr,         Cse523::MOV16rm,             0 },
         //{ Cse523::MOV32rr,         Cse523::MOV32rm,             0 },
-        //{ Cse523::MOV64rr,         Cse523::MOV64rm,             0 },
+        { Cse523::MOV64rr,         Cse523::MOV64rm,             0 }
         //{ Cse523::MOV64toPQIrr,    Cse523::MOVQI2PQIrm,         0 },
         //{ Cse523::MOV64toSDrr,     Cse523::MOV64toSDrm,         0 },
         //{ Cse523::MOV8rr,          Cse523::MOV8rm,              0 },
@@ -456,15 +455,15 @@ Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
         //{ Cse523::UCOMISSrr,       Cse523::UCOMISSrm,           0 }
     };
 
-//    for (unsigned i = 0, e = array_lengthof(OpTbl1); i != e; ++i) {
-//        unsigned RegOp = OpTbl1[i].RegOp;
-//        unsigned MemOp = OpTbl1[i].MemOp;
-//        unsigned Flags = OpTbl1[i].Flags;
-//        AddTableEntry(RegOp2MemOpTable1, MemOp2RegOpTable,
-//                RegOp, MemOp,
-//                // Index 1, folded load
-//                Flags | TB_INDEX_1 | TB_FOLDED_LOAD);
-//    }
+    for (unsigned i = 0, e = array_lengthof(OpTbl1); i != e; ++i) {
+        unsigned RegOp = OpTbl1[i].RegOp;
+        unsigned MemOp = OpTbl1[i].MemOp;
+        unsigned Flags = OpTbl1[i].Flags;
+        AddTableEntry(RegOp2MemOpTable1, MemOp2RegOpTable,
+                RegOp, MemOp,
+                // Index 1, folded load
+                Flags | TB_INDEX_1 | TB_FOLDED_LOAD);
+    }
 
     static const Cse523OpTblEntry OpTbl2[1] = {
         //{ Cse523::ADC32rr,         Cse523::ADC32rm,       0 },
@@ -807,17 +806,14 @@ bool Cse523InstrInfo::isFrameOperand(const MachineInstr *MI, unsigned int Op,
 static bool isFrameLoadOpcode(int Opcode) {
     switch (Opcode) {
         default: break;
-//        case Cse523::MOV8rm:
-//        case Cse523::MOV16rm:
-//        case Cse523::MOV32rm:
-//        case Cse523::MOV64rm:
+        case Cse523::MOV64rm:
 //        case Cse523::LD_Fp64m:
 //        case Cse523::MOVSSrm:
 //        case Cse523::MOVSDrm:
 //        case Cse523::MOVAPSrm:
 //        case Cse523::MOVAPDrm:
 //        case Cse523::MOVDQArm:
-//            return true;
+            return true;
     }
     return false;
 }
@@ -825,17 +821,14 @@ static bool isFrameLoadOpcode(int Opcode) {
 static bool isFrameStoreOpcode(int Opcode) {
     switch (Opcode) {
         default: break;
-//        case Cse523::MOV8mr:
-//        case Cse523::MOV16mr:
-//        case Cse523::MOV32mr:
-//        case Cse523::MOV64mr:
+        case Cse523::MOV64mr:
 //        case Cse523::ST_FpP64m:
 //        case Cse523::MOVSSmr:
 //        case Cse523::MOVSDmr:
 //        case Cse523::MOVAPSmr:
 //        case Cse523::MOVAPDmr:
 //        case Cse523::MOVDQAmr:
-//             return true;
+             return true;
     }
     return false;
 }
@@ -893,6 +886,7 @@ static bool regIsPICBase(unsigned BaseReg, const MachineRegisterInfo &MRI) {
     for (MachineRegisterInfo::def_iterator I = MRI.def_begin(BaseReg),
             E = MRI.def_end(); I != E; ++I) {
         MachineInstr *DefMI = I.getOperand().getParent();
+        assert(0);
 //        if (DefMI->getOpcode() != Cse523::MOVPC32r)
 //            return false;
         assert(!isPICBase && "More than one PIC base?");
@@ -906,10 +900,7 @@ Cse523InstrInfo::isReallyTriviallyReMaterializable(const MachineInstr *MI,
         AliasAnalysis *AA) const {
     switch (MI->getOpcode()) {
         default: break;
-//        case Cse523::MOV8rm:
-//        case Cse523::MOV16rm:
-//        case Cse523::MOV32rm:
-//        case Cse523::MOV64rm:
+        case Cse523::MOV64rm:
 //        case Cse523::LD_Fp64m:
 //        case Cse523::MOVSSrm:
 //        case Cse523::MOVSDrm:
@@ -918,44 +909,43 @@ Cse523InstrInfo::isReallyTriviallyReMaterializable(const MachineInstr *MI,
 //        case Cse523::MOVAPDrm:
 //        case Cse523::MOVDQArm:
 //        case Cse523::MOVDQUrm:
-//        {
-//            // Loads from constant pools are trivially rematerializable.
-//            if (MI->getOperand(1).isReg() &&
-//                    MI->getOperand(2).isImm() &&
-//                    MI->getOperand(3).isReg() && MI->getOperand(3).getReg() == 0 &&
-//                    MI->isInvariantLoad(AA)) {
-//                unsigned BaseReg = MI->getOperand(1).getReg();
-//                if (BaseReg == 0 || BaseReg == Cse523::RIP)
-//                    return true;
-//                // Allow re-materialization of PIC load.
-//                if (!ReMatPICStubLoad && MI->getOperand(4).isGlobal())
-//                    return false;
-//                const MachineFunction &MF = *MI->getParent()->getParent();
-//                const MachineRegisterInfo &MRI = MF.getRegInfo();
-//                return regIsPICBase(BaseReg, MRI);
-//            }
-//            return false;
-//        }
-//
-//        case Cse523::LEA32r:
-//        case Cse523::LEA64r: 
-//        {
-//            if (MI->getOperand(2).isImm() &&
-//                    MI->getOperand(3).isReg() && MI->getOperand(3).getReg() == 0 &&
-//                    !MI->getOperand(4).isReg()) {
-//                // lea fi#, lea GV, etc. are all rematerializable.
-//                if (!MI->getOperand(1).isReg())
-//                    return true;
-//                unsigned BaseReg = MI->getOperand(1).getReg();
-//                if (BaseReg == 0)
-//                    return true;
-//                // Allow re-materialization of lea PICBase + x.
-//                const MachineFunction &MF = *MI->getParent()->getParent();
-//                const MachineRegisterInfo &MRI = MF.getRegInfo();
-//                return regIsPICBase(BaseReg, MRI);
-//            }
-//            return false;
-//        }
+        {
+            // Loads from constant pools are trivially rematerializable.
+            if (MI->getOperand(1).isReg() &&
+                    MI->getOperand(2).isImm() &&
+                    MI->getOperand(3).isReg() && MI->getOperand(3).getReg() == 0 &&
+                    MI->isInvariantLoad(AA)) {
+                unsigned BaseReg = MI->getOperand(1).getReg();
+                if (BaseReg == 0 || BaseReg == Cse523::RIP)
+                    return true;
+                // Allow re-materialization of PIC load.
+                if (!ReMatPICStubLoad && MI->getOperand(4).isGlobal())
+                    return false;
+                const MachineFunction &MF = *MI->getParent()->getParent();
+                const MachineRegisterInfo &MRI = MF.getRegInfo();
+                return regIsPICBase(BaseReg, MRI);
+            }
+            return false;
+        }
+
+        case Cse523::LEA64r: 
+        {
+            if (MI->getOperand(2).isImm() &&
+                    MI->getOperand(3).isReg() && MI->getOperand(3).getReg() == 0 &&
+                    !MI->getOperand(4).isReg()) {
+                // lea fi#, lea GV, etc. are all rematerializable.
+                if (!MI->getOperand(1).isReg())
+                    return true;
+                unsigned BaseReg = MI->getOperand(1).getReg();
+                if (BaseReg == 0)
+                    return true;
+                // Allow re-materialization of lea PICBase + x.
+                const MachineFunction &MF = *MI->getParent()->getParent();
+                const MachineRegisterInfo &MRI = MF.getRegInfo();
+                return regIsPICBase(BaseReg, MRI);
+            }
+            return false;
+        }
     }
 
     // All other instructions marked M_REMATERIALIZABLE are always trivially
@@ -1190,7 +1180,6 @@ Cse523InstrInfo::convertToThreeAddressWithLEA(unsigned MIOpc,
 //    bool isKill = MI->getOperand(1).isKill();
 //
 //    MachineRegisterInfo &RegInfo = MFI->getParent()->getRegInfo();
-//    assert(0);
 //    unsigned leaOutReg = 10;//RegInfo.createVirtualRegister(&Cse523::GR32RegClass); //TODO
 //    unsigned Opc, leaInReg;
 //
@@ -1972,6 +1961,7 @@ bool Cse523InstrInfo::AnalyzeBranch(MachineBasicBlock &MBB,
         MachineBasicBlock *&FBB,
         SmallVectorImpl<MachineOperand> &Cond,
         bool AllowModify) const {
+    assert(0);
     // Start from the bottom of the block and work up, examining the
     // terminator instructions.
 //    MachineBasicBlock::iterator I = MBB.end();
@@ -2128,6 +2118,7 @@ unsigned Cse523InstrInfo::RemoveBranch(MachineBasicBlock &MBB) const {
 //        ++Count;
 //    }
 
+    assert(0);
     return Count;
 }
 
@@ -2177,6 +2168,7 @@ Cse523InstrInfo::InsertBranch(MachineBasicBlock &MBB, MachineBasicBlock *TBB,
 //        BuildMI(&MBB, DL, get(Cse523::JMP_4)).addMBB(FBB);
 //        ++Count;
 //    }
+    assert(0);
     return Count;
 }
 
@@ -2186,8 +2178,8 @@ canInsertSelect(const MachineBasicBlock &MBB,
         unsigned TrueReg, unsigned FalseReg,
         int &CondCycles, int &TrueCycles, int &FalseCycles) const {
     // Not all subtargets have cmov instructions.
-    //if (!TM.getSubtarget<Cse523Subtarget>().hasCMov())
-    //    return false;
+    if (!TM.getSubtarget<Cse523Subtarget>().hasCMov())
+        return false;
     if (Cond.size() != 1)
         return false;
     // We cannot do the composite conditions, at least not in SSA form.
@@ -2248,10 +2240,10 @@ void Cse523InstrInfo::copyPhysReg(MachineBasicBlock &MBB,
         bool KillSrc) const {
     // First deal with the normal symmetric copies.
     unsigned Opc = 0;
-//    if (Cse523::GR64RegClass.contains(DestReg, SrcReg))
-//        Opc = Cse523::MOV64rr;
-//    else
-//        llvm_unreachable("Invalid Register copyPhysReg()");
+    if (Cse523::GR64RegClass.contains(DestReg, SrcReg))
+        Opc = Cse523::MOV64rr;
+    else
+        llvm_unreachable("Invalid Register copyPhysReg()");
 
     if (Opc) {
         BuildMI(MBB, MI, DL, get(Opc), DestReg)
@@ -2282,7 +2274,7 @@ static unsigned getLoadStoreRegOpcode(unsigned Reg,
             llvm_unreachable("Unknown 4-byte regclass");
         case 8:
             if (Cse523::GR64RegClass.hasSubClassEq(RC)) {
-//                return load ? Cse523::MOV64rm : Cse523::MOV64mr;
+                return load ? Cse523::MOV64rm : Cse523::MOV64mr;
             } else {
                 llvm_unreachable("Unknown 8-byte regclass");
             }
@@ -2383,6 +2375,7 @@ void Cse523InstrInfo::loadRegFromAddr(MachineFunction &MF, unsigned DestReg,
 bool Cse523InstrInfo::
 analyzeCompare(const MachineInstr *MI, unsigned &SrcReg, unsigned &SrcReg2,
         int &CmpMask, int &CmpValue) const {
+    assert(0);
     switch (MI->getOpcode()) {
         default: break;
 //        case Cse523::CMP64ri32:
@@ -2461,6 +2454,8 @@ analyzeCompare(const MachineInstr *MI, unsigned &SrcReg, unsigned &SrcReg2,
 inline static bool isRedundantFlagInstr(MachineInstr *FlagI, unsigned SrcReg,
         unsigned SrcReg2, int ImmValue,
         MachineInstr *OI) {
+
+    assert(0);
 //    if (((FlagI->getOpcode() == Cse523::CMP64rr &&
 //                    OI->getOpcode() == Cse523::SUB64rr) ||
 //                (FlagI->getOpcode() == Cse523::CMP32rr &&
@@ -2498,6 +2493,7 @@ inline static bool isRedundantFlagInstr(MachineInstr *FlagI, unsigned SrcReg,
 /// isDefConvertible - check whether the definition can be converted
 /// to remove a comparison against zero.
 inline static bool isDefConvertible(MachineInstr *MI) {
+    assert(0);
     switch (MI->getOpcode()) {
         default: return false;
 
@@ -3149,6 +3145,7 @@ Cse523InstrInfo::foldMemoryOperandImpl(MachineFunction &MF,
 /// FIXME: This should be turned into a TSFlags.
 ///
 static bool hasPartialRegUpdate(unsigned Opcode) {
+    assert(0);
     switch (Opcode) {
         default: break;
 //        case Cse523::CVTSI2SSrr:
@@ -3267,6 +3264,7 @@ Cse523InstrInfo::foldMemoryOperandImpl(MachineFunction &MF, MachineInstr *MI,
     if (Ops.size() == 2 && Ops[0] == 0 && Ops[1] == 1) {
         unsigned NewOpc = 0;
         unsigned RCSize = 0;
+        assert(0);
         switch (MI->getOpcode()) {
             default: return NULL;
 //            case Cse523::TEST8rr:  NewOpc = Cse523::CMP8ri; RCSize = 1; break;
@@ -3309,6 +3307,7 @@ MachineInstr* Cse523InstrInfo::foldMemoryOperandImpl(MachineFunction &MF,
             hasPartialRegUpdate(MI->getOpcode()))
         return 0;
 
+    assert(0);
     // Determine the alignment of the load.
     unsigned Alignment = 0;
     if (LoadMI->hasOneMemOperand())
@@ -3694,6 +3693,7 @@ unsigned Cse523InstrInfo::getOpcodeAfterMemoryUnfold(unsigned Opc,
         unsigned *LoadRegIndex) const {
     DenseMap<unsigned, std::pair<unsigned,unsigned> >::const_iterator I =
         MemOp2RegOpTable.find(Opc);
+    assert(0);
     if (I == MemOp2RegOpTable.end())
         return 0;
     bool FoldedLoad = I->second.second & TB_FOLDED_LOAD;
@@ -3940,10 +3940,11 @@ void Cse523InstrInfo::setExecutionDomain(MachineInstr *MI, unsigned Domain) cons
 
 /// getNoopForMachoTarget - Return the noop instruction to use for a noop.
 void Cse523InstrInfo::getNoopForMachoTarget(MCInst &NopInst) const {
-    //NopInst.setOpcode(Cse523::NOOP);
+    NopInst.setOpcode(Cse523::NOOP);
 }
 
 bool Cse523InstrInfo::isHighLatencyDef(int opc) const {
+    assert(0);
     switch (opc) {
         default: return false;
 //        case Cse523::DIVSDrm:
@@ -3999,6 +4000,7 @@ namespace {
             // If we didn't need a GlobalBaseReg, don't insert code.
             if (GlobalBaseReg == 0)
                 return false;
+            assert(0);
 
             // Insert the set of GlobalBaseReg into the first MBB of the function
 //            MachineBasicBlock &FirstMBB = MF.front();
@@ -4009,7 +4011,6 @@ namespace {
 //
 //            unsigned PC;
 //            if (TM->getSubtarget<Cse523Subtarget>().isPICStyleGOT())
-//                assert(0);
 //                PC = 10;
 //            else
 //                PC = GlobalBaseReg;
@@ -4074,14 +4075,13 @@ namespace {
             for (MachineBasicBlock::iterator I = BB->begin(), E = BB->end(); I != E;
                     ++I) {
                 switch (I->getOpcode()) {
-//                    case Cse523::TLS_base_addr32:
-//                    case Cse523::TLS_base_addr64:
-//                        if (TLSBaseAddrReg)
-//                            I = ReplaceTLSBaseAddrCall(I, TLSBaseAddrReg);
-//                        else
-//                            I = SetRegister(I, &TLSBaseAddrReg);
-//                        Changed = true;
-//                        break;
+                    case Cse523::TLS_base_addr64:
+                        if (TLSBaseAddrReg)
+                            I = ReplaceTLSBaseAddrCall(I, TLSBaseAddrReg);
+                        else
+                            I = SetRegister(I, &TLSBaseAddrReg);
+                        Changed = true;
+                        break;
                     default:
                         break;
                 }

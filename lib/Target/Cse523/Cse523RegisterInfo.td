@@ -56,6 +56,7 @@ def R14 : Cse523Reg<"r14", 14>, DwarfRegNum<[14]>;
 def R15 : Cse523Reg<"r15", 15>, DwarfRegNum<[15]>;
 def RIP : Cse523Reg<"rip",  0>, DwarfRegNum<[16]>;
 }
+}
 
 
 // Status flags register
@@ -99,7 +100,6 @@ def CR15 : Cse523Reg<"cr15", 15>;
 
 // Pseudo index registers
 def RIZ : Cse523Reg<"riz", 4>;
-}
 
 //===----------------------------------------------------------------------===//
 // Register Class Definitions... now that we have all of the pieces, define the
