@@ -2119,78 +2119,77 @@ SDNode *Cse523DAGToDAGISel::Select(SDNode *Node) {
         case ISD::XOR: {
                            // For operations of the form (x << C1) op C2, check if we can use a smaller
                            // encoding for C2 by transforming it into (x op (C2>>C1)) << C1.
-                           assert(0);
-                       //    SDValue N0 = Node->getOperand(0);
-                       //    SDValue N1 = Node->getOperand(1);
+                           SDValue N0 = Node->getOperand(0);
+                           SDValue N1 = Node->getOperand(1);
 
-                       //    if (N0->getOpcode() != ISD::SHL || !N0->hasOneUse())
-                       //        break;
+                           if (N0->getOpcode() != ISD::SHL || !N0->hasOneUse())
+                               break;
 
-                       //    // i8 is unshrinkable, i16 should be promoted to i32.
-                       //    if (NVT != MVT::i32 && NVT != MVT::i64)
-                       //        break;
+                           // i8 is unshrinkable, i16 should be promoted to i32.
+                           if (NVT != MVT::i32 && NVT != MVT::i64)
+                               break;
 
-                       //    ConstantSDNode *Cst = dyn_cast<ConstantSDNode>(N1);
-                       //    ConstantSDNode *ShlCst = dyn_cast<ConstantSDNode>(N0->getOperand(1));
-                       //    if (!Cst || !ShlCst)
-                       //        break;
+                           ConstantSDNode *Cst = dyn_cast<ConstantSDNode>(N1);
+                           ConstantSDNode *ShlCst = dyn_cast<ConstantSDNode>(N0->getOperand(1));
+                           if (!Cst || !ShlCst)
+                               break;
 
-                       //    int64_t Val = Cst->getSExtValue();
-                       //    uint64_t ShlVal = ShlCst->getZExtValue();
+                           int64_t Val = Cst->getSExtValue();
+                           uint64_t ShlVal = ShlCst->getZExtValue();
 
-                       //    // Make sure that we don't change the operation by removing bits.
-                       //    // This only matters for OR and XOR, AND is unaffected.
-                       //    uint64_t RemovedBitsMask = (1ULL << ShlVal) - 1;
-                       //    if (Opcode != ISD::AND && (Val & RemovedBitsMask) != 0)
-                       //        break;
+                           // Make sure that we don't change the operation by removing bits.
+                           // This only matters for OR and XOR, AND is unaffected.
+                           uint64_t RemovedBitsMask = (1ULL << ShlVal) - 1;
+                           if (Opcode != ISD::AND && (Val & RemovedBitsMask) != 0)
+                               break;
 
-                       //    unsigned ShlOp, Op;
-                       //    MVT CstVT = NVT;
+                           unsigned ShlOp, Op;
+                           MVT CstVT = NVT;
 
-                       //    // Check the minimum bitwidth for the new constant.
-                       //    // TODO: AND32ri is the same as AND64ri32 with zext imm.
-                       //    // TODO: MOV32ri+OR64r is cheaper than MOV64ri64+OR64rr
-                       //    // TODO: Using 16 and 8 bit operations is also possible for or32 & xor32.
-                       //    if (!isInt<8>(Val) && isInt<8>(Val >> ShlVal))
-                       //        CstVT = MVT::i8;
-                       //    else if (!isInt<32>(Val) && isInt<32>(Val >> ShlVal))
-                       //        CstVT = MVT::i32;
+                           // Check the minimum bitwidth for the new constant.
+                           // TODO: AND32ri is the same as AND64ri32 with zext imm.
+                           // TODO: MOV32ri+OR64r is cheaper than MOV64ri64+OR64rr
+                           // TODO: Using 16 and 8 bit operations is also possible for or32 & xor32.
+                           if (!isInt<8>(Val) && isInt<8>(Val >> ShlVal))
+                               CstVT = MVT::i8;
+                           else if (!isInt<32>(Val) && isInt<32>(Val >> ShlVal))
+                               CstVT = MVT::i32;
 
-                       //    // Bail if there is no smaller encoding.
-                       //    if (NVT == CstVT)
-                       //        break;
+                           // Bail if there is no smaller encoding.
+                           if (NVT == CstVT)
+                               break;
 
-                       //    switch (NVT.SimpleTy) {
-                       //        default: llvm_unreachable("Unsupported VT!");
-                       //        case MVT::i32:
-                       //                 assert(CstVT == MVT::i8);
-                       //                 //ShlOp = Cse523::SHL32ri;
+                           switch (NVT.SimpleTy) {
+                               default: llvm_unreachable("Unsupported VT!");
+                               case MVT::i32:
+                                        assert(CstVT == MVT::i8);
+                                        //ShlOp = Cse523::SHL32ri;
 
-                       //                 switch (Opcode) {
-                       //                     default: llvm_unreachable("Impossible opcode");
-                       //                     //case ISD::AND: Op = Cse523::AND32ri8; break;
-                       //                     //case ISD::OR:  Op =  Cse523::OR32ri8; break;
-                       //                     //case ISD::XOR: Op = Cse523::XOR32ri8; break;
-                       //                 }
-                       //                 break;
-                       //        case MVT::i64:
-                       //                 assert(CstVT == MVT::i8 || CstVT == MVT::i32);
-                       //                 //ShlOp = Cse523::SHL64ri;
+                                        switch (Opcode) {
+                                            default: llvm_unreachable("Impossible opcode");
+                                            //case ISD::AND: Op = Cse523::AND32ri8; break;
+                                            //case ISD::OR:  Op =  Cse523::OR32ri8; break;
+                                            //case ISD::XOR: Op = Cse523::XOR32ri8; break;
+                                        }
+                                        break;
+                               case MVT::i64:
+                                        assert(CstVT == MVT::i8 || CstVT == MVT::i32);
+                                        ShlOp = Cse523::SHL64ri;
 
-                       //                 switch (Opcode) {
-                       //                     default: llvm_unreachable("Impossible opcode");
-                       //                     //case ISD::AND: Op = CstVT==MVT::i8? Cse523::AND64ri8 : Cse523::AND64ri32; break;
-                       //                     //case ISD::OR:  Op = CstVT==MVT::i8?  Cse523::OR64ri8 :  Cse523::OR64ri32; break;
-                       //                     //case ISD::XOR: Op = CstVT==MVT::i8? Cse523::XOR64ri8 : Cse523::XOR64ri32; break;
-                       //                 }
-                       //                 break;
-                       //    }
+                                        switch (Opcode) {
+                                            default: llvm_unreachable("Impossible opcode");
+                                            case ISD::AND: Op = Cse523::AND64ri32; break;
+                                            case ISD::OR:  Op = Cse523::OR64ri32; break;
+                                            case ISD::XOR: Op = Cse523::XOR64ri32; break;
+                                        }
+                                        break;
+                           }
 
-                       //    // Emit the smaller op and the shift.
-                       //    SDValue NewCst = CurDAG->getTargetConstant(Val >> ShlVal, CstVT);
-                       //    SDNode *New = CurDAG->getMachineNode(Op, dl, NVT, N0->getOperand(0),NewCst);
-                       //    return CurDAG->SelectNodeTo(Node, ShlOp, NVT, SDValue(New, 0),
-                       //            getI8Imm(ShlVal));
+                           // Emit the smaller op and the shift.
+                           SDValue NewCst = CurDAG->getTargetConstant(Val >> ShlVal, CstVT);
+                           SDNode *New = CurDAG->getMachineNode(Op, dl, NVT, N0->getOperand(0),NewCst);
+                           return CurDAG->SelectNodeTo(Node, ShlOp, NVT, SDValue(New, 0),
+                                   getI8Imm(ShlVal));
                        }
                        break;
         case Cse523ISD::UMUL: {
@@ -2660,7 +2659,6 @@ SDNode *Cse523DAGToDAGISel::Select(SDNode *Node) {
                                  break;
                              }
         case ISD::STORE: {
-                                assert(0);
                              // Change a chain of {load; incr or dec; store} of the same value into
                              // a simple increment or decrement through memory of that value, if the
                              // uses of the modified value and its address are suitable.
@@ -2678,36 +2676,36 @@ SDNode *Cse523DAGToDAGISel::Select(SDNode *Node) {
                              //  [(store (add (loadi64 addr:$dst), -1), addr:$dst),
                              //   (transferrable EFLAGS)]>;
 
-                             //StoreSDNode *StoreNode = cast<StoreSDNode>(Node);
-                             //SDValue StoredVal = StoreNode->getOperand(1);
-                             //unsigned Opc = StoredVal->getOpcode();
+                             StoreSDNode *StoreNode = cast<StoreSDNode>(Node);
+                             SDValue StoredVal = StoreNode->getOperand(1);
+                             unsigned Opc = StoredVal->getOpcode();
 
-                             //LoadSDNode *LoadNode = 0;
-                             //SDValue InputChain;
-                             //if (!isLoadIncOrDecStore(StoreNode, Opc, StoredVal, CurDAG,
-                             //            LoadNode, InputChain))
-                             //    break;
+                             LoadSDNode *LoadNode = 0;
+                             SDValue InputChain;
+                             if (!isLoadIncOrDecStore(StoreNode, Opc, StoredVal, CurDAG,
+                                         LoadNode, InputChain))
+                                 break;
 
-                             //SDValue Base, Scale, Index, Disp, Segment;
-                             //if (!SelectAddr(LoadNode, LoadNode->getBasePtr(),
-                             //            Base, Scale, Index, Disp, Segment))
-                             //    break;
+                             SDValue Base, Scale, Index, Disp, Segment;
+                             if (!SelectAddr(LoadNode, LoadNode->getBasePtr(),
+                                         Base, Scale, Index, Disp, Segment))
+                                 break;
 
-                             //MachineSDNode::mmo_iterator MemOp = MF->allocateMemRefsArray(2);
-                             //MemOp[0] = StoreNode->getMemOperand();
-                             //MemOp[1] = LoadNode->getMemOperand();
-                             //const SDValue Ops[] = { Base, Scale, Index, Disp, Segment, InputChain };
-                             //EVT LdVT = LoadNode->getMemoryVT();
-                             //unsigned newOpc = getFusedLdStOpcode(LdVT, Opc);
-                             //MachineSDNode *Result = CurDAG->getMachineNode(newOpc,
-                             //        SDLoc(Node),
-                             //        MVT::i32, MVT::Other, Ops);
-                             //Result->setMemRefs(MemOp, MemOp + 2);
+                             MachineSDNode::mmo_iterator MemOp = MF->allocateMemRefsArray(2);
+                             MemOp[0] = StoreNode->getMemOperand();
+                             MemOp[1] = LoadNode->getMemOperand();
+                             const SDValue Ops[] = { Base, Scale, Index, Disp, Segment, InputChain };
+                             EVT LdVT = LoadNode->getMemoryVT();
+                             unsigned newOpc = getFusedLdStOpcode(LdVT, Opc);
+                             MachineSDNode *Result = CurDAG->getMachineNode(newOpc,
+                                     SDLoc(Node),
+                                     MVT::i32, MVT::Other, Ops);
+                             Result->setMemRefs(MemOp, MemOp + 2);
 
-                             //ReplaceUses(SDValue(StoreNode, 0), SDValue(Result, 1));
-                             //ReplaceUses(SDValue(StoredVal.getNode(), 1), SDValue(Result, 0));
+                             ReplaceUses(SDValue(StoreNode, 0), SDValue(Result, 1));
+                             ReplaceUses(SDValue(StoredVal.getNode(), 1), SDValue(Result, 0));
 
-                             //return Result;
+                             return Result;
                          }
                          break;
     }

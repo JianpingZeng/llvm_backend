@@ -1878,7 +1878,6 @@ Cse523TargetLowering::LowerCall(TargetLowering::CallLoweringInfo &CLI,
                 // Win64 ABI requires argument XMM reg to be copied to the corresponding
                 // shadow reg if callee is a varargs function.
                 unsigned ShadowReg = 0;
-                assert(0);
                 if (ShadowReg)
                     RegsToPass.push_back(std::make_pair(ShadowReg, Arg));
             }

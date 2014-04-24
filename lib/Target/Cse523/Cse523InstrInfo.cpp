@@ -102,171 +102,45 @@ Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
     TM(tm), RI(tm)
 {
 
-    static const Cse523OpTblEntry OpTbl2Addr[1] = {
-        //{ Cse523::ADC32ri,     Cse523::ADC32mi,    0 },
-        //{ Cse523::ADC32ri8,    Cse523::ADC32mi8,   0 },
-        //{ Cse523::ADC32rr,     Cse523::ADC32mr,    0 },
+    static const Cse523OpTblEntry OpTbl2Addr[] = {
         //{ Cse523::ADC64ri32,   Cse523::ADC64mi32,  0 },
-        //{ Cse523::ADC64ri8,    Cse523::ADC64mi8,   0 },
         //{ Cse523::ADC64rr,     Cse523::ADC64mr,    0 },
-        //{ Cse523::ADD16ri,     Cse523::ADD16mi,    0 },
-        //{ Cse523::ADD16ri8,    Cse523::ADD16mi8,   0 },
-        //{ Cse523::ADD16ri_DB,  Cse523::ADD16mi,    TB_NO_REVERSE },
-        //{ Cse523::ADD16ri8_DB, Cse523::ADD16mi8,   TB_NO_REVERSE },
-        //{ Cse523::ADD16rr,     Cse523::ADD16mr,    0 },
-        //{ Cse523::ADD16rr_DB,  Cse523::ADD16mr,    TB_NO_REVERSE },
-        //{ Cse523::ADD32ri,     Cse523::ADD32mi,    0 },
-        //{ Cse523::ADD32ri8,    Cse523::ADD32mi8,   0 },
-        //{ Cse523::ADD32ri_DB,  Cse523::ADD32mi,    TB_NO_REVERSE },
-        //{ Cse523::ADD32ri8_DB, Cse523::ADD32mi8,   TB_NO_REVERSE },
-        //{ Cse523::ADD32rr,     Cse523::ADD32mr,    0 },
-        //{ Cse523::ADD32rr_DB,  Cse523::ADD32mr,    TB_NO_REVERSE },
-        //{ Cse523::ADD64ri32,   Cse523::ADD64mi32,  0 },
-        //{ Cse523::ADD64ri8,    Cse523::ADD64mi8,   0 },
+        { Cse523::ADD64ri32,   Cse523::ADD64mi32,  0 },
         //{ Cse523::ADD64ri32_DB,Cse523::ADD64mi32,  TB_NO_REVERSE },
-        //{ Cse523::ADD64ri8_DB, Cse523::ADD64mi8,   TB_NO_REVERSE },
-        //{ Cse523::ADD64rr,     Cse523::ADD64mr,    0 },
+        { Cse523::ADD64rr,     Cse523::ADD64mr,    0 },
         //{ Cse523::ADD64rr_DB,  Cse523::ADD64mr,    TB_NO_REVERSE },
-        //{ Cse523::ADD8ri,      Cse523::ADD8mi,     0 },
-        //{ Cse523::ADD8rr,      Cse523::ADD8mr,     0 },
-        //{ Cse523::AND16ri,     Cse523::AND16mi,    0 },
-        //{ Cse523::AND16ri8,    Cse523::AND16mi8,   0 },
-        //{ Cse523::AND16rr,     Cse523::AND16mr,    0 },
-        //{ Cse523::AND32ri,     Cse523::AND32mi,    0 },
-        //{ Cse523::AND32ri8,    Cse523::AND32mi8,   0 },
-        //{ Cse523::AND32rr,     Cse523::AND32mr,    0 },
-        //{ Cse523::AND64ri32,   Cse523::AND64mi32,  0 },
-        //{ Cse523::AND64ri8,    Cse523::AND64mi8,   0 },
-        //{ Cse523::AND64rr,     Cse523::AND64mr,    0 },
-        //{ Cse523::AND8ri,      Cse523::AND8mi,     0 },
-        //{ Cse523::AND8rr,      Cse523::AND8mr,     0 },
-        //{ Cse523::DEC16r,      Cse523::DEC16m,     0 },
-        //{ Cse523::DEC32r,      Cse523::DEC32m,     0 },
-        //{ Cse523::DEC64_16r,   Cse523::DEC64_16m,  0 },
+        { Cse523::AND64ri32,   Cse523::AND64mi32,  0 },
+        { Cse523::AND64rr,     Cse523::AND64mr,    0 },
         //{ Cse523::DEC64_32r,   Cse523::DEC64_32m,  0 },
-        //{ Cse523::DEC64r,      Cse523::DEC64m,     0 },
-        //{ Cse523::DEC8r,       Cse523::DEC8m,      0 },
-        //{ Cse523::INC16r,      Cse523::INC16m,     0 },
-        //{ Cse523::INC32r,      Cse523::INC32m,     0 },
-        //{ Cse523::INC64_16r,   Cse523::INC64_16m,  0 },
+        { Cse523::DEC64r,      Cse523::DEC64m,     0 },
         //{ Cse523::INC64_32r,   Cse523::INC64_32m,  0 },
-        //{ Cse523::INC64r,      Cse523::INC64m,     0 },
-        //{ Cse523::INC8r,       Cse523::INC8m,      0 },
-        //{ Cse523::NEG16r,      Cse523::NEG16m,     0 },
-        //{ Cse523::NEG32r,      Cse523::NEG32m,     0 },
-        //{ Cse523::NEG64r,      Cse523::NEG64m,     0 },
-        //{ Cse523::NEG8r,       Cse523::NEG8m,      0 },
-        //{ Cse523::NOT16r,      Cse523::NOT16m,     0 },
-        //{ Cse523::NOT32r,      Cse523::NOT32m,     0 },
-        //{ Cse523::NOT64r,      Cse523::NOT64m,     0 },
-        //{ Cse523::NOT8r,       Cse523::NOT8m,      0 },
-        //{ Cse523::OR16ri,      Cse523::OR16mi,     0 },
-        //{ Cse523::OR16ri8,     Cse523::OR16mi8,    0 },
-        //{ Cse523::OR16rr,      Cse523::OR16mr,     0 },
-        //{ Cse523::OR32ri,      Cse523::OR32mi,     0 },
-        //{ Cse523::OR32ri8,     Cse523::OR32mi8,    0 },
-        //{ Cse523::OR32rr,      Cse523::OR32mr,     0 },
-        //{ Cse523::OR64ri32,    Cse523::OR64mi32,   0 },
-        //{ Cse523::OR64ri8,     Cse523::OR64mi8,    0 },
-        //{ Cse523::OR64rr,      Cse523::OR64mr,     0 },
-        //{ Cse523::OR8ri,       Cse523::OR8mi,      0 },
-        //{ Cse523::OR8rr,       Cse523::OR8mr,      0 },
-        //{ Cse523::ROL16r1,     Cse523::ROL16m1,    0 },
-        //{ Cse523::ROL16rCL,    Cse523::ROL16mCL,   0 },
-        //{ Cse523::ROL16ri,     Cse523::ROL16mi,    0 },
-        //{ Cse523::ROL32r1,     Cse523::ROL32m1,    0 },
-        //{ Cse523::ROL32rCL,    Cse523::ROL32mCL,   0 },
-        //{ Cse523::ROL32ri,     Cse523::ROL32mi,    0 },
+        { Cse523::INC64r,      Cse523::INC64m,     0 },
+        { Cse523::NEG64r,      Cse523::NEG64m,     0 },
+        { Cse523::NOT64r,      Cse523::NOT64m,     0 },
+        { Cse523::OR64ri32,    Cse523::OR64mi32,   0 },
+        { Cse523::OR64rr,      Cse523::OR64mr,     0 },
         //{ Cse523::ROL64r1,     Cse523::ROL64m1,    0 },
         //{ Cse523::ROL64rCL,    Cse523::ROL64mCL,   0 },
         //{ Cse523::ROL64ri,     Cse523::ROL64mi,    0 },
-        //{ Cse523::ROL8r1,      Cse523::ROL8m1,     0 },
-        //{ Cse523::ROL8rCL,     Cse523::ROL8mCL,    0 },
-        //{ Cse523::ROL8ri,      Cse523::ROL8mi,     0 },
-        //{ Cse523::ROR16r1,     Cse523::ROR16m1,    0 },
-        //{ Cse523::ROR16rCL,    Cse523::ROR16mCL,   0 },
-        //{ Cse523::ROR16ri,     Cse523::ROR16mi,    0 },
-        //{ Cse523::ROR32r1,     Cse523::ROR32m1,    0 },
-        //{ Cse523::ROR32rCL,    Cse523::ROR32mCL,   0 },
-        //{ Cse523::ROR32ri,     Cse523::ROR32mi,    0 },
         //{ Cse523::ROR64r1,     Cse523::ROR64m1,    0 },
         //{ Cse523::ROR64rCL,    Cse523::ROR64mCL,   0 },
         //{ Cse523::ROR64ri,     Cse523::ROR64mi,    0 },
-        //{ Cse523::ROR8r1,      Cse523::ROR8m1,     0 },
-        //{ Cse523::ROR8rCL,     Cse523::ROR8mCL,    0 },
-        //{ Cse523::ROR8ri,      Cse523::ROR8mi,     0 },
-        //{ Cse523::SAR16r1,     Cse523::SAR16m1,    0 },
-        //{ Cse523::SAR16rCL,    Cse523::SAR16mCL,   0 },
-        //{ Cse523::SAR16ri,     Cse523::SAR16mi,    0 },
-        //{ Cse523::SAR32r1,     Cse523::SAR32m1,    0 },
-        //{ Cse523::SAR32rCL,    Cse523::SAR32mCL,   0 },
-        //{ Cse523::SAR32ri,     Cse523::SAR32mi,    0 },
         //{ Cse523::SAR64r1,     Cse523::SAR64m1,    0 },
         //{ Cse523::SAR64rCL,    Cse523::SAR64mCL,   0 },
         //{ Cse523::SAR64ri,     Cse523::SAR64mi,    0 },
-        //{ Cse523::SAR8r1,      Cse523::SAR8m1,     0 },
-        //{ Cse523::SAR8rCL,     Cse523::SAR8mCL,    0 },
-        //{ Cse523::SAR8ri,      Cse523::SAR8mi,     0 },
-        //{ Cse523::SBB32ri,     Cse523::SBB32mi,    0 },
-        //{ Cse523::SBB32ri8,    Cse523::SBB32mi8,   0 },
-        //{ Cse523::SBB32rr,     Cse523::SBB32mr,    0 },
         //{ Cse523::SBB64ri32,   Cse523::SBB64mi32,  0 },
-        //{ Cse523::SBB64ri8,    Cse523::SBB64mi8,   0 },
         //{ Cse523::SBB64rr,     Cse523::SBB64mr,    0 },
-        //{ Cse523::SHL16rCL,    Cse523::SHL16mCL,   0 },
-        //{ Cse523::SHL16ri,     Cse523::SHL16mi,    0 },
-        //{ Cse523::SHL32rCL,    Cse523::SHL32mCL,   0 },
-        //{ Cse523::SHL32ri,     Cse523::SHL32mi,    0 },
         //{ Cse523::SHL64rCL,    Cse523::SHL64mCL,   0 },
         //{ Cse523::SHL64ri,     Cse523::SHL64mi,    0 },
-        //{ Cse523::SHL8rCL,     Cse523::SHL8mCL,    0 },
-        //{ Cse523::SHL8ri,      Cse523::SHL8mi,     0 },
-        //{ Cse523::SHLD16rrCL,  Cse523::SHLD16mrCL, 0 },
-        //{ Cse523::SHLD16rri8,  Cse523::SHLD16mri8, 0 },
-        //{ Cse523::SHLD32rrCL,  Cse523::SHLD32mrCL, 0 },
-        //{ Cse523::SHLD32rri8,  Cse523::SHLD32mri8, 0 },
         //{ Cse523::SHLD64rrCL,  Cse523::SHLD64mrCL, 0 },
-        //{ Cse523::SHLD64rri8,  Cse523::SHLD64mri8, 0 },
-        //{ Cse523::SHR16r1,     Cse523::SHR16m1,    0 },
-        //{ Cse523::SHR16rCL,    Cse523::SHR16mCL,   0 },
-        //{ Cse523::SHR16ri,     Cse523::SHR16mi,    0 },
-        //{ Cse523::SHR32r1,     Cse523::SHR32m1,    0 },
-        //{ Cse523::SHR32rCL,    Cse523::SHR32mCL,   0 },
-        //{ Cse523::SHR32ri,     Cse523::SHR32mi,    0 },
         //{ Cse523::SHR64r1,     Cse523::SHR64m1,    0 },
         //{ Cse523::SHR64rCL,    Cse523::SHR64mCL,   0 },
         //{ Cse523::SHR64ri,     Cse523::SHR64mi,    0 },
-        //{ Cse523::SHR8r1,      Cse523::SHR8m1,     0 },
-        //{ Cse523::SHR8rCL,     Cse523::SHR8mCL,    0 },
-        //{ Cse523::SHR8ri,      Cse523::SHR8mi,     0 },
-        //{ Cse523::SHRD16rrCL,  Cse523::SHRD16mrCL, 0 },
-        //{ Cse523::SHRD16rri8,  Cse523::SHRD16mri8, 0 },
-        //{ Cse523::SHRD32rrCL,  Cse523::SHRD32mrCL, 0 },
-        //{ Cse523::SHRD32rri8,  Cse523::SHRD32mri8, 0 },
         //{ Cse523::SHRD64rrCL,  Cse523::SHRD64mrCL, 0 },
-        //{ Cse523::SHRD64rri8,  Cse523::SHRD64mri8, 0 },
-        //{ Cse523::SUB16ri,     Cse523::SUB16mi,    0 },
-        //{ Cse523::SUB16ri8,    Cse523::SUB16mi8,   0 },
-        //{ Cse523::SUB16rr,     Cse523::SUB16mr,    0 },
-        //{ Cse523::SUB32ri,     Cse523::SUB32mi,    0 },
-        //{ Cse523::SUB32ri8,    Cse523::SUB32mi8,   0 },
-        //{ Cse523::SUB32rr,     Cse523::SUB32mr,    0 },
-        //{ Cse523::SUB64ri32,   Cse523::SUB64mi32,  0 },
-        //{ Cse523::SUB64ri8,    Cse523::SUB64mi8,   0 },
-        //{ Cse523::SUB64rr,     Cse523::SUB64mr,    0 },
-        //{ Cse523::SUB8ri,      Cse523::SUB8mi,     0 },
-        //{ Cse523::SUB8rr,      Cse523::SUB8mr,     0 },
-        //{ Cse523::XOR16ri,     Cse523::XOR16mi,    0 },
-        //{ Cse523::XOR16ri8,    Cse523::XOR16mi8,   0 },
-        //{ Cse523::XOR16rr,     Cse523::XOR16mr,    0 },
-        //{ Cse523::XOR32ri,     Cse523::XOR32mi,    0 },
-        //{ Cse523::XOR32ri8,    Cse523::XOR32mi8,   0 },
-        //{ Cse523::XOR32rr,     Cse523::XOR32mr,    0 },
-        //{ Cse523::XOR64ri32,   Cse523::XOR64mi32,  0 },
-        //{ Cse523::XOR64ri8,    Cse523::XOR64mi8,   0 },
-        //{ Cse523::XOR64rr,     Cse523::XOR64mr,    0 },
-        //{ Cse523::XOR8ri,      Cse523::XOR8mi,     0 },
-        //{ Cse523::XOR8rr,      Cse523::XOR8mr,     0 }
+        { Cse523::SUB64ri32,   Cse523::SUB64mi32,  0 },
+        { Cse523::SUB64rr,     Cse523::SUB64mr,    0 },
+        { Cse523::XOR64ri32,   Cse523::XOR64mi32,  0 },
+        { Cse523::XOR64rr,     Cse523::XOR64mr,    0 }
     };
 
     for (unsigned i = 0, e = array_lengthof(OpTbl2Addr); i != e; ++i) {
@@ -279,26 +153,26 @@ Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
                 Flags | TB_INDEX_0 | TB_FOLDED_LOAD | TB_FOLDED_STORE);
     }
 
-    static const Cse523OpTblEntry OpTbl0[1] = {
+    static const Cse523OpTblEntry OpTbl0[] = {
         //{ Cse523::BT16ri8,     Cse523::BT16mi8,       TB_FOLDED_LOAD },
         //{ Cse523::BT32ri8,     Cse523::BT32mi8,       TB_FOLDED_LOAD },
         //{ Cse523::BT64ri8,     Cse523::BT64mi8,       TB_FOLDED_LOAD },
         //{ Cse523::CALL32r,     Cse523::CALL32m,       TB_FOLDED_LOAD },
-        //{ Cse523::CALL64r,     Cse523::CALL64m,       TB_FOLDED_LOAD },
+        { Cse523::CALL64r,     Cse523::CALL64m,       TB_FOLDED_LOAD },
         //{ Cse523::CMP16ri,     Cse523::CMP16mi,       TB_FOLDED_LOAD },
         //{ Cse523::CMP16ri8,    Cse523::CMP16mi8,      TB_FOLDED_LOAD },
         //{ Cse523::CMP16rr,     Cse523::CMP16mr,       TB_FOLDED_LOAD },
         //{ Cse523::CMP32ri,     Cse523::CMP32mi,       TB_FOLDED_LOAD },
         //{ Cse523::CMP32ri8,    Cse523::CMP32mi8,      TB_FOLDED_LOAD },
         //{ Cse523::CMP32rr,     Cse523::CMP32mr,       TB_FOLDED_LOAD },
-        //{ Cse523::CMP64ri32,   Cse523::CMP64mi32,     TB_FOLDED_LOAD },
+        { Cse523::CMP64ri32,   Cse523::CMP64mi32,     TB_FOLDED_LOAD },
         //{ Cse523::CMP64ri8,    Cse523::CMP64mi8,      TB_FOLDED_LOAD },
-        //{ Cse523::CMP64rr,     Cse523::CMP64mr,       TB_FOLDED_LOAD },
+        { Cse523::CMP64rr,     Cse523::CMP64mr,       TB_FOLDED_LOAD },
         //{ Cse523::CMP8ri,      Cse523::CMP8mi,        TB_FOLDED_LOAD },
         //{ Cse523::CMP8rr,      Cse523::CMP8mr,        TB_FOLDED_LOAD },
         //{ Cse523::DIV16r,      Cse523::DIV16m,        TB_FOLDED_LOAD },
         //{ Cse523::DIV32r,      Cse523::DIV32m,        TB_FOLDED_LOAD },
-        //{ Cse523::DIV64r,      Cse523::DIV64m,        TB_FOLDED_LOAD },
+        { Cse523::DIV64r,      Cse523::DIV64m,        TB_FOLDED_LOAD },
         //{ Cse523::DIV8r,       Cse523::DIV8m,         TB_FOLDED_LOAD },
         //{ Cse523::EXTRACTPSrr, Cse523::EXTRACTPSmr,   TB_FOLDED_STORE },
         //{ Cse523::IDIV16r,     Cse523::IDIV16m,       TB_FOLDED_LOAD },
@@ -307,16 +181,16 @@ Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
         //{ Cse523::IDIV8r,      Cse523::IDIV8m,        TB_FOLDED_LOAD },
         //{ Cse523::IMUL16r,     Cse523::IMUL16m,       TB_FOLDED_LOAD },
         //{ Cse523::IMUL32r,     Cse523::IMUL32m,       TB_FOLDED_LOAD },
-        //{ Cse523::IMUL64r,     Cse523::IMUL64m,       TB_FOLDED_LOAD },
+        { Cse523::IMUL64r,     Cse523::IMUL64m,       TB_FOLDED_LOAD },
         //{ Cse523::IMUL8r,      Cse523::IMUL8m,        TB_FOLDED_LOAD },
         //{ Cse523::JMP32r,      Cse523::JMP32m,        TB_FOLDED_LOAD },
-        //{ Cse523::JMP64r,      Cse523::JMP64m,        TB_FOLDED_LOAD },
+        { Cse523::JMP64r,      Cse523::JMP64m,        TB_FOLDED_LOAD },
         //{ Cse523::MOV16ri,     Cse523::MOV16mi,       TB_FOLDED_STORE },
         //{ Cse523::MOV16rr,     Cse523::MOV16mr,       TB_FOLDED_STORE },
         //{ Cse523::MOV32ri,     Cse523::MOV32mi,       TB_FOLDED_STORE },
         //{ Cse523::MOV32rr,     Cse523::MOV32mr,       TB_FOLDED_STORE },
-        //{ Cse523::MOV64ri32,   Cse523::MOV64mi32,     TB_FOLDED_STORE },
-        //{ Cse523::MOV64rr,     Cse523::MOV64mr,       TB_FOLDED_STORE },
+        { Cse523::MOV64ri32,   Cse523::MOV64mi32,     TB_FOLDED_STORE },
+        { Cse523::MOV64rr,     Cse523::MOV64mr,       TB_FOLDED_STORE },
         //{ Cse523::MOV8ri,      Cse523::MOV8mi,        TB_FOLDED_STORE },
         //{ Cse523::MOV8rr,      Cse523::MOV8mr,        TB_FOLDED_STORE },
         //{ Cse523::MOV8rr_NOREX, Cse523::MOV8mr_NOREX, TB_FOLDED_STORE },
@@ -350,25 +224,25 @@ Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
         //{ Cse523::SETPr,       Cse523::SETPm,         TB_FOLDED_STORE },
         //{ Cse523::SETSr,       Cse523::SETSm,         TB_FOLDED_STORE },
         //{ Cse523::TAILJMPr,    Cse523::TAILJMPm,      TB_FOLDED_LOAD },
-        //{ Cse523::TAILJMPr64,  Cse523::TAILJMPm64,    TB_FOLDED_LOAD },
+        { Cse523::TAILJMPr64,  Cse523::TAILJMPm64,    TB_FOLDED_LOAD },
         //{ Cse523::TEST16ri,    Cse523::TEST16mi,      TB_FOLDED_LOAD },
         //{ Cse523::TEST32ri,    Cse523::TEST32mi,      TB_FOLDED_LOAD },
-        //{ Cse523::TEST64ri32,  Cse523::TEST64mi32,    TB_FOLDED_LOAD },
+        { Cse523::TEST64ri32,  Cse523::TEST64mi32,    TB_FOLDED_LOAD }
         //{ Cse523::TEST8ri,     Cse523::TEST8mi,       TB_FOLDED_LOAD }
     };
 
-//    for (unsigned i = 0, e = array_lengthof(OpTbl0); i != e; ++i) {
-//        unsigned RegOp      = OpTbl0[i].RegOp;
-//        unsigned MemOp      = OpTbl0[i].MemOp;
-//        unsigned Flags      = OpTbl0[i].Flags;
-//        AddTableEntry(RegOp2MemOpTable0, MemOp2RegOpTable,
-//                RegOp, MemOp, TB_INDEX_0 | Flags);
-//    }
+    for (unsigned i = 0, e = array_lengthof(OpTbl0); i != e; ++i) {
+        unsigned RegOp      = OpTbl0[i].RegOp;
+        unsigned MemOp      = OpTbl0[i].MemOp;
+        unsigned Flags      = OpTbl0[i].Flags;
+        AddTableEntry(RegOp2MemOpTable0, MemOp2RegOpTable,
+                RegOp, MemOp, TB_INDEX_0 | Flags);
+    }
 
-    static const Cse523OpTblEntry OpTbl1[1] = {
+    static const Cse523OpTblEntry OpTbl1[] = {
         //{ Cse523::CMP16rr,         Cse523::CMP16rm,             0 },
         //{ Cse523::CMP32rr,         Cse523::CMP32rm,             0 },
-        //{ Cse523::CMP64rr,         Cse523::CMP64rm,             0 },
+        { Cse523::CMP64rr,         Cse523::CMP64rm,             0 },
         //{ Cse523::CMP8rr,          Cse523::CMP8rm,              0 },
         //{ Cse523::CVTSD2SSrr,      Cse523::CVTSD2SSrm,          0 },
         //{ Cse523::CVTSI2SD64rr,    Cse523::CVTSI2SD64rm,        0 },
@@ -384,7 +258,7 @@ Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
         //{ Cse523::IMUL16rri8,      Cse523::IMUL16rmi8,          0 },
         //{ Cse523::IMUL32rri,       Cse523::IMUL32rmi,           0 },
         //{ Cse523::IMUL32rri8,      Cse523::IMUL32rmi8,          0 },
-        //{ Cse523::IMUL64rri32,     Cse523::IMUL64rmi32,         0 },
+        { Cse523::IMUL64rri32,     Cse523::IMUL64rmi32,         0 },
         //{ Cse523::IMUL64rri8,      Cse523::IMUL64rmi8,          0 },
         //{ Cse523::Int_COMISDrr,    Cse523::Int_COMISDrm,        0 },
         //{ Cse523::Int_COMISSrr,    Cse523::Int_COMISSrm,        0 },
@@ -402,7 +276,7 @@ Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
         //{ Cse523::Int_UCOMISSrr,   Cse523::Int_UCOMISSrm,       0 },
         //{ Cse523::MOV16rr,         Cse523::MOV16rm,             0 },
         //{ Cse523::MOV32rr,         Cse523::MOV32rm,             0 },
-        { Cse523::MOV64rr,         Cse523::MOV64rm,             0 }
+        { Cse523::MOV64rr,         Cse523::MOV64rm,             0 },
         //{ Cse523::MOV64toPQIrr,    Cse523::MOVQI2PQIrm,         0 },
         //{ Cse523::MOV64toSDrr,     Cse523::MOV64toSDrm,         0 },
         //{ Cse523::MOV8rr,          Cse523::MOV8rm,              0 },
@@ -448,7 +322,7 @@ Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
         //{ Cse523::SQRTSSr_Int,     Cse523::SQRTSSm_Int,         0 },
         //{ Cse523::TEST16rr,        Cse523::TEST16rm,            0 },
         //{ Cse523::TEST32rr,        Cse523::TEST32rm,            0 },
-        //{ Cse523::TEST64rr,        Cse523::TEST64rm,            0 },
+        { Cse523::TEST64rr,        Cse523::TEST64rm,            0 }
         //{ Cse523::TEST8rr,         Cse523::TEST8rm,             0 },
         //// FIXME: TEST*rr EAX,EAX ---> CMP [mem], 0
         //{ Cse523::UCOMISDrr,       Cse523::UCOMISDrm,           0 },
@@ -465,14 +339,14 @@ Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
                 Flags | TB_INDEX_1 | TB_FOLDED_LOAD);
     }
 
-    static const Cse523OpTblEntry OpTbl2[1] = {
+    static const Cse523OpTblEntry OpTbl2[] = {
         //{ Cse523::ADC32rr,         Cse523::ADC32rm,       0 },
-        //{ Cse523::ADC64rr,         Cse523::ADC64rm,       0 },
+        { Cse523::ADC64rr,         Cse523::ADC64rm,       0 },
         //{ Cse523::ADD16rr,         Cse523::ADD16rm,       0 },
         //{ Cse523::ADD16rr_DB,      Cse523::ADD16rm,       TB_NO_REVERSE },
         //{ Cse523::ADD32rr,         Cse523::ADD32rm,       0 },
         //{ Cse523::ADD32rr_DB,      Cse523::ADD32rm,       TB_NO_REVERSE },
-        //{ Cse523::ADD64rr,         Cse523::ADD64rm,       0 },
+        { Cse523::ADD64rr,         Cse523::ADD64rm,       0 },
         //{ Cse523::ADD64rr_DB,      Cse523::ADD64rm,       TB_NO_REVERSE },
         //{ Cse523::ADD8rr,          Cse523::ADD8rm,        0 },
         //{ Cse523::ADDPDrr,         Cse523::ADDPDrm,       TB_ALIGN_16 },
@@ -483,7 +357,7 @@ Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
         //{ Cse523::ADDSUBPSrr,      Cse523::ADDSUBPSrm,    TB_ALIGN_16 },
         //{ Cse523::AND16rr,         Cse523::AND16rm,       0 },
         //{ Cse523::AND32rr,         Cse523::AND32rm,       0 },
-        //{ Cse523::AND64rr,         Cse523::AND64rm,       0 },
+        { Cse523::AND64rr,         Cse523::AND64rm,       0 },
         //{ Cse523::AND8rr,          Cse523::AND8rm,        0 },
         //{ Cse523::ANDNPDrr,        Cse523::ANDNPDrm,      TB_ALIGN_16 },
         //{ Cse523::ANDNPSrr,        Cse523::ANDNPSrm,      TB_ALIGN_16 },
@@ -679,7 +553,7 @@ Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
         //{ Cse523::SHUFPSrri,       Cse523::SHUFPSrmi,     TB_ALIGN_16 },
         //{ Cse523::SUB16rr,         Cse523::SUB16rm,       0 },
         //{ Cse523::SUB32rr,         Cse523::SUB32rm,       0 },
-        //{ Cse523::SUB64rr,         Cse523::SUB64rm,       0 },
+        { Cse523::SUB64rr,         Cse523::SUB64rm,       0 },
         //{ Cse523::SUB8rr,          Cse523::SUB8rm,        0 },
         //{ Cse523::SUBPDrr,         Cse523::SUBPDrm,       TB_ALIGN_16 },
         //{ Cse523::SUBPSrr,         Cse523::SUBPSrm,       TB_ALIGN_16 },
@@ -692,21 +566,21 @@ Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
         //{ Cse523::UNPCKLPSrr,      Cse523::UNPCKLPSrm,    TB_ALIGN_16 },
         //{ Cse523::XOR16rr,         Cse523::XOR16rm,       0 },
         //{ Cse523::XOR32rr,         Cse523::XOR32rm,       0 },
-        //{ Cse523::XOR64rr,         Cse523::XOR64rm,       0 },
+        { Cse523::XOR64rr,         Cse523::XOR64rm,       0 }
         //{ Cse523::XOR8rr,          Cse523::XOR8rm,        0 },
         //{ Cse523::XORPDrr,         Cse523::XORPDrm,       TB_ALIGN_16 },
         //{ Cse523::XORPSrr,         Cse523::XORPSrm,       TB_ALIGN_16 }
     };
 
-//    for (unsigned i = 0, e = array_lengthof(OpTbl2); i != e; ++i) {
-//        unsigned RegOp = OpTbl2[i].RegOp;
-//        unsigned MemOp = OpTbl2[i].MemOp;
-//        unsigned Flags = OpTbl2[i].Flags;
-//        AddTableEntry(RegOp2MemOpTable2, MemOp2RegOpTable,
-//                RegOp, MemOp,
-//                // Index 2, folded load
-//                Flags | TB_INDEX_2 | TB_FOLDED_LOAD);
-//    }
+    for (unsigned i = 0, e = array_lengthof(OpTbl2); i != e; ++i) {
+        unsigned RegOp = OpTbl2[i].RegOp;
+        unsigned MemOp = OpTbl2[i].MemOp;
+        unsigned Flags = OpTbl2[i].Flags;
+        AddTableEntry(RegOp2MemOpTable2, MemOp2RegOpTable,
+                RegOp, MemOp,
+                // Index 2, folded load
+                Flags | TB_INDEX_2 | TB_FOLDED_LOAD);
+    }
 //
 //    // TODO: Remove this entry
 //    static const Cse523OpTblEntry OpTbl3[1] = {
@@ -3024,105 +2898,105 @@ Cse523InstrInfo::foldMemoryOperandImpl(MachineFunction &MF,
         MachineInstr *MI, unsigned i,
         const SmallVectorImpl<MachineOperand> &MOs,
         unsigned Size, unsigned Align) const {
-    assert(0);
-//    const DenseMap<unsigned, std::pair<unsigned,unsigned> > *OpcodeTablePtr = 0;
-//    bool isCallRegIndirect = TM.getSubtarget<Cse523Subtarget>().callRegIndirect();
-//    bool isTwoAddrFold = false;
-//
-//    // Atom favors register form of call. So, we do not fold loads into calls
-//    // when Cse523Subtarget is Atom.
-//    if (isCallRegIndirect &&
-//            (MI->getOpcode() == Cse523::CALL32r || MI->getOpcode() == Cse523::CALL64r)) {
-//        return NULL;
-//    }
-//
-//    unsigned NumOps = MI->getDesc().getNumOperands();
-//    bool isTwoAddr = NumOps > 1 &&
-//        MI->getDesc().getOperandConstraint(1, MCOI::TIED_TO) != -1;
-//
-//    // FIXME: AsmPrinter doesn't know how to handle
-//    // Cse523II::MO_GOT_ABSOLUTE_ADDRESS after folding.
-//    if (MI->getOpcode() == Cse523::ADD32ri &&
-//            MI->getOperand(2).getTargetFlags() == Cse523II::MO_GOT_ABSOLUTE_ADDRESS)
-//        return NULL;
-//
-//    MachineInstr *NewMI = NULL;
-//    // Folding a memory location into the two-address part of a two-address
-//    // instruction is different than folding it other places.  It requires
-//    // replacing the *two* registers with the memory location.
-//    if (isTwoAddr && NumOps >= 2 && i < 2 &&
-//            MI->getOperand(0).isReg() &&
-//            MI->getOperand(1).isReg() &&
-//            MI->getOperand(0).getReg() == MI->getOperand(1).getReg()) {
-//        OpcodeTablePtr = &RegOp2MemOpTable2Addr;
-//        isTwoAddrFold = true;
-//    } else if (i == 0) { // If operand 0
-//        if (MI->getOpcode() == Cse523::MOV32r0) {
-//            NewMI = MakeM0Inst(*this, Cse523::MOV32mi, MOs, MI);
-//            if (NewMI)
-//                return NewMI;
-//        }
-//
-//        OpcodeTablePtr = &RegOp2MemOpTable0;
-//    } else if (i == 1) {
-//        OpcodeTablePtr = &RegOp2MemOpTable1;
-//    } else if (i == 2) {
-//        OpcodeTablePtr = &RegOp2MemOpTable2;
-//    } else if (i == 3) {
-//        OpcodeTablePtr = &RegOp2MemOpTable3;
-//    }
-//
-//    // If table selected...
-//    if (OpcodeTablePtr) {
-//        // Find the Opcode to fuse
-//        DenseMap<unsigned, std::pair<unsigned,unsigned> >::const_iterator I =
-//            OpcodeTablePtr->find(MI->getOpcode());
-//        if (I != OpcodeTablePtr->end()) {
-//            unsigned Opcode = I->second.first;
-//            unsigned MinAlign = (I->second.second & TB_ALIGN_MASK) >> TB_ALIGN_SHIFT;
-//            if (Align < MinAlign)
-//                return NULL;
-//            bool NarrowToMOV32rm = false;
-//            if (Size) {
-//                unsigned RCSize = getRegClass(MI->getDesc(), i, &RI, MF)->getSize();
-//                if (Size < RCSize) {
-//                    // Check if it's safe to fold the load. If the size of the object is
-//                    // narrower than the load width, then it's not.
-//                    if (Opcode != Cse523::MOV64rm || RCSize != 8 || Size != 4)
-//                        return NULL;
-//                    // If this is a 64-bit load, but the spill slot is 32, then we can do
-//                    // a 32-bit load which is implicitly zero-extended. This likely is due
-//                    // to liveintervalanalysis remat'ing a load from stack slot.
-//                    if (MI->getOperand(0).getSubReg() || MI->getOperand(1).getSubReg())
-//                        return NULL;
-//                    Opcode = Cse523::MOV32rm;
-//                    NarrowToMOV32rm = true;
-//                }
-//            }
-//
-//            if (isTwoAddrFold)
-//                NewMI = FuseTwoAddrInst(MF, Opcode, MOs, MI, *this);
-//            else
-//                NewMI = FuseInst(MF, Opcode, i, MOs, MI, *this);
-//
-//            if (NarrowToMOV32rm) {
-//                // If this is the special case where we use a MOV32rm to load a 32-bit
-//                // value and zero-extend the top bits. Change the destination register
-//                // to a 32-bit one.
-//                unsigned DstReg = NewMI->getOperand(0).getReg();
-//                if (TargetRegisterInfo::isPhysicalRegister(DstReg))
-//                    NewMI->getOperand(0).setReg(RI.getSubReg(DstReg,
-//                                Cse523::sub_32bit));
-//                else
-//                    NewMI->getOperand(0).setSubReg(Cse523::sub_32bit);
-//            }
-//            return NewMI;
-//        }
-//    }
-//
-//    // No fusion
-//    if (PrintFailedFusing && !MI->isCopy())
-//        dbgs() << "We failed to fuse operand " << i << " in " << *MI;
+    const DenseMap<unsigned, std::pair<unsigned,unsigned> > *OpcodeTablePtr = 0;
+    bool isCallRegIndirect = TM.getSubtarget<Cse523Subtarget>().callRegIndirect();
+    bool isTwoAddrFold = false;
+
+    // Atom favors register form of call. So, we do not fold loads into calls
+    // when Cse523Subtarget is Atom.
+    if (isCallRegIndirect && (MI->getOpcode() == Cse523::CALL64r)) {
+        return NULL;
+    }
+
+    unsigned NumOps = MI->getDesc().getNumOperands();
+    bool isTwoAddr = NumOps > 1 &&
+        MI->getDesc().getOperandConstraint(1, MCOI::TIED_TO) != -1;
+
+    // FIXME: AsmPrinter doesn't know how to handle
+    // Cse523II::MO_GOT_ABSOLUTE_ADDRESS after folding.
+    if (MI->getOpcode() == Cse523::ADD64ri32 &&
+            MI->getOperand(2).getTargetFlags() == Cse523II::MO_GOT_ABSOLUTE_ADDRESS)
+        return NULL;
+
+    MachineInstr *NewMI = NULL;
+    // Folding a memory location into the two-address part of a two-address
+    // instruction is different than folding it other places.  It requires
+    // replacing the *two* registers with the memory location.
+    if (isTwoAddr && NumOps >= 2 && i < 2 &&
+            MI->getOperand(0).isReg() &&
+            MI->getOperand(1).isReg() &&
+            MI->getOperand(0).getReg() == MI->getOperand(1).getReg()) {
+        OpcodeTablePtr = &RegOp2MemOpTable2Addr;
+        isTwoAddrFold = true;
+    } else if (i == 0) { // If operand 0
+        if (MI->getOpcode() == Cse523::MOV64r0) {
+            NewMI = MakeM0Inst(*this, Cse523::MOV64mi32, MOs, MI);
+            if (NewMI)
+                return NewMI;
+        }
+
+        OpcodeTablePtr = &RegOp2MemOpTable0;
+    } else if (i == 1) {
+        OpcodeTablePtr = &RegOp2MemOpTable1;
+    } else if (i == 2) {
+        OpcodeTablePtr = &RegOp2MemOpTable2;
+    } else if (i == 3) {
+        OpcodeTablePtr = &RegOp2MemOpTable3;
+    }
+
+    // If table selected...
+    if (OpcodeTablePtr) {
+        // Find the Opcode to fuse
+        DenseMap<unsigned, std::pair<unsigned,unsigned> >::const_iterator I =
+            OpcodeTablePtr->find(MI->getOpcode());
+        if (I != OpcodeTablePtr->end()) {
+            unsigned Opcode = I->second.first;
+            unsigned MinAlign = (I->second.second & TB_ALIGN_MASK) >> TB_ALIGN_SHIFT;
+            if (Align < MinAlign)
+                return NULL;
+            bool NarrowToMOV32rm = false;
+            if (Size) {
+                unsigned RCSize = getRegClass(MI->getDesc(), i, &RI, MF)->getSize();
+                if (Size < RCSize) {
+                    // Check if it's safe to fold the load. If the size of the object is
+                    // narrower than the load width, then it's not.
+                    if (Opcode != Cse523::MOV64rm || RCSize != 8 || Size != 4)
+                        return NULL;
+                    // If this is a 64-bit load, but the spill slot is 32, then we can do
+                    // a 32-bit load which is implicitly zero-extended. This likely is due
+                    // to liveintervalanalysis remat'ing a load from stack slot.
+                    if (MI->getOperand(0).getSubReg() || MI->getOperand(1).getSubReg())
+                        return NULL;
+                    assert(0);
+                    //Opcode = Cse523::MOV32rm;
+                    //NarrowToMOV32rm = true;
+                }
+            }
+
+            if (isTwoAddrFold)
+                NewMI = FuseTwoAddrInst(MF, Opcode, MOs, MI, *this);
+            else
+                NewMI = FuseInst(MF, Opcode, i, MOs, MI, *this);
+
+            if (NarrowToMOV32rm) {
+                // If this is the special case where we use a MOV32rm to load a 32-bit
+                // value and zero-extend the top bits. Change the destination register
+                // to a 32-bit one.
+                assert(0);
+                //unsigned DstReg = NewMI->getOperand(0).getReg();
+                //if (TargetRegisterInfo::isPhysicalRegister(DstReg))
+                //    NewMI->getOperand(0).setReg(RI.getSubReg(DstReg,
+                //                Cse523::sub_32bit));
+                //else
+                //    NewMI->getOperand(0).setSubReg(Cse523::sub_32bit);
+            }
+            return NewMI;
+        }
+    }
+
+    // No fusion
+    if (PrintFailedFusing && !MI->isCopy())
+        dbgs() << "We failed to fuse operand " << i << " in " << *MI;
     return NULL;
 }
 
@@ -3143,9 +3017,9 @@ Cse523InstrInfo::foldMemoryOperandImpl(MachineFunction &MF,
 /// FIXME: This should be turned into a TSFlags.
 ///
 static bool hasPartialRegUpdate(unsigned Opcode) {
-    assert(0);
     switch (Opcode) {
         default: break;
+// TODO:
 //        case Cse523::CVTSI2SSrr:
 //        case Cse523::CVTSI2SS64rr:
 //        case Cse523::CVTSI2SDrr:
@@ -3262,13 +3136,9 @@ Cse523InstrInfo::foldMemoryOperandImpl(MachineFunction &MF, MachineInstr *MI,
     if (Ops.size() == 2 && Ops[0] == 0 && Ops[1] == 1) {
         unsigned NewOpc = 0;
         unsigned RCSize = 0;
-        assert(0);
         switch (MI->getOpcode()) {
             default: return NULL;
-//            case Cse523::TEST8rr:  NewOpc = Cse523::CMP8ri; RCSize = 1; break;
-//            case Cse523::TEST16rr: NewOpc = Cse523::CMP16ri8; RCSize = 2; break;
-//            case Cse523::TEST32rr: NewOpc = Cse523::CMP32ri8; RCSize = 4; break;
-//            case Cse523::TEST64rr: NewOpc = Cse523::CMP64ri8; RCSize = 8; break;
+            case Cse523::TEST64rr: NewOpc = Cse523::CMP64ri32; RCSize = 8; break;
         }
         // Check if it's safe to fold the load. If the size of the object is
         // narrower than the load width, then it's not.
@@ -3305,30 +3175,17 @@ MachineInstr* Cse523InstrInfo::foldMemoryOperandImpl(MachineFunction &MF,
             hasPartialRegUpdate(MI->getOpcode()))
         return 0;
 
-    assert(0);
     // Determine the alignment of the load.
     unsigned Alignment = 0;
     if (LoadMI->hasOneMemOperand())
         Alignment = (*LoadMI->memoperands_begin())->getAlignment();
     else
-        switch (LoadMI->getOpcode()) {
-//            case Cse523::FsFLD0SD:
-//                Alignment = 8;
-//                break;
-//            case Cse523::FsFLD0SS:
-//                Alignment = 4;
-//                break;
-            default:
-                return 0;
-        }
+        return 0;
     if (Ops.size() == 2 && Ops[0] == 0 && Ops[1] == 1) {
         unsigned NewOpc = 0;
         switch (MI->getOpcode()) {
             default: return NULL;
-//            case Cse523::TEST8rr:  NewOpc = Cse523::CMP8ri; break;
-//            case Cse523::TEST16rr: NewOpc = Cse523::CMP16ri8; break;
-//            case Cse523::TEST32rr: NewOpc = Cse523::CMP32ri8; break;
-//            case Cse523::TEST64rr: NewOpc = Cse523::CMP64ri8; break;
+            case Cse523::TEST64rr: NewOpc = Cse523::CMP64ri32; break;
         }
         // Change to CMPXXri r, 0 first.
         MI->setDesc(get(NewOpc));
@@ -3342,72 +3199,11 @@ MachineInstr* Cse523InstrInfo::foldMemoryOperandImpl(MachineFunction &MF,
         return NULL;
 
     SmallVector<MachineOperand,Cse523::AddrNumOperands> MOs;
-    switch (LoadMI->getOpcode()) {
-//        case Cse523::FsFLD0SD:
-//        case Cse523::FsFLD0SS: {
-//                                   // Folding a V_SET0 or V_SETALLONES as a load, to ease register pressure.
-//                                   // Create a constant-pool entry and operands to load from it.
-//
-//                                   // Medium and large mode can't fold loads this way.
-//                                   if (TM.getCodeModel() != CodeModel::Small &&
-//                                           TM.getCodeModel() != CodeModel::Kernel)
-//                                       return NULL;
-//
-//                                   // cse523-32 PIC requires a PIC base register for constant pools.
-//                                   unsigned PICBase = 0;
-//                                   if (TM.getRelocationModel() == Reloc::PIC_) {
-//                                       if (TM.getSubtarget<Cse523Subtarget>().is64Bit())
-//                                           PICBase = Cse523::RIP;
-//                                       else
-//                                           // FIXME: PICBase = getGlobalBaseReg(&MF);
-//                                           // This doesn't work for several reasons.
-//                                           // 1. GlobalBaseReg may have been spilled.
-//                                           // 2. It may not be live at MI.
-//                                           return NULL;
-//                                   }
-//
-//                                   // Create a constant-pool entry.
-//                                   MachineConstantPool &MCP = *MF.getConstantPool();
-//                                   Type *Ty;
-//                                   unsigned Opc = LoadMI->getOpcode();
-//                                   if (Opc == Cse523::FsFLD0SS)
-//                                       Ty = Type::getFloatTy(MF.getFunction()->getContext());
-//                                   else if (Opc == Cse523::FsFLD0SD)
-//                                       Ty = Type::getDoubleTy(MF.getFunction()->getContext());
-//                                   else
-//                                       Ty = VectorType::get(Type::getInt32Ty(MF.getFunction()->getContext()), 4);
-//
-//                                   const Constant *C = Constant::getNullValue(Ty);
-//                                   unsigned CPI = MCP.getConstantPoolIndex(C, Alignment);
-//
-//                                   // Create operands to load from the constant pool entry.
-//                                   MOs.push_back(MachineOperand::CreateReg(PICBase, false));
-//                                   MOs.push_back(MachineOperand::CreateImm(1));
-//                                   MOs.push_back(MachineOperand::CreateReg(0, false));
-//                                   MOs.push_back(MachineOperand::CreateCPI(CPI, 0));
-//                                   MOs.push_back(MachineOperand::CreateReg(0, false));
-//                                   break;
-//                               }
-//        default: {
-//                     if ((LoadMI->getOpcode() == Cse523::MOVSSrm) &&
-//                             MF.getRegInfo().getRegClass(LoadMI->getOperand(0).getReg())->getSize()
-//                             > 4)
-//                         // These instructions only load 32 bits, we can't fold them if the
-//                         // destination register is wider than 32 bits (4 bytes).
-//                         return NULL;
-//                     if ((LoadMI->getOpcode() == Cse523::MOVSDrm) &&
-//                             MF.getRegInfo().getRegClass(LoadMI->getOperand(0).getReg())->getSize()
-//                             > 8)
-//                         // These instructions only load 64 bits, we can't fold them if the
-//                         // destination register is wider than 64 bits (8 bytes).
-//                         return NULL;
-//
-//                     // Folding a normal load. Just copy the load's address operands.
-//                     for (unsigned i = NumOps - Cse523::AddrNumOperands; i != NumOps; ++i)
-//                         MOs.push_back(LoadMI->getOperand(i));
-//                     break;
-//                 }
-    }
+
+    // Folding a normal load. Just copy the load's address operands.
+    for (unsigned i = NumOps - Cse523::AddrNumOperands; i != NumOps; ++i)
+        MOs.push_back(LoadMI->getOperand(i));
+
     return foldMemoryOperandImpl(MF, MI, Ops[0], MOs, 0, Alignment);
 }
 
@@ -3416,55 +3212,50 @@ bool Cse523InstrInfo::canFoldMemoryOperand(const MachineInstr *MI,
         const SmallVectorImpl<unsigned> &Ops) const {
     // Check switch flag
     if (NoFusing) return 0;
-    assert(0);
 
-//    if (Ops.size() == 2 && Ops[0] == 0 && Ops[1] == 1) {
-//        switch (MI->getOpcode()) {
-//            default: return false;
-//            case Cse523::TEST8rr:
-//            case Cse523::TEST16rr:
-//            case Cse523::TEST32rr:
-//            case Cse523::TEST64rr:
-//                     return true;
-//            case Cse523::ADD32ri:
-//                     // FIXME: AsmPrinter doesn't know how to handle
-//                     // Cse523II::MO_GOT_ABSOLUTE_ADDRESS after folding.
-//                     if (MI->getOperand(2).getTargetFlags() == Cse523II::MO_GOT_ABSOLUTE_ADDRESS)
-//                         return false;
-//                     break;
-//        }
-//    }
-//
-//    if (Ops.size() != 1)
-//        return false;
-//
+    if (Ops.size() == 2 && Ops[0] == 0 && Ops[1] == 1) {
+        switch (MI->getOpcode()) {
+            default: return false;
+            case Cse523::TEST64rr:
+                     return true;
+            case Cse523::ADD64ri32:
+                     // FIXME: AsmPrinter doesn't know how to handle
+                     // Cse523II::MO_GOT_ABSOLUTE_ADDRESS after folding.
+                     if (MI->getOperand(2).getTargetFlags() == Cse523II::MO_GOT_ABSOLUTE_ADDRESS)
+                         return false;
+                     break;
+        }
+    }
+
+    if (Ops.size() != 1)
+        return false;
+
     unsigned OpNum = Ops[0];
-//    unsigned Opc = MI->getOpcode();
-//    unsigned NumOps = MI->getDesc().getNumOperands();
-//    bool isTwoAddr = NumOps > 1 &&
-//        MI->getDesc().getOperandConstraint(1, MCOI::TIED_TO) != -1;
-//
-//    // Folding a memory location into the two-address part of a two-address
-//    // instruction is different than folding it other places.  It requires
-//    // replacing the *two* registers with the memory location.
-//    const DenseMap<unsigned, std::pair<unsigned,unsigned> > *OpcodeTablePtr = 0;
-//    if (isTwoAddr && NumOps >= 2 && OpNum < 2) {
-//        OpcodeTablePtr = &RegOp2MemOpTable2Addr;
-//    } else if (OpNum == 0) { // If operand 0
-//        if (Opc == Cse523::MOV32r0)
-//            return true;
-//
-//        OpcodeTablePtr = &RegOp2MemOpTable0;
-//    } else if (OpNum == 1) {
-//        OpcodeTablePtr = &RegOp2MemOpTable1;
-//    } else if (OpNum == 2) {
-//        OpcodeTablePtr = &RegOp2MemOpTable2;
-//    } else if (OpNum == 3) {
-//        OpcodeTablePtr = &RegOp2MemOpTable3;
-//    }
+    unsigned Opc = MI->getOpcode();
+    unsigned NumOps = MI->getDesc().getNumOperands();
+    bool isTwoAddr = NumOps > 1 &&
+        MI->getDesc().getOperandConstraint(1, MCOI::TIED_TO) != -1;
 
-//    if (OpcodeTablePtr && OpcodeTablePtr->count(Opc))
-//        return true;
+    // Folding a memory location into the two-address part of a two-address
+    // instruction is different than folding it other places.  It requires
+    // replacing the *two* registers with the memory location.
+    const DenseMap<unsigned, std::pair<unsigned,unsigned> > *OpcodeTablePtr = 0;
+    if (isTwoAddr && NumOps >= 2 && OpNum < 2) {
+        OpcodeTablePtr = &RegOp2MemOpTable2Addr;
+    } else if (OpNum == 0) { // If operand 0
+        if (Opc == Cse523::MOV64r0)
+            return true;
+        OpcodeTablePtr = &RegOp2MemOpTable0;
+    } else if (OpNum == 1) {
+        OpcodeTablePtr = &RegOp2MemOpTable1;
+    } else if (OpNum == 2) {
+        OpcodeTablePtr = &RegOp2MemOpTable2;
+    } else if (OpNum == 3) {
+        OpcodeTablePtr = &RegOp2MemOpTable3;
+    }
+
+    if (OpcodeTablePtr && OpcodeTablePtr->count(Opc))
+        return true;
     return TargetInstrInfo::canFoldMemoryOperand(MI, Ops);
 }
 
