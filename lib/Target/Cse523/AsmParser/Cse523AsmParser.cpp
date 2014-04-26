@@ -1047,7 +1047,7 @@ namespace {
 
         bool isReg() const { return Kind == Register; }
 
-        bool isGR64() const {
+        bool isGR32orGR64() const {
             return Kind == Register &&
                  Cse523MCRegisterClasses[Cse523::GR64RegClassID].contains(getReg());
         }

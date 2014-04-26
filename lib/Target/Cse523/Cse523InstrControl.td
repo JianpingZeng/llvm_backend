@@ -28,21 +28,10 @@ let isTerminator = 1, isReturn = 1, isBarrier = 1,
                     "ret{q}\t$amt",
                     [(Cse523retflag timm:$amt)], IIC_RET_IMM>, OpSize32,
                Requires<[In64BitMode]>;
-  def RETIW  : Ii16<0xC2, RawFrm, (outs), (ins i16imm:$amt),
-                    "ret{w}\t$amt",
-                    [], IIC_RET_IMM>, OpSize16;
-  def LRETL  : I   <0xCB, RawFrm, (outs), (ins),
-                    "{l}ret{l|f}", [], IIC_RET>, OpSize32;
   def LRETQ  : RI  <0xCB, RawFrm, (outs), (ins),
                     "{l}ret{|f}q", [], IIC_RET>, Requires<[In64BitMode]>;
-  def LRETW  : I   <0xCB, RawFrm, (outs), (ins),
-                    "{l}ret{w|f}", [], IIC_RET>, OpSize16;
-  def LRETIL : Ii16<0xCA, RawFrm, (outs), (ins i16imm:$amt),
-                    "{l}ret{l|f}\t$amt", [], IIC_RET>, OpSize32;
   def LRETIQ : RIi16<0xCA, RawFrm, (outs), (ins i16imm:$amt),
                     "{l}ret{|f}q\t$amt", [], IIC_RET>, Requires<[In64BitMode]>;
-  def LRETIW : Ii16<0xCA, RawFrm, (outs), (ins i16imm:$amt),
-                    "{l}ret{w|f}\t$amt", [], IIC_RET>, OpSize16;
 }
 
 // Unconditional branches.
@@ -55,33 +44,33 @@ let isBarrier = 1, isBranch = 1, isTerminator = 1, SchedRW = [WriteJump] in {
 }
 
 // Conditional Branches.
-//let isBranch = 1, isTerminator = 1, Uses = [EFLAGS], SchedRW = [WriteJump] in {
-//  multiclass ICBr<bits<8> opc1, bits<8> opc4, string asm, PatFrag Cond> {
-//    let hasSideEffects = 0 in
-//    def _1 : Ii8PCRel <opc1, RawFrm, (outs), (ins brtarget8:$dst), asm, [],
-//                       IIC_Jcc>;
-//    def _4 : Ii32PCRel<opc4, RawFrm, (outs), (ins brtarget:$dst), asm,
-//                       [(Cse523brcond bb:$dst, Cond, EFLAGS)], IIC_Jcc>, TB,
-//             OpSize32;
-//  }
-//}
-//
-//defm JO  : ICBr<0x70, 0x80, "jo\t$dst" , Cse523_COND_O>;
-//defm JNO : ICBr<0x71, 0x81, "jno\t$dst" , Cse523_COND_NO>;
-//defm JB  : ICBr<0x72, 0x82, "jb\t$dst" , Cse523_COND_B>;
-//defm JAE : ICBr<0x73, 0x83, "jae\t$dst", Cse523_COND_AE>;
-//defm JE  : ICBr<0x74, 0x84, "je\t$dst" , Cse523_COND_E>;
-//defm JNE : ICBr<0x75, 0x85, "jne\t$dst", Cse523_COND_NE>;
-//defm JBE : ICBr<0x76, 0x86, "jbe\t$dst", Cse523_COND_BE>;
-//defm JA  : ICBr<0x77, 0x87, "ja\t$dst" , Cse523_COND_A>;
-//defm JS  : ICBr<0x78, 0x88, "js\t$dst" , Cse523_COND_S>;
-//defm JNS : ICBr<0x79, 0x89, "jns\t$dst", Cse523_COND_NS>;
-//defm JP  : ICBr<0x7A, 0x8A, "jp\t$dst" , Cse523_COND_P>;
-//defm JNP : ICBr<0x7B, 0x8B, "jnp\t$dst", Cse523_COND_NP>;
-//defm JL  : ICBr<0x7C, 0x8C, "jl\t$dst" , Cse523_COND_L>;
-//defm JGE : ICBr<0x7D, 0x8D, "jge\t$dst", Cse523_COND_GE>;
-//defm JLE : ICBr<0x7E, 0x8E, "jle\t$dst", Cse523_COND_LE>;
-//defm JG  : ICBr<0x7F, 0x8F, "jg\t$dst" , Cse523_COND_G>;
+let isBranch = 1, isTerminator = 1, Uses = [EFLAGS], SchedRW = [WriteJump] in {
+  multiclass ICBr<bits<8> opc1, bits<8> opc4, string asm, PatFrag Cond> {
+    let hasSideEffects = 0 in
+    def _1 : Ii8PCRel <opc1, RawFrm, (outs), (ins brtarget8:$dst), asm, [],
+                       IIC_Jcc>;
+    def _4 : Ii32PCRel<opc4, RawFrm, (outs), (ins brtarget:$dst), asm,
+                       [(Cse523brcond bb:$dst, Cond, EFLAGS)], IIC_Jcc>, TB,
+             OpSize32;
+  }
+}
+
+defm JO  : ICBr<0x70, 0x80, "jo\t$dst" , Cse523_COND_O>;
+defm JNO : ICBr<0x71, 0x81, "jno\t$dst" , Cse523_COND_NO>;
+defm JB  : ICBr<0x72, 0x82, "jb\t$dst" , Cse523_COND_B>;
+defm JAE : ICBr<0x73, 0x83, "jae\t$dst", Cse523_COND_AE>;
+defm JE  : ICBr<0x74, 0x84, "je\t$dst" , Cse523_COND_E>;
+defm JNE : ICBr<0x75, 0x85, "jne\t$dst", Cse523_COND_NE>;
+defm JBE : ICBr<0x76, 0x86, "jbe\t$dst", Cse523_COND_BE>;
+defm JA  : ICBr<0x77, 0x87, "ja\t$dst" , Cse523_COND_A>;
+defm JS  : ICBr<0x78, 0x88, "js\t$dst" , Cse523_COND_S>;
+defm JNS : ICBr<0x79, 0x89, "jns\t$dst", Cse523_COND_NS>;
+defm JP  : ICBr<0x7A, 0x8A, "jp\t$dst" , Cse523_COND_P>;
+defm JNP : ICBr<0x7B, 0x8B, "jnp\t$dst", Cse523_COND_NP>;
+defm JL  : ICBr<0x7C, 0x8C, "jl\t$dst" , Cse523_COND_L>;
+defm JGE : ICBr<0x7D, 0x8D, "jge\t$dst", Cse523_COND_GE>;
+defm JLE : ICBr<0x7E, 0x8E, "jle\t$dst", Cse523_COND_LE>;
+defm JG  : ICBr<0x7F, 0x8F, "jg\t$dst" , Cse523_COND_G>;
 
 // jcx/jecx/jrcx instructions.
 let isBranch = 1, isTerminator = 1, hasSideEffects = 0, SchedRW = [WriteJump] in {

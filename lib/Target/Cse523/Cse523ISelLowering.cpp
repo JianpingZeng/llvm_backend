@@ -12813,10 +12813,7 @@ static unsigned getCmpXChgOpcode(EVT VT) {
 // Get LOAD opcode for the specified data type.
 static unsigned getLoadOpcode(EVT VT) {
     switch (VT.getSimpleVT().SimpleTy) {
-//        case MVT::i8:  return Cse523::MOV8rm;
-//        case MVT::i16: return Cse523::MOV16rm;
-//        case MVT::i32: return Cse523::MOV32rm;
-//        case MVT::i64: return Cse523::MOV64rm;
+        case MVT::i64: return Cse523::MOV64rm;
         default:
                        break;
     }
@@ -13036,12 +13033,10 @@ Cse523TargetLowering::EmitAtomicLoadArith(MachineInstr *MI,
     MachineInstr *Phi = BuildMI(mainMBB, DL, TII->get(Cse523::PHI), t4)
         .addReg(t1).addMBB(thisMBB).addReg(t3).addMBB(mainMBB);
 
-    assert(0);
-//
-//    unsigned Opc = MI->getOpcode();
-//    switch (Opc) {
-//        default:
-//            llvm_unreachable("Unhandled atomic-load-op opcode!");
+    unsigned Opc = MI->getOpcode();
+    switch (Opc) {
+        default:
+            llvm_unreachable("Unhandled atomic-load-op opcode!");
 //        case Cse523::ATOMAND8:
 //        case Cse523::ATOMAND16:
 //        case Cse523::ATOMAND32:
@@ -13147,37 +13142,37 @@ Cse523TargetLowering::EmitAtomicLoadArith(MachineInstr *MI,
 //                                     }
 //                                     break;
 //                                 }
-//    }
-//
-//    // Copy PhyReg back from virtual register.
-//    BuildMI(mainMBB, DL, TII->get(TargetOpcode::COPY), PhyReg)
-//        .addReg(t4);
-//
-//    MIB = BuildMI(mainMBB, DL, TII->get(LCMPXCHGOpc));
-//    for (unsigned i = 0; i < Cse523::AddrNumOperands; ++i) {
-//        MachineOperand NewMO = MI->getOperand(MemOpndSlot + i);
-//        if (NewMO.isReg())
-//            NewMO.setIsKill(false);
-//        MIB.addOperand(NewMO);
-//    }
-//    MIB.addReg(t2);
-//    MIB.setMemRefs(MMOBegin, MMOEnd);
-//
-//    // Copy PhyReg back to virtual register.
-//    BuildMI(mainMBB, DL, TII->get(TargetOpcode::COPY), t3)
-//        .addReg(PhyReg);
-//
-//    BuildMI(mainMBB, DL, TII->get(Cse523::JNE_4)).addMBB(origMainMBB);
-//
-//    mainMBB->addSuccessor(origMainMBB);
-//    mainMBB->addSuccessor(sinkMBB);
-//
-//    // sinkMBB:
-//    BuildMI(*sinkMBB, sinkMBB->begin(), DL,
-//            TII->get(TargetOpcode::COPY), DstReg)
-//        .addReg(t3);
-//
-//    MI->eraseFromParent();
+    }
+
+    // Copy PhyReg back from virtual register.
+    BuildMI(mainMBB, DL, TII->get(TargetOpcode::COPY), PhyReg)
+        .addReg(t4);
+
+    MIB = BuildMI(mainMBB, DL, TII->get(LCMPXCHGOpc));
+    for (unsigned i = 0; i < Cse523::AddrNumOperands; ++i) {
+        MachineOperand NewMO = MI->getOperand(MemOpndSlot + i);
+        if (NewMO.isReg())
+            NewMO.setIsKill(false);
+        MIB.addOperand(NewMO);
+    }
+    MIB.addReg(t2);
+    MIB.setMemRefs(MMOBegin, MMOEnd);
+
+    // Copy PhyReg back to virtual register.
+    BuildMI(mainMBB, DL, TII->get(TargetOpcode::COPY), t3)
+        .addReg(PhyReg);
+
+    BuildMI(mainMBB, DL, TII->get(Cse523::JNE_4)).addMBB(origMainMBB);
+
+    mainMBB->addSuccessor(origMainMBB);
+    mainMBB->addSuccessor(sinkMBB);
+
+    // sinkMBB:
+    BuildMI(*sinkMBB, sinkMBB->begin(), DL,
+            TII->get(TargetOpcode::COPY), DstReg)
+        .addReg(t3);
+
+    MI->eraseFromParent();
     return sinkMBB;
 }
 
@@ -14022,14 +14017,13 @@ Cse523TargetLowering::EmitLoweredSegAlloca(MachineInstr *MI, MachineBasicBlock *
 
     // Add code to the main basic block to check if the stack limit has been hit,
     // and if so, jump to mallocMBB otherwise to bumpMBB.
-    assert(0);
     BuildMI(BB, DL, TII->get(TargetOpcode::COPY), tmpSPVReg).addReg(physSPReg);
-//    BuildMI(BB, DL, TII->get(Cse523::SUB64rr:), SPLimitVReg)
-//        .addReg(tmpSPVReg).addReg(sizeVReg);
-//    BuildMI(BB, DL, TII->get(Cse523::CMP64mr))
-//        .addReg(0).addImm(1).addReg(0).addImm(TlsOffset).addReg(TlsReg)
-//        .addReg(SPLimitVReg);
-//    BuildMI(BB, DL, TII->get(Cse523::JG_4)).addMBB(mallocMBB);
+    BuildMI(BB, DL, TII->get(Cse523::SUB64rr), SPLimitVReg)
+        .addReg(tmpSPVReg).addReg(sizeVReg);
+    BuildMI(BB, DL, TII->get(Cse523::CMP64mr))
+        .addReg(0).addImm(1).addReg(0).addImm(TlsOffset).addReg(TlsReg)
+        .addReg(SPLimitVReg);
+    BuildMI(BB, DL, TII->get(Cse523::JG_4)).addMBB(mallocMBB);
 
     // bumpMBB simply decreases the stack pointer, since we know the current
     // stacklet has enough space.
@@ -14037,7 +14031,7 @@ Cse523TargetLowering::EmitLoweredSegAlloca(MachineInstr *MI, MachineBasicBlock *
         .addReg(SPLimitVReg);
     BuildMI(bumpMBB, DL, TII->get(TargetOpcode::COPY), bumpSPPtrVReg)
         .addReg(SPLimitVReg);
-    //BuildMI(bumpMBB, DL, TII->get(Cse523::JMP_4)).addMBB(continueMBB);
+    BuildMI(bumpMBB, DL, TII->get(Cse523::JMP_4)).addMBB(continueMBB);
 
     // Calls into a routine in libgcc to allocate more space from the heap.
     const uint32_t *RegMask =
@@ -14121,240 +14115,223 @@ Cse523TargetLowering::EmitLoweredTLSCall(MachineInstr *MI,
     // our load from the relocation, sticking it in either RDI (cse523-64)
     // or EAX and doing an indirect call.  The return value will then
     // be in the normal return register.
-    assert(0);
-    return NULL;
-    //const Cse523InstrInfo *TII
-    //    = static_cast<const Cse523InstrInfo*>(getTargetMachine().getInstrInfo());
-    //DebugLoc DL = MI->getDebugLoc();
-    //MachineFunction *F = BB->getParent();
+    const Cse523InstrInfo *TII
+        = static_cast<const Cse523InstrInfo*>(getTargetMachine().getInstrInfo());
+    DebugLoc DL = MI->getDebugLoc();
+    MachineFunction *F = BB->getParent();
 
-    //assert(Subtarget->isTargetDarwin() && "Darwin only instr emitted?");
-    //assert(MI->getOperand(3).isGlobal() && "This should be a global");
+    assert(Subtarget->isTargetDarwin() && "Darwin only instr emitted?");
+    assert(MI->getOperand(3).isGlobal() && "This should be a global");
 
-    //// Get a register mask for the lowered call.
-    //// FIXME: The 32-bit calls have non-standard calling conventions. Use a
-    //// proper register mask.
-    //const uint32_t *RegMask =
-    //    getTargetMachine().getRegisterInfo()->getCallPreservedMask(CallingConv::C);
-    //MachineInstrBuilder MIB = BuildMI(*BB, MI, DL,
-    //        TII->get(Cse523::MOV64rm), Cse523::RDI)
-    //    .addReg(Cse523::RIP)
-    //    .addImm(0).addReg(0)
-    //    .addGlobalAddress(MI->getOperand(3).getGlobal(), 0,
-    //            MI->getOperand(3).getTargetFlags())
-    //    .addReg(0);
-    //MIB = BuildMI(*BB, MI, DL, TII->get(Cse523::CALL64m));
-    //addDirectMem(MIB, Cse523::RDI);
-    //MIB.addReg(Cse523::RAX, RegState::ImplicitDefine).addRegMask(RegMask);
+    // Get a register mask for the lowered call.
+    // FIXME: The 32-bit calls have non-standard calling conventions. Use a
+    // proper register mask.
+    const uint32_t *RegMask =
+        getTargetMachine().getRegisterInfo()->getCallPreservedMask(CallingConv::C);
+    MachineInstrBuilder MIB = BuildMI(*BB, MI, DL,
+            TII->get(Cse523::MOV64rm), Cse523::RDI)
+        .addReg(Cse523::RIP)
+        .addImm(0).addReg(0)
+        .addGlobalAddress(MI->getOperand(3).getGlobal(), 0,
+                MI->getOperand(3).getTargetFlags())
+        .addReg(0);
+    MIB = BuildMI(*BB, MI, DL, TII->get(Cse523::CALL64m));
+    addDirectMem(MIB, Cse523::RDI);
+    MIB.addReg(Cse523::RAX, RegState::ImplicitDefine).addRegMask(RegMask);
 
-    //MI->eraseFromParent(); // The pseudo instruction is gone now.
-    //return BB;
+    MI->eraseFromParent(); // The pseudo instruction is gone now.
+    return BB;
 }
 
 MachineBasicBlock *
 Cse523TargetLowering::emitEHSjLjSetJmp(MachineInstr *MI,
         MachineBasicBlock *MBB) const {
-    assert(0);
-    return NULL;
-    //DebugLoc DL = MI->getDebugLoc();
-    //const TargetInstrInfo *TII = getTargetMachine().getInstrInfo();
+    DebugLoc DL = MI->getDebugLoc();
+    const TargetInstrInfo *TII = getTargetMachine().getInstrInfo();
 
-    //MachineFunction *MF = MBB->getParent();
-    //MachineRegisterInfo &MRI = MF->getRegInfo();
+    MachineFunction *MF = MBB->getParent();
+    MachineRegisterInfo &MRI = MF->getRegInfo();
 
-    //const BasicBlock *BB = MBB->getBasicBlock();
-    //MachineFunction::iterator I = MBB;
-    //++I;
+    const BasicBlock *BB = MBB->getBasicBlock();
+    MachineFunction::iterator I = MBB;
+    ++I;
 
-    //// Memory Reference
-    //MachineInstr::mmo_iterator MMOBegin = MI->memoperands_begin();
-    //MachineInstr::mmo_iterator MMOEnd = MI->memoperands_end();
+    // Memory Reference
+    MachineInstr::mmo_iterator MMOBegin = MI->memoperands_begin();
+    MachineInstr::mmo_iterator MMOEnd = MI->memoperands_end();
 
-    //unsigned DstReg;
-    //unsigned MemOpndSlot = 0;
+    unsigned DstReg;
+    unsigned MemOpndSlot = 0;
 
-    //unsigned CurOp = 0;
+    unsigned CurOp = 0;
 
-    //DstReg = MI->getOperand(CurOp++).getReg();
-    //const TargetRegisterClass *RC = MRI.getRegClass(DstReg);
-    //assert(RC->hasType(MVT::i32) && "Invalid destination!");
-    //unsigned mainDstReg = MRI.createVirtualRegister(RC);
-    //unsigned restoreDstReg = MRI.createVirtualRegister(RC);
+    DstReg = MI->getOperand(CurOp++).getReg();
+    const TargetRegisterClass *RC = MRI.getRegClass(DstReg);
+    assert(RC->hasType(MVT::i32) && "Invalid destination!");
+    unsigned mainDstReg = MRI.createVirtualRegister(RC);
+    unsigned restoreDstReg = MRI.createVirtualRegister(RC);
 
-    //MemOpndSlot = CurOp;
+    MemOpndSlot = CurOp;
 
-    //MVT PVT = getPointerTy();
-    //assert((PVT == MVT::i64 || PVT == MVT::i32) &&
-    //        "Invalid Pointer Size!");
+    MVT PVT = getPointerTy();
+    assert((PVT == MVT::i64 || PVT == MVT::i32) &&
+            "Invalid Pointer Size!");
 
-    //// For v = setjmp(buf), we generate
-    ////
-    //// thisMBB:
-    ////  buf[LabelOffset] = restoreMBB
-    ////  SjLjSetup restoreMBB
-    ////
-    //// mainMBB:
-    ////  v_main = 0
-    ////
-    //// sinkMBB:
-    ////  v = phi(main, restore)
-    ////
-    //// restoreMBB:
-    ////  v_restore = 1
+    // For v = setjmp(buf), we generate
+    //
+    // thisMBB:
+    //  buf[LabelOffset] = restoreMBB
+    //  SjLjSetup restoreMBB
+    //
+    // mainMBB:
+    //  v_main = 0
+    //
+    // sinkMBB:
+    //  v = phi(main, restore)
+    //
+    // restoreMBB:
+    //  v_restore = 1
 
-    //MachineBasicBlock *thisMBB = MBB;
-    //MachineBasicBlock *mainMBB = MF->CreateMachineBasicBlock(BB);
-    //MachineBasicBlock *sinkMBB = MF->CreateMachineBasicBlock(BB);
-    //MachineBasicBlock *restoreMBB = MF->CreateMachineBasicBlock(BB);
-    //MF->insert(I, mainMBB);
-    //MF->insert(I, sinkMBB);
-    //MF->push_back(restoreMBB);
+    MachineBasicBlock *thisMBB = MBB;
+    MachineBasicBlock *mainMBB = MF->CreateMachineBasicBlock(BB);
+    MachineBasicBlock *sinkMBB = MF->CreateMachineBasicBlock(BB);
+    MachineBasicBlock *restoreMBB = MF->CreateMachineBasicBlock(BB);
+    MF->insert(I, mainMBB);
+    MF->insert(I, sinkMBB);
+    MF->push_back(restoreMBB);
 
-    //MachineInstrBuilder MIB;
+    MachineInstrBuilder MIB;
 
-    //// Transfer the remainder of BB and its successor edges to sinkMBB.
-    //sinkMBB->splice(sinkMBB->begin(), MBB,
-    //        llvm::next(MachineBasicBlock::iterator(MI)), MBB->end());
-    //sinkMBB->transferSuccessorsAndUpdatePHIs(MBB);
+    // Transfer the remainder of BB and its successor edges to sinkMBB.
+    sinkMBB->splice(sinkMBB->begin(), MBB,
+            llvm::next(MachineBasicBlock::iterator(MI)), MBB->end());
+    sinkMBB->transferSuccessorsAndUpdatePHIs(MBB);
 
-    //// thisMBB:
-    //unsigned PtrStoreOpc = 0;
-    //unsigned LabelReg = 0;
-    //const int64_t LabelOffset = 1 * PVT.getStoreSize();
-    //Reloc::Model RM = getTargetMachine().getRelocationModel();
-    //bool UseImmLabel = (getTargetMachine().getCodeModel() == CodeModel::Small) &&
-    //    (RM == Reloc::Static || RM == Reloc::DynamicNoPIC);
+    // thisMBB:
+    unsigned PtrStoreOpc = 0;
+    unsigned LabelReg = 0;
+    const int64_t LabelOffset = 1 * PVT.getStoreSize();
+    Reloc::Model RM = getTargetMachine().getRelocationModel();
+    bool UseImmLabel = (getTargetMachine().getCodeModel() == CodeModel::Small) &&
+        (RM == Reloc::Static || RM == Reloc::DynamicNoPIC);
 
-    //// Prepare IP either in reg or imm.
-    //if (!UseImmLabel) {
-    //    PtrStoreOpc = (PVT == MVT::i64) ? Cse523::MOV64mr : Cse523::MOV32mr;
-    //    const TargetRegisterClass *PtrRC = getRegClassFor(PVT);
-    //    LabelReg = MRI.createVirtualRegister(PtrRC);
-    //    if (Subtarget->is64Bit()) {
-    //        MIB = BuildMI(*thisMBB, MI, DL, TII->get(Cse523::LEA64r), LabelReg)
-    //            .addReg(Cse523::RIP)
-    //            .addImm(0)
-    //            .addReg(0)
-    //            .addMBB(restoreMBB)
-    //            .addReg(0);
-    //    } else {
-    //        const Cse523InstrInfo *XII = static_cast<const Cse523InstrInfo*>(TII);
-    //        MIB = BuildMI(*thisMBB, MI, DL, TII->get(Cse523::LEA32r), LabelReg)
-    //            .addReg(XII->getGlobalBaseReg(MF))
-    //            .addImm(0)
-    //            .addReg(0)
-    //            .addMBB(restoreMBB, Subtarget->ClassifyBlockAddressReference())
-    //            .addReg(0);
-    //    }
-    //} else
-    //    PtrStoreOpc = (PVT == MVT::i64) ? Cse523::MOV64mi32 : Cse523::MOV32mi;
-    //// Store IP
-    //MIB = BuildMI(*thisMBB, MI, DL, TII->get(PtrStoreOpc));
-    //for (unsigned i = 0; i < Cse523::AddrNumOperands; ++i) {
-    //    if (i == Cse523::AddrDisp)
-    //        MIB.addDisp(MI->getOperand(MemOpndSlot + i), LabelOffset);
-    //    else
-    //        MIB.addOperand(MI->getOperand(MemOpndSlot + i));
-    //}
-    //if (!UseImmLabel)
-    //    MIB.addReg(LabelReg);
-    //else
-    //    MIB.addMBB(restoreMBB);
-    //MIB.setMemRefs(MMOBegin, MMOEnd);
-    //// Setup
-    //MIB = BuildMI(*thisMBB, MI, DL, TII->get(Cse523::EH_SjLj_Setup))
-    //    .addMBB(restoreMBB);
+    // Prepare IP either in reg or imm.
+    if (!UseImmLabel) {
+        PtrStoreOpc = Cse523::MOV64mr;
+        const TargetRegisterClass *PtrRC = getRegClassFor(PVT);
+        LabelReg = MRI.createVirtualRegister(PtrRC);
+        MIB = BuildMI(*thisMBB, MI, DL, TII->get(Cse523::LEA64r), LabelReg)
+            .addReg(Cse523::RIP)
+            .addImm(0)
+            .addReg(0)
+            .addMBB(restoreMBB)
+            .addReg(0);
+    } else
+        PtrStoreOpc = Cse523::MOV64mi32;
+    // Store IP
+    MIB = BuildMI(*thisMBB, MI, DL, TII->get(PtrStoreOpc));
+    for (unsigned i = 0; i < Cse523::AddrNumOperands; ++i) {
+        if (i == Cse523::AddrDisp)
+            MIB.addDisp(MI->getOperand(MemOpndSlot + i), LabelOffset);
+        else
+            MIB.addOperand(MI->getOperand(MemOpndSlot + i));
+    }
+    if (!UseImmLabel)
+        MIB.addReg(LabelReg);
+    else
+        MIB.addMBB(restoreMBB);
+    MIB.setMemRefs(MMOBegin, MMOEnd);
+    // Setup
+    MIB = BuildMI(*thisMBB, MI, DL, TII->get(Cse523::EH_SjLj_Setup))
+        .addMBB(restoreMBB);
 
-    //const Cse523RegisterInfo *RegInfo =
-    //    static_cast<const Cse523RegisterInfo*>(getTargetMachine().getRegisterInfo());
-    //MIB.addRegMask(RegInfo->getNoPreservedMask());
-    //thisMBB->addSuccessor(mainMBB);
-    //thisMBB->addSuccessor(restoreMBB);
+    const Cse523RegisterInfo *RegInfo =
+        static_cast<const Cse523RegisterInfo*>(getTargetMachine().getRegisterInfo());
+    MIB.addRegMask(RegInfo->getNoPreservedMask());
+    thisMBB->addSuccessor(mainMBB);
+    thisMBB->addSuccessor(restoreMBB);
 
-    //// mainMBB:
-    ////  EAX = 0
-    //BuildMI(mainMBB, DL, TII->get(Cse523::MOV32r0), mainDstReg);
-    //mainMBB->addSuccessor(sinkMBB);
+    // mainMBB:
+    //  EAX = 0
+    BuildMI(mainMBB, DL, TII->get(Cse523::MOV64r0), mainDstReg);
+    mainMBB->addSuccessor(sinkMBB);
 
-    //// sinkMBB:
-    //BuildMI(*sinkMBB, sinkMBB->begin(), DL,
-    //        TII->get(Cse523::PHI), DstReg)
-    //    .addReg(mainDstReg).addMBB(mainMBB)
-    //    .addReg(restoreDstReg).addMBB(restoreMBB);
+    // sinkMBB:
+    BuildMI(*sinkMBB, sinkMBB->begin(), DL,
+            TII->get(Cse523::PHI), DstReg)
+        .addReg(mainDstReg).addMBB(mainMBB)
+        .addReg(restoreDstReg).addMBB(restoreMBB);
 
-    //// restoreMBB:
-    //BuildMI(restoreMBB, DL, TII->get(Cse523::MOV32ri), restoreDstReg).addImm(1);
-    //BuildMI(restoreMBB, DL, TII->get(Cse523::JMP_4)).addMBB(sinkMBB);
-    //restoreMBB->addSuccessor(sinkMBB);
+    // restoreMBB:
+    BuildMI(restoreMBB, DL, TII->get(Cse523::MOV64ri), restoreDstReg).addImm(1);
+    BuildMI(restoreMBB, DL, TII->get(Cse523::JMP_4)).addMBB(sinkMBB);
+    restoreMBB->addSuccessor(sinkMBB);
 
-    //MI->eraseFromParent();
-    //return sinkMBB;
+    MI->eraseFromParent();
+    return sinkMBB;
 }
 
 MachineBasicBlock *
 Cse523TargetLowering::emitEHSjLjLongJmp(MachineInstr *MI,
         MachineBasicBlock *MBB) const {
-    assert(0);
-    return NULL;
-    //DebugLoc DL = MI->getDebugLoc();
-    //const TargetInstrInfo *TII = getTargetMachine().getInstrInfo();
+    DebugLoc DL = MI->getDebugLoc();
+    const TargetInstrInfo *TII = getTargetMachine().getInstrInfo();
 
-    //MachineFunction *MF = MBB->getParent();
-    //MachineRegisterInfo &MRI = MF->getRegInfo();
+    MachineFunction *MF = MBB->getParent();
+    MachineRegisterInfo &MRI = MF->getRegInfo();
 
-    //// Memory Reference
-    //MachineInstr::mmo_iterator MMOBegin = MI->memoperands_begin();
-    //MachineInstr::mmo_iterator MMOEnd = MI->memoperands_end();
+    // Memory Reference
+    MachineInstr::mmo_iterator MMOBegin = MI->memoperands_begin();
+    MachineInstr::mmo_iterator MMOEnd = MI->memoperands_end();
 
-    //MVT PVT = getPointerTy();
-    //assert((PVT == MVT::i64 || PVT == MVT::i32) &&
-    //        "Invalid Pointer Size!");
+    MVT PVT = getPointerTy();
+    assert((PVT == MVT::i64 || PVT == MVT::i32) &&
+            "Invalid Pointer Size!");
 
-    //const TargetRegisterClass *RC =
-    //    (PVT == MVT::i64) ? &Cse523::GR64RegClass : &Cse523::GR32RegClass;
-    //unsigned Tmp = MRI.createVirtualRegister(RC);
-    //// Since FP is only updated here but NOT referenced, it's treated as GPR.
-    //const Cse523RegisterInfo *RegInfo =
-    //    static_cast<const Cse523RegisterInfo*>(getTargetMachine().getRegisterInfo());
-    //unsigned FP = (PVT == MVT::i64) ? Cse523::RBP : Cse523::EBP;
-    //unsigned SP = RegInfo->getStackRegister();
+    const TargetRegisterClass *RC = &Cse523::GR64RegClass;
+    unsigned Tmp = MRI.createVirtualRegister(RC);
+    // Since FP is only updated here but NOT referenced, it's treated as GPR.
+    const Cse523RegisterInfo *RegInfo =
+        static_cast<const Cse523RegisterInfo*>(getTargetMachine().getRegisterInfo());
+    unsigned FP = Cse523::RBP;
+    unsigned SP = RegInfo->getStackRegister();
 
-    //MachineInstrBuilder MIB;
+    MachineInstrBuilder MIB;
 
-    //const int64_t LabelOffset = 1 * PVT.getStoreSize();
-    //const int64_t SPOffset = 2 * PVT.getStoreSize();
+    const int64_t LabelOffset = 1 * PVT.getStoreSize();
+    const int64_t SPOffset = 2 * PVT.getStoreSize();
 
-    //unsigned PtrLoadOpc = (PVT == MVT::i64) ? Cse523::MOV64rm : Cse523::MOV32rm;
-    //unsigned IJmpOpc = (PVT == MVT::i64) ? Cse523::JMP64r : Cse523::JMP32r;
+    unsigned PtrLoadOpc = Cse523::MOV64rm;
+    unsigned IJmpOpc = Cse523::JMP64r;
 
-    //// Reload FP
-    //MIB = BuildMI(*MBB, MI, DL, TII->get(PtrLoadOpc), FP);
-    //for (unsigned i = 0; i < Cse523::AddrNumOperands; ++i)
-    //    MIB.addOperand(MI->getOperand(i));
-    //MIB.setMemRefs(MMOBegin, MMOEnd);
-    //// Reload IP
-    //MIB = BuildMI(*MBB, MI, DL, TII->get(PtrLoadOpc), Tmp);
-    //for (unsigned i = 0; i < Cse523::AddrNumOperands; ++i) {
-    //    if (i == Cse523::AddrDisp)
-    //        MIB.addDisp(MI->getOperand(i), LabelOffset);
-    //    else
-    //        MIB.addOperand(MI->getOperand(i));
-    //}
-    //MIB.setMemRefs(MMOBegin, MMOEnd);
-    //// Reload SP
-    //MIB = BuildMI(*MBB, MI, DL, TII->get(PtrLoadOpc), SP);
-    //for (unsigned i = 0; i < Cse523::AddrNumOperands; ++i) {
-    //    if (i == Cse523::AddrDisp)
-    //        MIB.addDisp(MI->getOperand(i), SPOffset);
-    //    else
-    //        MIB.addOperand(MI->getOperand(i));
-    //}
-    //MIB.setMemRefs(MMOBegin, MMOEnd);
-    //// Jump
-    //BuildMI(*MBB, MI, DL, TII->get(IJmpOpc)).addReg(Tmp);
+    // Reload FP
+    MIB = BuildMI(*MBB, MI, DL, TII->get(PtrLoadOpc), FP);
+    for (unsigned i = 0; i < Cse523::AddrNumOperands; ++i)
+        MIB.addOperand(MI->getOperand(i));
+    MIB.setMemRefs(MMOBegin, MMOEnd);
+    // Reload IP
+    MIB = BuildMI(*MBB, MI, DL, TII->get(PtrLoadOpc), Tmp);
+    for (unsigned i = 0; i < Cse523::AddrNumOperands; ++i) {
+        if (i == Cse523::AddrDisp)
+            MIB.addDisp(MI->getOperand(i), LabelOffset);
+        else
+            MIB.addOperand(MI->getOperand(i));
+    }
+    MIB.setMemRefs(MMOBegin, MMOEnd);
+    // Reload SP
+    MIB = BuildMI(*MBB, MI, DL, TII->get(PtrLoadOpc), SP);
+    for (unsigned i = 0; i < Cse523::AddrNumOperands; ++i) {
+        if (i == Cse523::AddrDisp)
+            MIB.addDisp(MI->getOperand(i), SPOffset);
+        else
+            MIB.addOperand(MI->getOperand(i));
+    }
+    MIB.setMemRefs(MMOBegin, MMOEnd);
+    // Jump
+    BuildMI(*MBB, MI, DL, TII->get(IJmpOpc)).addReg(Tmp);
 
-    //MI->eraseFromParent();
-    //return MBB;
+    MI->eraseFromParent();
+    return MBB;
 }
 
 // Replace 213-type (isel default) FMA3 instructions with 231-type for

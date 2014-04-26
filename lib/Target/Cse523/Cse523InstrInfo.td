@@ -24,7 +24,6 @@ def SDTIntShiftDOp: SDTypeProfile<1, 3,
 def SDTCse523CmpTest : SDTypeProfile<1, 2, [SDTCisVT<0, i64>, SDTCisSameAs<1, 2>]>;
 
 def SDTCse523Cmps : SDTypeProfile<1, 3, [SDTCisFP<0>, SDTCisSameAs<1, 2>, SDTCisVT<3, i8>]>;
-//def SDTCse523Cmpss : SDTypeProfile<1, 3, [SDTCisVT<0, f32>, SDTCisSameAs<1, 2>, SDTCisVT<3, i8>]>;
 
 def SDTCse523Cmov    : SDTypeProfile<1, 4,
                                   [SDTCisSameAs<0, 1>, SDTCisSameAs<1, 2>,
@@ -523,12 +522,12 @@ class ImmZExtAsmOperandClass : AsmOperandClass {
   let RenderMethod = "addImmOperands";
 }
 
-def Cse523GR64AsmOperand : AsmOperandClass {
-  let Name = "GR64";
+def Cse523GR32orGR64AsmOperand : AsmOperandClass {
+  let Name = "GR32orGR64";
 }
 
 def GR32orGR64 : RegisterOperand<GR64> {
-  let ParserMatchClass = Cse523GR64AsmOperand;
+  let ParserMatchClass = Cse523GR32orGR64AsmOperand;
 }
 // Sign-extended immediate classes. We don't need to define the full lattice
 // here because there is no instruction with an ambiguity between ImmSExti64i32

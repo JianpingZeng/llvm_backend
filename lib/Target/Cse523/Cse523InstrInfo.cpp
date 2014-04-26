@@ -106,36 +106,32 @@ Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
         //{ Cse523::ADC64ri32,   Cse523::ADC64mi32,  0 },
         //{ Cse523::ADC64rr,     Cse523::ADC64mr,    0 },
         { Cse523::ADD64ri32,   Cse523::ADD64mi32,  0 },
-        //{ Cse523::ADD64ri32_DB,Cse523::ADD64mi32,  TB_NO_REVERSE },
         { Cse523::ADD64rr,     Cse523::ADD64mr,    0 },
-        //{ Cse523::ADD64rr_DB,  Cse523::ADD64mr,    TB_NO_REVERSE },
         { Cse523::AND64ri32,   Cse523::AND64mi32,  0 },
         { Cse523::AND64rr,     Cse523::AND64mr,    0 },
-        //{ Cse523::DEC64_32r,   Cse523::DEC64_32m,  0 },
         { Cse523::DEC64r,      Cse523::DEC64m,     0 },
-        //{ Cse523::INC64_32r,   Cse523::INC64_32m,  0 },
         { Cse523::INC64r,      Cse523::INC64m,     0 },
         { Cse523::NEG64r,      Cse523::NEG64m,     0 },
         { Cse523::NOT64r,      Cse523::NOT64m,     0 },
         { Cse523::OR64ri32,    Cse523::OR64mi32,   0 },
         { Cse523::OR64rr,      Cse523::OR64mr,     0 },
-        //{ Cse523::ROL64r1,     Cse523::ROL64m1,    0 },
-        //{ Cse523::ROL64rCL,    Cse523::ROL64mCL,   0 },
-        //{ Cse523::ROL64ri,     Cse523::ROL64mi,    0 },
-        //{ Cse523::ROR64r1,     Cse523::ROR64m1,    0 },
-        //{ Cse523::ROR64rCL,    Cse523::ROR64mCL,   0 },
-        //{ Cse523::ROR64ri,     Cse523::ROR64mi,    0 },
-        //{ Cse523::SAR64r1,     Cse523::SAR64m1,    0 },
-        //{ Cse523::SAR64rCL,    Cse523::SAR64mCL,   0 },
-        //{ Cse523::SAR64ri,     Cse523::SAR64mi,    0 },
+        { Cse523::ROL64r1,     Cse523::ROL64m1,    0 },
+        { Cse523::ROL64rCL,    Cse523::ROL64mCL,   0 },
+        { Cse523::ROL64ri,     Cse523::ROL64mi,    0 },
+        { Cse523::ROR64r1,     Cse523::ROR64m1,    0 },
+        { Cse523::ROR64rCL,    Cse523::ROR64mCL,   0 },
+        { Cse523::ROR64ri,     Cse523::ROR64mi,    0 },
+        { Cse523::SAR64r1,     Cse523::SAR64m1,    0 },
+        { Cse523::SAR64rCL,    Cse523::SAR64mCL,   0 },
+        { Cse523::SAR64ri,     Cse523::SAR64mi,    0 },
         //{ Cse523::SBB64ri32,   Cse523::SBB64mi32,  0 },
         //{ Cse523::SBB64rr,     Cse523::SBB64mr,    0 },
-        //{ Cse523::SHL64rCL,    Cse523::SHL64mCL,   0 },
-        //{ Cse523::SHL64ri,     Cse523::SHL64mi,    0 },
+        { Cse523::SHL64rCL,    Cse523::SHL64mCL,   0 },
+        { Cse523::SHL64ri,     Cse523::SHL64mi,    0 },
         //{ Cse523::SHLD64rrCL,  Cse523::SHLD64mrCL, 0 },
-        //{ Cse523::SHR64r1,     Cse523::SHR64m1,    0 },
-        //{ Cse523::SHR64rCL,    Cse523::SHR64mCL,   0 },
-        //{ Cse523::SHR64ri,     Cse523::SHR64mi,    0 },
+        { Cse523::SHR64r1,     Cse523::SHR64m1,    0 },
+        { Cse523::SHR64rCL,    Cse523::SHR64mCL,   0 },
+        { Cse523::SHR64ri,     Cse523::SHR64mi,    0 },
         //{ Cse523::SHRD64rrCL,  Cse523::SHRD64mrCL, 0 },
         { Cse523::SUB64ri32,   Cse523::SUB64mi32,  0 },
         { Cse523::SUB64rr,     Cse523::SUB64mr,    0 },
@@ -154,59 +150,16 @@ Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
     }
 
     static const Cse523OpTblEntry OpTbl0[] = {
-        //{ Cse523::BT16ri8,     Cse523::BT16mi8,       TB_FOLDED_LOAD },
-        //{ Cse523::BT32ri8,     Cse523::BT32mi8,       TB_FOLDED_LOAD },
-        //{ Cse523::BT64ri8,     Cse523::BT64mi8,       TB_FOLDED_LOAD },
-        //{ Cse523::CALL32r,     Cse523::CALL32m,       TB_FOLDED_LOAD },
         { Cse523::CALL64r,     Cse523::CALL64m,       TB_FOLDED_LOAD },
-        //{ Cse523::CMP16ri,     Cse523::CMP16mi,       TB_FOLDED_LOAD },
-        //{ Cse523::CMP16ri8,    Cse523::CMP16mi8,      TB_FOLDED_LOAD },
-        //{ Cse523::CMP16rr,     Cse523::CMP16mr,       TB_FOLDED_LOAD },
-        //{ Cse523::CMP32ri,     Cse523::CMP32mi,       TB_FOLDED_LOAD },
-        //{ Cse523::CMP32ri8,    Cse523::CMP32mi8,      TB_FOLDED_LOAD },
-        //{ Cse523::CMP32rr,     Cse523::CMP32mr,       TB_FOLDED_LOAD },
         { Cse523::CMP64ri32,   Cse523::CMP64mi32,     TB_FOLDED_LOAD },
-        //{ Cse523::CMP64ri8,    Cse523::CMP64mi8,      TB_FOLDED_LOAD },
         { Cse523::CMP64rr,     Cse523::CMP64mr,       TB_FOLDED_LOAD },
-        //{ Cse523::CMP8ri,      Cse523::CMP8mi,        TB_FOLDED_LOAD },
-        //{ Cse523::CMP8rr,      Cse523::CMP8mr,        TB_FOLDED_LOAD },
-        //{ Cse523::DIV16r,      Cse523::DIV16m,        TB_FOLDED_LOAD },
-        //{ Cse523::DIV32r,      Cse523::DIV32m,        TB_FOLDED_LOAD },
         { Cse523::DIV64r,      Cse523::DIV64m,        TB_FOLDED_LOAD },
-        //{ Cse523::DIV8r,       Cse523::DIV8m,         TB_FOLDED_LOAD },
-        //{ Cse523::EXTRACTPSrr, Cse523::EXTRACTPSmr,   TB_FOLDED_STORE },
-        //{ Cse523::IDIV16r,     Cse523::IDIV16m,       TB_FOLDED_LOAD },
-        //{ Cse523::IDIV32r,     Cse523::IDIV32m,       TB_FOLDED_LOAD },
-        //{ Cse523::IDIV64r,     Cse523::IDIV64m,       TB_FOLDED_LOAD },
-        //{ Cse523::IDIV8r,      Cse523::IDIV8m,        TB_FOLDED_LOAD },
-        //{ Cse523::IMUL16r,     Cse523::IMUL16m,       TB_FOLDED_LOAD },
-        //{ Cse523::IMUL32r,     Cse523::IMUL32m,       TB_FOLDED_LOAD },
+        { Cse523::IDIV64r,     Cse523::IDIV64m,       TB_FOLDED_LOAD },
         { Cse523::IMUL64r,     Cse523::IMUL64m,       TB_FOLDED_LOAD },
-        //{ Cse523::IMUL8r,      Cse523::IMUL8m,        TB_FOLDED_LOAD },
-        //{ Cse523::JMP32r,      Cse523::JMP32m,        TB_FOLDED_LOAD },
         { Cse523::JMP64r,      Cse523::JMP64m,        TB_FOLDED_LOAD },
-        //{ Cse523::MOV16ri,     Cse523::MOV16mi,       TB_FOLDED_STORE },
-        //{ Cse523::MOV16rr,     Cse523::MOV16mr,       TB_FOLDED_STORE },
-        //{ Cse523::MOV32ri,     Cse523::MOV32mi,       TB_FOLDED_STORE },
-        //{ Cse523::MOV32rr,     Cse523::MOV32mr,       TB_FOLDED_STORE },
         { Cse523::MOV64ri32,   Cse523::MOV64mi32,     TB_FOLDED_STORE },
         { Cse523::MOV64rr,     Cse523::MOV64mr,       TB_FOLDED_STORE },
-        //{ Cse523::MOV8ri,      Cse523::MOV8mi,        TB_FOLDED_STORE },
-        //{ Cse523::MOV8rr,      Cse523::MOV8mr,        TB_FOLDED_STORE },
-        //{ Cse523::MOV8rr_NOREX, Cse523::MOV8mr_NOREX, TB_FOLDED_STORE },
-        //{ Cse523::MOVAPDrr,    Cse523::MOVAPDmr,      TB_FOLDED_STORE | TB_ALIGN_16 },
-        //{ Cse523::MOVAPSrr,    Cse523::MOVAPSmr,      TB_FOLDED_STORE | TB_ALIGN_16 },
-        //{ Cse523::MOVDQArr,    Cse523::MOVDQAmr,      TB_FOLDED_STORE | TB_ALIGN_16 },
-        //{ Cse523::MOVPDI2DIrr, Cse523::MOVPDI2DImr,   TB_FOLDED_STORE },
-        //{ Cse523::MOVPQIto64rr,Cse523::MOVPQI2QImr,   TB_FOLDED_STORE },
-        //{ Cse523::MOVSDto64rr, Cse523::MOVSDto64mr,   TB_FOLDED_STORE },
-        //{ Cse523::MOVSS2DIrr,  Cse523::MOVSS2DImr,    TB_FOLDED_STORE },
-        //{ Cse523::MOVUPDrr,    Cse523::MOVUPDmr,      TB_FOLDED_STORE },
-        //{ Cse523::MOVUPSrr,    Cse523::MOVUPSmr,      TB_FOLDED_STORE },
-        //{ Cse523::MUL16r,      Cse523::MUL16m,        TB_FOLDED_LOAD },
-        //{ Cse523::MUL32r,      Cse523::MUL32m,        TB_FOLDED_LOAD },
-        //{ Cse523::MUL64r,      Cse523::MUL64m,        TB_FOLDED_LOAD },
-        //{ Cse523::MUL8r,       Cse523::MUL8m,         TB_FOLDED_LOAD },
+        { Cse523::MUL64r,      Cse523::MUL64m,        TB_FOLDED_LOAD },
         //{ Cse523::SETAEr,      Cse523::SETAEm,        TB_FOLDED_STORE },
         //{ Cse523::SETAr,       Cse523::SETAm,         TB_FOLDED_STORE },
         //{ Cse523::SETBEr,      Cse523::SETBEm,        TB_FOLDED_STORE },
@@ -223,12 +176,8 @@ Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
         //{ Cse523::SETOr,       Cse523::SETOm,         TB_FOLDED_STORE },
         //{ Cse523::SETPr,       Cse523::SETPm,         TB_FOLDED_STORE },
         //{ Cse523::SETSr,       Cse523::SETSm,         TB_FOLDED_STORE },
-        //{ Cse523::TAILJMPr,    Cse523::TAILJMPm,      TB_FOLDED_LOAD },
         { Cse523::TAILJMPr64,  Cse523::TAILJMPm64,    TB_FOLDED_LOAD },
-        //{ Cse523::TEST16ri,    Cse523::TEST16mi,      TB_FOLDED_LOAD },
-        //{ Cse523::TEST32ri,    Cse523::TEST32mi,      TB_FOLDED_LOAD },
         { Cse523::TEST64ri32,  Cse523::TEST64mi32,    TB_FOLDED_LOAD }
-        //{ Cse523::TEST8ri,     Cse523::TEST8mi,       TB_FOLDED_LOAD }
     };
 
     for (unsigned i = 0, e = array_lengthof(OpTbl0); i != e; ++i) {
@@ -240,93 +189,10 @@ Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
     }
 
     static const Cse523OpTblEntry OpTbl1[] = {
-        //{ Cse523::CMP16rr,         Cse523::CMP16rm,             0 },
-        //{ Cse523::CMP32rr,         Cse523::CMP32rm,             0 },
         { Cse523::CMP64rr,         Cse523::CMP64rm,             0 },
-        //{ Cse523::CMP8rr,          Cse523::CMP8rm,              0 },
-        //{ Cse523::CVTSD2SSrr,      Cse523::CVTSD2SSrm,          0 },
-        //{ Cse523::CVTSI2SD64rr,    Cse523::CVTSI2SD64rm,        0 },
-        //{ Cse523::CVTSI2SDrr,      Cse523::CVTSI2SDrm,          0 },
-        //{ Cse523::CVTSI2SS64rr,    Cse523::CVTSI2SS64rm,        0 },
-        //{ Cse523::CVTSI2SSrr,      Cse523::CVTSI2SSrm,          0 },
-        //{ Cse523::CVTSS2SDrr,      Cse523::CVTSS2SDrm,          0 },
-        //{ Cse523::CVTTSD2SI64rr,   Cse523::CVTTSD2SI64rm,       0 },
-        //{ Cse523::CVTTSD2SIrr,     Cse523::CVTTSD2SIrm,         0 },
-        //{ Cse523::CVTTSS2SI64rr,   Cse523::CVTTSS2SI64rm,       0 },
-        //{ Cse523::CVTTSS2SIrr,     Cse523::CVTTSS2SIrm,         0 },
-        //{ Cse523::IMUL16rri,       Cse523::IMUL16rmi,           0 },
-        //{ Cse523::IMUL16rri8,      Cse523::IMUL16rmi8,          0 },
-        //{ Cse523::IMUL32rri,       Cse523::IMUL32rmi,           0 },
-        //{ Cse523::IMUL32rri8,      Cse523::IMUL32rmi8,          0 },
         { Cse523::IMUL64rri32,     Cse523::IMUL64rmi32,         0 },
-        //{ Cse523::IMUL64rri8,      Cse523::IMUL64rmi8,          0 },
-        //{ Cse523::Int_COMISDrr,    Cse523::Int_COMISDrm,        0 },
-        //{ Cse523::Int_COMISSrr,    Cse523::Int_COMISSrm,        0 },
-        //{ Cse523::CVTSD2SI64rr,    Cse523::CVTSD2SI64rm,        0 },
-        //{ Cse523::CVTSD2SIrr,      Cse523::CVTSD2SIrm,          0 },
-        //{ Cse523::CVTSS2SI64rr,    Cse523::CVTSS2SI64rm,        0 },
-        //{ Cse523::CVTSS2SIrr,      Cse523::CVTSS2SIrm,          0 },
-        //{ Cse523::CVTTPD2DQrr,     Cse523::CVTTPD2DQrm,         TB_ALIGN_16 },
-        //{ Cse523::CVTTPS2DQrr,     Cse523::CVTTPS2DQrm,         TB_ALIGN_16 },
-        //{ Cse523::Int_CVTTSD2SI64rr,Cse523::Int_CVTTSD2SI64rm,  0 },
-        //{ Cse523::Int_CVTTSD2SIrr, Cse523::Int_CVTTSD2SIrm,     0 },
-        //{ Cse523::Int_CVTTSS2SI64rr,Cse523::Int_CVTTSS2SI64rm,  0 },
-        //{ Cse523::Int_CVTTSS2SIrr, Cse523::Int_CVTTSS2SIrm,     0 },
-        //{ Cse523::Int_UCOMISDrr,   Cse523::Int_UCOMISDrm,       0 },
-        //{ Cse523::Int_UCOMISSrr,   Cse523::Int_UCOMISSrm,       0 },
-        //{ Cse523::MOV16rr,         Cse523::MOV16rm,             0 },
-        //{ Cse523::MOV32rr,         Cse523::MOV32rm,             0 },
         { Cse523::MOV64rr,         Cse523::MOV64rm,             0 },
-        //{ Cse523::MOV64toPQIrr,    Cse523::MOVQI2PQIrm,         0 },
-        //{ Cse523::MOV64toSDrr,     Cse523::MOV64toSDrm,         0 },
-        //{ Cse523::MOV8rr,          Cse523::MOV8rm,              0 },
-        //{ Cse523::MOVAPDrr,        Cse523::MOVAPDrm,            TB_ALIGN_16 },
-        //{ Cse523::MOVAPSrr,        Cse523::MOVAPSrm,            TB_ALIGN_16 },
-        //{ Cse523::MOVDDUPrr,       Cse523::MOVDDUPrm,           0 },
-        //{ Cse523::MOVDI2PDIrr,     Cse523::MOVDI2PDIrm,         0 },
-        //{ Cse523::MOVDI2SSrr,      Cse523::MOVDI2SSrm,          0 },
-        //{ Cse523::MOVDQArr,        Cse523::MOVDQArm,            TB_ALIGN_16 },
-        //{ Cse523::MOVSHDUPrr,      Cse523::MOVSHDUPrm,          TB_ALIGN_16 },
-        //{ Cse523::MOVSLDUPrr,      Cse523::MOVSLDUPrm,          TB_ALIGN_16 },
-        //{ Cse523::MOVSX16rr8,      Cse523::MOVSX16rm8,          0 },
-        //{ Cse523::MOVSX32rr16,     Cse523::MOVSX32rm16,         0 },
-        //{ Cse523::MOVSX32rr8,      Cse523::MOVSX32rm8,          0 },
-        //{ Cse523::MOVSX64rr16,     Cse523::MOVSX64rm16,         0 },
-        //{ Cse523::MOVSX64rr32,     Cse523::MOVSX64rm32,         0 },
-        //{ Cse523::MOVSX64rr8,      Cse523::MOVSX64rm8,          0 },
-        //{ Cse523::MOVUPDrr,        Cse523::MOVUPDrm,            TB_ALIGN_16 },
-        //{ Cse523::MOVUPSrr,        Cse523::MOVUPSrm,            0 },
-        //{ Cse523::MOVZQI2PQIrr,    Cse523::MOVZQI2PQIrm,        0 },
-        //{ Cse523::MOVZPQILo2PQIrr, Cse523::MOVZPQILo2PQIrm,     TB_ALIGN_16 },
-        //{ Cse523::MOVZX16rr8,      Cse523::MOVZX16rm8,          0 },
-        //{ Cse523::MOVZX32rr16,     Cse523::MOVZX32rm16,         0 },
-        //{ Cse523::MOVZX32_NOREXrr8, Cse523::MOVZX32_NOREXrm8,   0 },
-        //{ Cse523::MOVZX32rr8,      Cse523::MOVZX32rm8,          0 },
-        //{ Cse523::PABSBrr128,      Cse523::PABSBrm128,          TB_ALIGN_16 },
-        //{ Cse523::PABSDrr128,      Cse523::PABSDrm128,          TB_ALIGN_16 },
-        //{ Cse523::PABSWrr128,      Cse523::PABSWrm128,          TB_ALIGN_16 },
-        //{ Cse523::PSHUFDri,        Cse523::PSHUFDmi,            TB_ALIGN_16 },
-        //{ Cse523::PSHUFHWri,       Cse523::PSHUFHWmi,           TB_ALIGN_16 },
-        //{ Cse523::PSHUFLWri,       Cse523::PSHUFLWmi,           TB_ALIGN_16 },
-        //{ Cse523::RCPPSr,          Cse523::RCPPSm,              TB_ALIGN_16 },
-        //{ Cse523::RCPPSr_Int,      Cse523::RCPPSm_Int,          TB_ALIGN_16 },
-        //{ Cse523::RSQRTPSr,        Cse523::RSQRTPSm,            TB_ALIGN_16 },
-        //{ Cse523::RSQRTPSr_Int,    Cse523::RSQRTPSm_Int,        TB_ALIGN_16 },
-        //{ Cse523::RSQRTSSr,        Cse523::RSQRTSSm,            0 },
-        //{ Cse523::RSQRTSSr_Int,    Cse523::RSQRTSSm_Int,        0 },
-        //{ Cse523::SQRTPDr,         Cse523::SQRTPDm,             TB_ALIGN_16 },
-        //{ Cse523::SQRTPSr,         Cse523::SQRTPSm,             TB_ALIGN_16 },
-        //{ Cse523::SQRTSDr,         Cse523::SQRTSDm,             0 },
-        //{ Cse523::SQRTSDr_Int,     Cse523::SQRTSDm_Int,         0 },
-        //{ Cse523::SQRTSSr,         Cse523::SQRTSSm,             0 },
-        //{ Cse523::SQRTSSr_Int,     Cse523::SQRTSSm_Int,         0 },
-        //{ Cse523::TEST16rr,        Cse523::TEST16rm,            0 },
-        //{ Cse523::TEST32rr,        Cse523::TEST32rm,            0 },
         { Cse523::TEST64rr,        Cse523::TEST64rm,            0 }
-        //{ Cse523::TEST8rr,         Cse523::TEST8rm,             0 },
-        //// FIXME: TEST*rr EAX,EAX ---> CMP [mem], 0
-        //{ Cse523::UCOMISDrr,       Cse523::UCOMISDrm,           0 },
-        //{ Cse523::UCOMISSrr,       Cse523::UCOMISSrm,           0 }
     };
 
     for (unsigned i = 0, e = array_lengthof(OpTbl1); i != e; ++i) {
@@ -340,236 +206,29 @@ Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
     }
 
     static const Cse523OpTblEntry OpTbl2[] = {
-        //{ Cse523::ADC32rr,         Cse523::ADC32rm,       0 },
         { Cse523::ADC64rr,         Cse523::ADC64rm,       0 },
-        //{ Cse523::ADD16rr,         Cse523::ADD16rm,       0 },
-        //{ Cse523::ADD16rr_DB,      Cse523::ADD16rm,       TB_NO_REVERSE },
-        //{ Cse523::ADD32rr,         Cse523::ADD32rm,       0 },
-        //{ Cse523::ADD32rr_DB,      Cse523::ADD32rm,       TB_NO_REVERSE },
         { Cse523::ADD64rr,         Cse523::ADD64rm,       0 },
-        //{ Cse523::ADD64rr_DB,      Cse523::ADD64rm,       TB_NO_REVERSE },
-        //{ Cse523::ADD8rr,          Cse523::ADD8rm,        0 },
-        //{ Cse523::ADDPDrr,         Cse523::ADDPDrm,       TB_ALIGN_16 },
-        //{ Cse523::ADDPSrr,         Cse523::ADDPSrm,       TB_ALIGN_16 },
-        //{ Cse523::ADDSDrr,         Cse523::ADDSDrm,       0 },
-        //{ Cse523::ADDSSrr,         Cse523::ADDSSrm,       0 },
-        //{ Cse523::ADDSUBPDrr,      Cse523::ADDSUBPDrm,    TB_ALIGN_16 },
-        //{ Cse523::ADDSUBPSrr,      Cse523::ADDSUBPSrm,    TB_ALIGN_16 },
-        //{ Cse523::AND16rr,         Cse523::AND16rm,       0 },
-        //{ Cse523::AND32rr,         Cse523::AND32rm,       0 },
         { Cse523::AND64rr,         Cse523::AND64rm,       0 },
-        //{ Cse523::AND8rr,          Cse523::AND8rm,        0 },
-        //{ Cse523::ANDNPDrr,        Cse523::ANDNPDrm,      TB_ALIGN_16 },
-        //{ Cse523::ANDNPSrr,        Cse523::ANDNPSrm,      TB_ALIGN_16 },
-        //{ Cse523::ANDPDrr,         Cse523::ANDPDrm,       TB_ALIGN_16 },
-        //{ Cse523::ANDPSrr,         Cse523::ANDPSrm,       TB_ALIGN_16 },
-        //{ Cse523::BLENDPDrri,      Cse523::BLENDPDrmi,    TB_ALIGN_16 },
-        //{ Cse523::BLENDPSrri,      Cse523::BLENDPSrmi,    TB_ALIGN_16 },
-        //{ Cse523::BLENDVPDrr0,     Cse523::BLENDVPDrm0,   TB_ALIGN_16 },
-        //{ Cse523::BLENDVPSrr0,     Cse523::BLENDVPSrm0,   TB_ALIGN_16 },
-        //{ Cse523::CMOVA16rr,       Cse523::CMOVA16rm,     0 },
-        //{ Cse523::CMOVA32rr,       Cse523::CMOVA32rm,     0 },
         //{ Cse523::CMOVA64rr,       Cse523::CMOVA64rm,     0 },
-        //{ Cse523::CMOVAE16rr,      Cse523::CMOVAE16rm,    0 },
-        //{ Cse523::CMOVAE32rr,      Cse523::CMOVAE32rm,    0 },
         //{ Cse523::CMOVAE64rr,      Cse523::CMOVAE64rm,    0 },
-        //{ Cse523::CMOVB16rr,       Cse523::CMOVB16rm,     0 },
-        //{ Cse523::CMOVB32rr,       Cse523::CMOVB32rm,     0 },
         //{ Cse523::CMOVB64rr,       Cse523::CMOVB64rm,     0 },
-        //{ Cse523::CMOVBE16rr,      Cse523::CMOVBE16rm,    0 },
-        //{ Cse523::CMOVBE32rr,      Cse523::CMOVBE32rm,    0 },
         //{ Cse523::CMOVBE64rr,      Cse523::CMOVBE64rm,    0 },
-        //{ Cse523::CMOVE16rr,       Cse523::CMOVE16rm,     0 },
-        //{ Cse523::CMOVE32rr,       Cse523::CMOVE32rm,     0 },
         //{ Cse523::CMOVE64rr,       Cse523::CMOVE64rm,     0 },
-        //{ Cse523::CMOVG16rr,       Cse523::CMOVG16rm,     0 },
-        //{ Cse523::CMOVG32rr,       Cse523::CMOVG32rm,     0 },
         //{ Cse523::CMOVG64rr,       Cse523::CMOVG64rm,     0 },
-        //{ Cse523::CMOVGE16rr,      Cse523::CMOVGE16rm,    0 },
-        //{ Cse523::CMOVGE32rr,      Cse523::CMOVGE32rm,    0 },
         //{ Cse523::CMOVGE64rr,      Cse523::CMOVGE64rm,    0 },
-        //{ Cse523::CMOVL16rr,       Cse523::CMOVL16rm,     0 },
-        //{ Cse523::CMOVL32rr,       Cse523::CMOVL32rm,     0 },
         //{ Cse523::CMOVL64rr,       Cse523::CMOVL64rm,     0 },
-        //{ Cse523::CMOVLE16rr,      Cse523::CMOVLE16rm,    0 },
-        //{ Cse523::CMOVLE32rr,      Cse523::CMOVLE32rm,    0 },
         //{ Cse523::CMOVLE64rr,      Cse523::CMOVLE64rm,    0 },
-        //{ Cse523::CMOVNE16rr,      Cse523::CMOVNE16rm,    0 },
-        //{ Cse523::CMOVNE32rr,      Cse523::CMOVNE32rm,    0 },
         //{ Cse523::CMOVNE64rr,      Cse523::CMOVNE64rm,    0 },
-        //{ Cse523::CMOVNO16rr,      Cse523::CMOVNO16rm,    0 },
-        //{ Cse523::CMOVNO32rr,      Cse523::CMOVNO32rm,    0 },
         //{ Cse523::CMOVNO64rr,      Cse523::CMOVNO64rm,    0 },
-        //{ Cse523::CMOVNP16rr,      Cse523::CMOVNP16rm,    0 },
-        //{ Cse523::CMOVNP32rr,      Cse523::CMOVNP32rm,    0 },
         //{ Cse523::CMOVNP64rr,      Cse523::CMOVNP64rm,    0 },
-        //{ Cse523::CMOVNS16rr,      Cse523::CMOVNS16rm,    0 },
-        //{ Cse523::CMOVNS32rr,      Cse523::CMOVNS32rm,    0 },
         //{ Cse523::CMOVNS64rr,      Cse523::CMOVNS64rm,    0 },
-        //{ Cse523::CMOVO16rr,       Cse523::CMOVO16rm,     0 },
-        //{ Cse523::CMOVO32rr,       Cse523::CMOVO32rm,     0 },
         //{ Cse523::CMOVO64rr,       Cse523::CMOVO64rm,     0 },
-        //{ Cse523::CMOVP16rr,       Cse523::CMOVP16rm,     0 },
-        //{ Cse523::CMOVP32rr,       Cse523::CMOVP32rm,     0 },
         //{ Cse523::CMOVP64rr,       Cse523::CMOVP64rm,     0 },
-        //{ Cse523::CMOVS16rr,       Cse523::CMOVS16rm,     0 },
-        //{ Cse523::CMOVS32rr,       Cse523::CMOVS32rm,     0 },
         //{ Cse523::CMOVS64rr,       Cse523::CMOVS64rm,     0 },
-        //{ Cse523::CMPPDrri,        Cse523::CMPPDrmi,      TB_ALIGN_16 },
-        //{ Cse523::CMPPSrri,        Cse523::CMPPSrmi,      TB_ALIGN_16 },
-        //{ Cse523::CMPSDrr,         Cse523::CMPSDrm,       0 },
-        //{ Cse523::CMPSSrr,         Cse523::CMPSSrm,       0 },
-        //{ Cse523::DIVPDrr,         Cse523::DIVPDrm,       TB_ALIGN_16 },
-        //{ Cse523::DIVPSrr,         Cse523::DIVPSrm,       TB_ALIGN_16 },
-        //{ Cse523::DIVSDrr,         Cse523::DIVSDrm,       0 },
-        //{ Cse523::DIVSSrr,         Cse523::DIVSSrm,       0 },
-        //{ Cse523::FsANDNPDrr,      Cse523::FsANDNPDrm,    TB_ALIGN_16 },
-        //{ Cse523::FsANDNPSrr,      Cse523::FsANDNPSrm,    TB_ALIGN_16 },
-        //{ Cse523::FsANDPDrr,       Cse523::FsANDPDrm,     TB_ALIGN_16 },
-        //{ Cse523::FsANDPSrr,       Cse523::FsANDPSrm,     TB_ALIGN_16 },
-        //{ Cse523::FsORPDrr,        Cse523::FsORPDrm,      TB_ALIGN_16 },
-        //{ Cse523::FsORPSrr,        Cse523::FsORPSrm,      TB_ALIGN_16 },
-        //{ Cse523::FsXORPDrr,       Cse523::FsXORPDrm,     TB_ALIGN_16 },
-        //{ Cse523::FsXORPSrr,       Cse523::FsXORPSrm,     TB_ALIGN_16 },
-        //{ Cse523::HADDPDrr,        Cse523::HADDPDrm,      TB_ALIGN_16 },
-        //{ Cse523::HADDPSrr,        Cse523::HADDPSrm,      TB_ALIGN_16 },
-        //{ Cse523::HSUBPDrr,        Cse523::HSUBPDrm,      TB_ALIGN_16 },
-        //{ Cse523::HSUBPSrr,        Cse523::HSUBPSrm,      TB_ALIGN_16 },
-        //{ Cse523::IMUL16rr,        Cse523::IMUL16rm,      0 },
-        //{ Cse523::IMUL32rr,        Cse523::IMUL32rm,      0 },
-        //{ Cse523::IMUL64rr,        Cse523::IMUL64rm,      0 },
-        //{ Cse523::Int_CMPSDrr,     Cse523::Int_CMPSDrm,   0 },
-        //{ Cse523::Int_CMPSSrr,     Cse523::Int_CMPSSrm,   0 },
-        //{ Cse523::Int_CVTSD2SSrr,  Cse523::Int_CVTSD2SSrm,      0 },
-        //{ Cse523::Int_CVTSI2SD64rr,Cse523::Int_CVTSI2SD64rm,    0 },
-        //{ Cse523::Int_CVTSI2SDrr,  Cse523::Int_CVTSI2SDrm,      0 },
-        //{ Cse523::Int_CVTSI2SS64rr,Cse523::Int_CVTSI2SS64rm,    0 },
-        //{ Cse523::Int_CVTSI2SSrr,  Cse523::Int_CVTSI2SSrm,      0 },
-        //{ Cse523::Int_CVTSS2SDrr,  Cse523::Int_CVTSS2SDrm,      0 },
-        //{ Cse523::MAXPDrr,         Cse523::MAXPDrm,       TB_ALIGN_16 },
-        //{ Cse523::MAXPSrr,         Cse523::MAXPSrm,       TB_ALIGN_16 },
-        //{ Cse523::MAXSDrr,         Cse523::MAXSDrm,       0 },
-        //{ Cse523::MAXSSrr,         Cse523::MAXSSrm,       0 },
-        //{ Cse523::MINPDrr,         Cse523::MINPDrm,       TB_ALIGN_16 },
-        //{ Cse523::MINPSrr,         Cse523::MINPSrm,       TB_ALIGN_16 },
-        //{ Cse523::MINSDrr,         Cse523::MINSDrm,       0 },
-        //{ Cse523::MINSSrr,         Cse523::MINSSrm,       0 },
-        //{ Cse523::MPSADBWrri,      Cse523::MPSADBWrmi,    TB_ALIGN_16 },
-        //{ Cse523::MULPDrr,         Cse523::MULPDrm,       TB_ALIGN_16 },
-        //{ Cse523::MULPSrr,         Cse523::MULPSrm,       TB_ALIGN_16 },
-        //{ Cse523::MULSDrr,         Cse523::MULSDrm,       0 },
-        //{ Cse523::MULSSrr,         Cse523::MULSSrm,       0 },
-        //{ Cse523::OR16rr,          Cse523::OR16rm,        0 },
-        //{ Cse523::OR32rr,          Cse523::OR32rm,        0 },
-        //{ Cse523::OR64rr,          Cse523::OR64rm,        0 },
-        //{ Cse523::OR8rr,           Cse523::OR8rm,         0 },
-        //{ Cse523::ORPDrr,          Cse523::ORPDrm,        TB_ALIGN_16 },
-        //{ Cse523::ORPSrr,          Cse523::ORPSrm,        TB_ALIGN_16 },
-        //{ Cse523::PACKSSDWrr,      Cse523::PACKSSDWrm,    TB_ALIGN_16 },
-        //{ Cse523::PACKSSWBrr,      Cse523::PACKSSWBrm,    TB_ALIGN_16 },
-        //{ Cse523::PACKUSDWrr,      Cse523::PACKUSDWrm,    TB_ALIGN_16 },
-        //{ Cse523::PACKUSWBrr,      Cse523::PACKUSWBrm,    TB_ALIGN_16 },
-        //{ Cse523::PADDBrr,         Cse523::PADDBrm,       TB_ALIGN_16 },
-        //{ Cse523::PADDDrr,         Cse523::PADDDrm,       TB_ALIGN_16 },
-        //{ Cse523::PADDQrr,         Cse523::PADDQrm,       TB_ALIGN_16 },
-        //{ Cse523::PADDSBrr,        Cse523::PADDSBrm,      TB_ALIGN_16 },
-        //{ Cse523::PADDSWrr,        Cse523::PADDSWrm,      TB_ALIGN_16 },
-        //{ Cse523::PADDUSBrr,       Cse523::PADDUSBrm,     TB_ALIGN_16 },
-        //{ Cse523::PADDUSWrr,       Cse523::PADDUSWrm,     TB_ALIGN_16 },
-        //{ Cse523::PADDWrr,         Cse523::PADDWrm,       TB_ALIGN_16 },
-        //{ Cse523::PALIGNR128rr,    Cse523::PALIGNR128rm,  TB_ALIGN_16 },
-        //{ Cse523::PANDNrr,         Cse523::PANDNrm,       TB_ALIGN_16 },
-        //{ Cse523::PANDrr,          Cse523::PANDrm,        TB_ALIGN_16 },
-        //{ Cse523::PAVGBrr,         Cse523::PAVGBrm,       TB_ALIGN_16 },
-        //{ Cse523::PAVGWrr,         Cse523::PAVGWrm,       TB_ALIGN_16 },
-        //{ Cse523::PBLENDWrri,      Cse523::PBLENDWrmi,    TB_ALIGN_16 },
-        //{ Cse523::PCMPEQBrr,       Cse523::PCMPEQBrm,     TB_ALIGN_16 },
-        //{ Cse523::PCMPEQDrr,       Cse523::PCMPEQDrm,     TB_ALIGN_16 },
-        //{ Cse523::PCMPEQQrr,       Cse523::PCMPEQQrm,     TB_ALIGN_16 },
-        //{ Cse523::PCMPEQWrr,       Cse523::PCMPEQWrm,     TB_ALIGN_16 },
-        //{ Cse523::PCMPGTBrr,       Cse523::PCMPGTBrm,     TB_ALIGN_16 },
-        //{ Cse523::PCMPGTDrr,       Cse523::PCMPGTDrm,     TB_ALIGN_16 },
-        //{ Cse523::PCMPGTQrr,       Cse523::PCMPGTQrm,     TB_ALIGN_16 },
-        //{ Cse523::PCMPGTWrr,       Cse523::PCMPGTWrm,     TB_ALIGN_16 },
-        //{ Cse523::PHADDDrr,        Cse523::PHADDDrm,      TB_ALIGN_16 },
-        //{ Cse523::PHADDWrr,        Cse523::PHADDWrm,      TB_ALIGN_16 },
-        //{ Cse523::PHADDSWrr128,    Cse523::PHADDSWrm128,  TB_ALIGN_16 },
-        //{ Cse523::PHSUBDrr,        Cse523::PHSUBDrm,      TB_ALIGN_16 },
-        //{ Cse523::PHSUBSWrr128,    Cse523::PHSUBSWrm128,  TB_ALIGN_16 },
-        //{ Cse523::PHSUBWrr,        Cse523::PHSUBWrm,      TB_ALIGN_16 },
-        //{ Cse523::PINSRWrri,       Cse523::PINSRWrmi,     TB_ALIGN_16 },
-        //{ Cse523::PMADDUBSWrr128,  Cse523::PMADDUBSWrm128, TB_ALIGN_16 },
-        //{ Cse523::PMADDWDrr,       Cse523::PMADDWDrm,     TB_ALIGN_16 },
-        //{ Cse523::PMAXSWrr,        Cse523::PMAXSWrm,      TB_ALIGN_16 },
-        //{ Cse523::PMAXUBrr,        Cse523::PMAXUBrm,      TB_ALIGN_16 },
-        //{ Cse523::PMINSWrr,        Cse523::PMINSWrm,      TB_ALIGN_16 },
-        //{ Cse523::PMINUBrr,        Cse523::PMINUBrm,      TB_ALIGN_16 },
-        //{ Cse523::PMINSBrr,        Cse523::PMINSBrm,      TB_ALIGN_16 },
-        //{ Cse523::PMINSDrr,        Cse523::PMINSDrm,      TB_ALIGN_16 },
-        //{ Cse523::PMINUDrr,        Cse523::PMINUDrm,      TB_ALIGN_16 },
-        //{ Cse523::PMINUWrr,        Cse523::PMINUWrm,      TB_ALIGN_16 },
-        //{ Cse523::PMAXSBrr,        Cse523::PMAXSBrm,      TB_ALIGN_16 },
-        //{ Cse523::PMAXSDrr,        Cse523::PMAXSDrm,      TB_ALIGN_16 },
-        //{ Cse523::PMAXUDrr,        Cse523::PMAXUDrm,      TB_ALIGN_16 },
-        //{ Cse523::PMAXUWrr,        Cse523::PMAXUWrm,      TB_ALIGN_16 },
-        //{ Cse523::PMULDQrr,        Cse523::PMULDQrm,      TB_ALIGN_16 },
-        //{ Cse523::PMULHRSWrr128,   Cse523::PMULHRSWrm128, TB_ALIGN_16 },
-        //{ Cse523::PMULHUWrr,       Cse523::PMULHUWrm,     TB_ALIGN_16 },
-        //{ Cse523::PMULHWrr,        Cse523::PMULHWrm,      TB_ALIGN_16 },
-        //{ Cse523::PMULLDrr,        Cse523::PMULLDrm,      TB_ALIGN_16 },
-        //{ Cse523::PMULLWrr,        Cse523::PMULLWrm,      TB_ALIGN_16 },
-        //{ Cse523::PMULUDQrr,       Cse523::PMULUDQrm,     TB_ALIGN_16 },
-        //{ Cse523::PORrr,           Cse523::PORrm,         TB_ALIGN_16 },
-        //{ Cse523::PSADBWrr,        Cse523::PSADBWrm,      TB_ALIGN_16 },
-        //{ Cse523::PSHUFBrr,        Cse523::PSHUFBrm,      TB_ALIGN_16 },
-        //{ Cse523::PSIGNBrr,        Cse523::PSIGNBrm,      TB_ALIGN_16 },
-        //{ Cse523::PSIGNWrr,        Cse523::PSIGNWrm,      TB_ALIGN_16 },
-        //{ Cse523::PSIGNDrr,        Cse523::PSIGNDrm,      TB_ALIGN_16 },
-        //{ Cse523::PSLLDrr,         Cse523::PSLLDrm,       TB_ALIGN_16 },
-        //{ Cse523::PSLLQrr,         Cse523::PSLLQrm,       TB_ALIGN_16 },
-        //{ Cse523::PSLLWrr,         Cse523::PSLLWrm,       TB_ALIGN_16 },
-        //{ Cse523::PSRADrr,         Cse523::PSRADrm,       TB_ALIGN_16 },
-        //{ Cse523::PSRAWrr,         Cse523::PSRAWrm,       TB_ALIGN_16 },
-        //{ Cse523::PSRLDrr,         Cse523::PSRLDrm,       TB_ALIGN_16 },
-        //{ Cse523::PSRLQrr,         Cse523::PSRLQrm,       TB_ALIGN_16 },
-        //{ Cse523::PSRLWrr,         Cse523::PSRLWrm,       TB_ALIGN_16 },
-        //{ Cse523::PSUBBrr,         Cse523::PSUBBrm,       TB_ALIGN_16 },
-        //{ Cse523::PSUBDrr,         Cse523::PSUBDrm,       TB_ALIGN_16 },
-        //{ Cse523::PSUBSBrr,        Cse523::PSUBSBrm,      TB_ALIGN_16 },
-        //{ Cse523::PSUBSWrr,        Cse523::PSUBSWrm,      TB_ALIGN_16 },
-        //{ Cse523::PSUBWrr,         Cse523::PSUBWrm,       TB_ALIGN_16 },
-        //{ Cse523::PUNPCKHBWrr,     Cse523::PUNPCKHBWrm,   TB_ALIGN_16 },
-        //{ Cse523::PUNPCKHDQrr,     Cse523::PUNPCKHDQrm,   TB_ALIGN_16 },
-        //{ Cse523::PUNPCKHQDQrr,    Cse523::PUNPCKHQDQrm,  TB_ALIGN_16 },
-        //{ Cse523::PUNPCKHWDrr,     Cse523::PUNPCKHWDrm,   TB_ALIGN_16 },
-        //{ Cse523::PUNPCKLBWrr,     Cse523::PUNPCKLBWrm,   TB_ALIGN_16 },
-        //{ Cse523::PUNPCKLDQrr,     Cse523::PUNPCKLDQrm,   TB_ALIGN_16 },
-        //{ Cse523::PUNPCKLQDQrr,    Cse523::PUNPCKLQDQrm,  TB_ALIGN_16 },
-        //{ Cse523::PUNPCKLWDrr,     Cse523::PUNPCKLWDrm,   TB_ALIGN_16 },
-        //{ Cse523::PXORrr,          Cse523::PXORrm,        TB_ALIGN_16 },
-        //{ Cse523::SBB32rr,         Cse523::SBB32rm,       0 },
-        //{ Cse523::SBB64rr,         Cse523::SBB64rm,       0 },
-        //{ Cse523::SHUFPDrri,       Cse523::SHUFPDrmi,     TB_ALIGN_16 },
-        //{ Cse523::SHUFPSrri,       Cse523::SHUFPSrmi,     TB_ALIGN_16 },
-        //{ Cse523::SUB16rr,         Cse523::SUB16rm,       0 },
-        //{ Cse523::SUB32rr,         Cse523::SUB32rm,       0 },
+        { Cse523::IMUL64rr,        Cse523::IMUL64rm,      0 },
+        { Cse523::OR64rr,          Cse523::OR64rm,        0 },
         { Cse523::SUB64rr,         Cse523::SUB64rm,       0 },
-        //{ Cse523::SUB8rr,          Cse523::SUB8rm,        0 },
-        //{ Cse523::SUBPDrr,         Cse523::SUBPDrm,       TB_ALIGN_16 },
-        //{ Cse523::SUBPSrr,         Cse523::SUBPSrm,       TB_ALIGN_16 },
-        //{ Cse523::SUBSDrr,         Cse523::SUBSDrm,       0 },
-        //{ Cse523::SUBSSrr,         Cse523::SUBSSrm,       0 },
-        //// FIXME: TEST*rr -> swapped operand of TEST*mr.
-        //{ Cse523::UNPCKHPDrr,      Cse523::UNPCKHPDrm,    TB_ALIGN_16 },
-        //{ Cse523::UNPCKHPSrr,      Cse523::UNPCKHPSrm,    TB_ALIGN_16 },
-        //{ Cse523::UNPCKLPDrr,      Cse523::UNPCKLPDrm,    TB_ALIGN_16 },
-        //{ Cse523::UNPCKLPSrr,      Cse523::UNPCKLPSrm,    TB_ALIGN_16 },
-        //{ Cse523::XOR16rr,         Cse523::XOR16rm,       0 },
-        //{ Cse523::XOR32rr,         Cse523::XOR32rm,       0 },
         { Cse523::XOR64rr,         Cse523::XOR64rm,       0 }
-        //{ Cse523::XOR8rr,          Cse523::XOR8rm,        0 },
-        //{ Cse523::XORPDrr,         Cse523::XORPDrm,       TB_ALIGN_16 },
-        //{ Cse523::XORPSrr,         Cse523::XORPSrm,       TB_ALIGN_16 }
     };
 
     for (unsigned i = 0, e = array_lengthof(OpTbl2); i != e; ++i) {
@@ -581,21 +240,6 @@ Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
                 // Index 2, folded load
                 Flags | TB_INDEX_2 | TB_FOLDED_LOAD);
     }
-//
-//    // TODO: Remove this entry
-//    static const Cse523OpTblEntry OpTbl3[1] = {
-//    };
-//
-//    for (unsigned i = 0, e = array_lengthof(OpTbl3); i != e; ++i) {
-//        unsigned RegOp = OpTbl3[i].RegOp;
-//        unsigned MemOp = OpTbl3[i].MemOp;
-//        unsigned Flags = OpTbl3[i].Flags;
-//        AddTableEntry(RegOp2MemOpTable3, MemOp2RegOpTable,
-//                RegOp, MemOp,
-//                // Index 3, folded load
-//                Flags | TB_INDEX_3 | TB_FOLDED_LOAD);
-//    }
-
 }
 
 void
@@ -1572,25 +1216,24 @@ Cse523InstrInfo::commuteInstruction(MachineInstr *MI, bool NewMI) const {
 }
 
 static Cse523::CondCode getCondFromBranchOpc(unsigned BrOpc) {
-    assert(0);
     switch (BrOpc) {
         default: return Cse523::COND_INVALID;
-        //case Cse523::JE_4:  return Cse523::COND_E;
-        //case Cse523::JNE_4: return Cse523::COND_NE;
-        //case Cse523::JL_4:  return Cse523::COND_L;
-        //case Cse523::JLE_4: return Cse523::COND_LE;
-        //case Cse523::JG_4:  return Cse523::COND_G;
-        //case Cse523::JGE_4: return Cse523::COND_GE;
-        //case Cse523::JB_4:  return Cse523::COND_B;
-        //case Cse523::JBE_4: return Cse523::COND_BE;
-        //case Cse523::JA_4:  return Cse523::COND_A;
-        //case Cse523::JAE_4: return Cse523::COND_AE;
-        //case Cse523::JS_4:  return Cse523::COND_S;
-        //case Cse523::JNS_4: return Cse523::COND_NS;
-        //case Cse523::JP_4:  return Cse523::COND_P;
-        //case Cse523::JNP_4: return Cse523::COND_NP;
-        //case Cse523::JO_4:  return Cse523::COND_O;
-        //case Cse523::JNO_4: return Cse523::COND_NO;
+        case Cse523::JE_4:  return Cse523::COND_E;
+        case Cse523::JNE_4: return Cse523::COND_NE;
+        case Cse523::JL_4:  return Cse523::COND_L;
+        case Cse523::JLE_4: return Cse523::COND_LE;
+        case Cse523::JG_4:  return Cse523::COND_G;
+        case Cse523::JGE_4: return Cse523::COND_GE;
+        case Cse523::JB_4:  return Cse523::COND_B;
+        case Cse523::JBE_4: return Cse523::COND_BE;
+        case Cse523::JA_4:  return Cse523::COND_A;
+        case Cse523::JAE_4: return Cse523::COND_AE;
+        case Cse523::JS_4:  return Cse523::COND_S;
+        case Cse523::JNS_4: return Cse523::COND_NS;
+        case Cse523::JP_4:  return Cse523::COND_P;
+        case Cse523::JNP_4: return Cse523::COND_NP;
+        case Cse523::JO_4:  return Cse523::COND_O;
+        case Cse523::JNO_4: return Cse523::COND_NO;
     }
 }
 
@@ -1675,50 +1318,48 @@ Cse523::CondCode Cse523::getCondFromCMovOpc(unsigned Opc) {
 }
 
 unsigned Cse523::GetCondBranchFromCond(Cse523::CondCode CC) {
-    assert(0);
     switch (CC) {
         default: llvm_unreachable("Illegal condition code!");
-        //case Cse523::COND_E:  return Cse523::JE_4;
-        //case Cse523::COND_NE: return Cse523::JNE_4;
-        //case Cse523::COND_L:  return Cse523::JL_4;
-        //case Cse523::COND_LE: return Cse523::JLE_4;
-        //case Cse523::COND_G:  return Cse523::JG_4;
-        //case Cse523::COND_GE: return Cse523::JGE_4;
-        //case Cse523::COND_B:  return Cse523::JB_4;
-        //case Cse523::COND_BE: return Cse523::JBE_4;
-        //case Cse523::COND_A:  return Cse523::JA_4;
-        //case Cse523::COND_AE: return Cse523::JAE_4;
-        //case Cse523::COND_S:  return Cse523::JS_4;
-        //case Cse523::COND_NS: return Cse523::JNS_4;
-        //case Cse523::COND_P:  return Cse523::JP_4;
-        //case Cse523::COND_NP: return Cse523::JNP_4;
-        //case Cse523::COND_O:  return Cse523::JO_4;
-        //case Cse523::COND_NO: return Cse523::JNO_4;
+        case Cse523::COND_E:  return Cse523::JE_4;
+        case Cse523::COND_NE: return Cse523::JNE_4;
+        case Cse523::COND_L:  return Cse523::JL_4;
+        case Cse523::COND_LE: return Cse523::JLE_4;
+        case Cse523::COND_G:  return Cse523::JG_4;
+        case Cse523::COND_GE: return Cse523::JGE_4;
+        case Cse523::COND_B:  return Cse523::JB_4;
+        case Cse523::COND_BE: return Cse523::JBE_4;
+        case Cse523::COND_A:  return Cse523::JA_4;
+        case Cse523::COND_AE: return Cse523::JAE_4;
+        case Cse523::COND_S:  return Cse523::JS_4;
+        case Cse523::COND_NS: return Cse523::JNS_4;
+        case Cse523::COND_P:  return Cse523::JP_4;
+        case Cse523::COND_NP: return Cse523::JNP_4;
+        case Cse523::COND_O:  return Cse523::JO_4;
+        case Cse523::COND_NO: return Cse523::JNO_4;
     }
 }
 
 /// GetOppositeBranchCondition - Return the inverse of the specified condition,
 /// e.g. turning COND_E to COND_NE.
 Cse523::CondCode Cse523::GetOppositeBranchCondition(Cse523::CondCode CC) {
-    assert(0);
     switch (CC) {
         default: llvm_unreachable("Illegal condition code!");
-        //case Cse523::COND_E:  return Cse523::COND_NE;
-        //case Cse523::COND_NE: return Cse523::COND_E;
-        //case Cse523::COND_L:  return Cse523::COND_GE;
-        //case Cse523::COND_LE: return Cse523::COND_G;
-        //case Cse523::COND_G:  return Cse523::COND_LE;
-        //case Cse523::COND_GE: return Cse523::COND_L;
-        //case Cse523::COND_B:  return Cse523::COND_AE;
-        //case Cse523::COND_BE: return Cse523::COND_A;
-        //case Cse523::COND_A:  return Cse523::COND_BE;
-        //case Cse523::COND_AE: return Cse523::COND_B;
-        //case Cse523::COND_S:  return Cse523::COND_NS;
-        //case Cse523::COND_NS: return Cse523::COND_S;
-        //case Cse523::COND_P:  return Cse523::COND_NP;
-        //case Cse523::COND_NP: return Cse523::COND_P;
-        //case Cse523::COND_O:  return Cse523::COND_NO;
-        //case Cse523::COND_NO: return Cse523::COND_O;
+        case Cse523::COND_E:  return Cse523::COND_NE;
+        case Cse523::COND_NE: return Cse523::COND_E;
+        case Cse523::COND_L:  return Cse523::COND_GE;
+        case Cse523::COND_LE: return Cse523::COND_G;
+        case Cse523::COND_G:  return Cse523::COND_LE;
+        case Cse523::COND_GE: return Cse523::COND_L;
+        case Cse523::COND_B:  return Cse523::COND_AE;
+        case Cse523::COND_BE: return Cse523::COND_A;
+        case Cse523::COND_A:  return Cse523::COND_BE;
+        case Cse523::COND_AE: return Cse523::COND_B;
+        case Cse523::COND_S:  return Cse523::COND_NS;
+        case Cse523::COND_NS: return Cse523::COND_S;
+        case Cse523::COND_P:  return Cse523::COND_NP;
+        case Cse523::COND_NP: return Cse523::COND_P;
+        case Cse523::COND_O:  return Cse523::COND_NO;
+        case Cse523::COND_NO: return Cse523::COND_O;
     }
 }
 
@@ -2013,29 +1654,28 @@ Cse523InstrInfo::InsertBranch(MachineBasicBlock &MBB, MachineBasicBlock *TBB,
 
     // Conditional branch.
     unsigned Count = 0;
-    assert(0);
-    //Cse523::CondCode CC = (Cse523::CondCode)Cond[0].getImm();
-    //switch (CC) {
-    //    case Cse523::COND_NP_OR_E:
-    //        // Synthesize NP_OR_E with two branches.
-    //        BuildMI(&MBB, DL, get(Cse523::JNP_4)).addMBB(TBB);
-    //        ++Count;
-    //        BuildMI(&MBB, DL, get(Cse523::JE_4)).addMBB(TBB);
-    //        ++Count;
-    //        break;
-    //    case Cse523::COND_NE_OR_P:
-    //        // Synthesize NE_OR_P with two branches.
-    //        BuildMI(&MBB, DL, get(Cse523::JNE_4)).addMBB(TBB);
-    //        ++Count;
-    //        BuildMI(&MBB, DL, get(Cse523::JP_4)).addMBB(TBB);
-    //        ++Count;
-    //        break;
-    //    default: {
-    //                 unsigned Opc = GetCondBranchFromCond(CC);
-    //                 BuildMI(&MBB, DL, get(Opc)).addMBB(TBB);
-    //                 ++Count;
-    //             }
-    //}
+    Cse523::CondCode CC = (Cse523::CondCode)Cond[0].getImm();
+    switch (CC) {
+        case Cse523::COND_NP_OR_E:
+            // Synthesize NP_OR_E with two branches.
+            BuildMI(&MBB, DL, get(Cse523::JNP_4)).addMBB(TBB);
+            ++Count;
+            BuildMI(&MBB, DL, get(Cse523::JE_4)).addMBB(TBB);
+            ++Count;
+            break;
+        case Cse523::COND_NE_OR_P:
+            // Synthesize NE_OR_P with two branches.
+            BuildMI(&MBB, DL, get(Cse523::JNE_4)).addMBB(TBB);
+            ++Count;
+            BuildMI(&MBB, DL, get(Cse523::JP_4)).addMBB(TBB);
+            ++Count;
+            break;
+        default: {
+                     unsigned Opc = GetCondBranchFromCond(CC);
+                     BuildMI(&MBB, DL, get(Opc)).addMBB(TBB);
+                     ++Count;
+                 }
+    }
     if (FBB) {
         // Two-way Conditional branch. Insert the second branch.
         BuildMI(&MBB, DL, get(Cse523::JMP_4)).addMBB(FBB);
@@ -2247,72 +1887,47 @@ void Cse523InstrInfo::loadRegFromAddr(MachineFunction &MF, unsigned DestReg,
 bool Cse523InstrInfo::
 analyzeCompare(const MachineInstr *MI, unsigned &SrcReg, unsigned &SrcReg2,
         int &CmpMask, int &CmpValue) const {
-    assert(0);
     switch (MI->getOpcode()) {
         default: break;
-//        case Cse523::CMP64ri32:
-//        case Cse523::CMP64ri8:
-//        case Cse523::CMP32ri:
-//        case Cse523::CMP32ri8:
-//        case Cse523::CMP16ri:
-//        case Cse523::CMP16ri8:
-//        case Cse523::CMP8ri:
-//                 SrcReg = MI->getOperand(0).getReg();
-//                 SrcReg2 = 0;
-//                 CmpMask = ~0;
-//                 CmpValue = MI->getOperand(1).getImm();
-//                 return true;
-//                 // A SUB can be used to perform comparison.
-//        case Cse523::SUB64rm:
-//        case Cse523::SUB32rm:
-//        case Cse523::SUB16rm:
-//        case Cse523::SUB8rm:
-//                 SrcReg = MI->getOperand(1).getReg();
-//                 SrcReg2 = 0;
-//                 CmpMask = ~0;
-//                 CmpValue = 0;
-//                 return true;
-//        case Cse523::SUB64rr:
-//        case Cse523::SUB32rr:
-//        case Cse523::SUB16rr:
-//        case Cse523::SUB8rr:
-//                 SrcReg = MI->getOperand(1).getReg();
-//                 SrcReg2 = MI->getOperand(2).getReg();
-//                 CmpMask = ~0;
-//                 CmpValue = 0;
-//                 return true;
-//        case Cse523::SUB64ri32:
-//        case Cse523::SUB64ri8:
-//        case Cse523::SUB32ri:
-//        case Cse523::SUB32ri8:
-//        case Cse523::SUB16ri:
-//        case Cse523::SUB16ri8:
-//        case Cse523::SUB8ri:
-//                 SrcReg = MI->getOperand(1).getReg();
-//                 SrcReg2 = 0;
-//                 CmpMask = ~0;
-//                 CmpValue = MI->getOperand(2).getImm();
-//                 return true;
-//        case Cse523::CMP64rr:
-//        case Cse523::CMP32rr:
-//        case Cse523::CMP16rr:
-//        case Cse523::CMP8rr:
-//                 SrcReg = MI->getOperand(0).getReg();
-//                 SrcReg2 = MI->getOperand(1).getReg();
-//                 CmpMask = ~0;
-//                 CmpValue = 0;
-//                 return true;
-//        case Cse523::TEST8rr:
-//        case Cse523::TEST16rr:
-//        case Cse523::TEST32rr:
-//        case Cse523::TEST64rr:
-//                 SrcReg = MI->getOperand(0).getReg();
-//                 if (MI->getOperand(1).getReg() != SrcReg) return false;
-//                 // Compare against zero.
-//                 SrcReg2 = 0;
-//                 CmpMask = ~0;
-//                 CmpValue = 0;
-//                 return true;
+        case Cse523::CMP64ri32:
+                 SrcReg = MI->getOperand(0).getReg();
+                 SrcReg2 = 0;
+                 CmpMask = ~0;
+                 CmpValue = MI->getOperand(1).getImm();
+                 return true;
+                 // A SUB can be used to perform comparison.
+        case Cse523::SUB64rm:
+                 SrcReg = MI->getOperand(1).getReg();
+                 SrcReg2 = 0;
+                 CmpMask = ~0;
+                 CmpValue = 0;
+                 return true;
+        case Cse523::SUB64rr:
+                 SrcReg = MI->getOperand(1).getReg();
+                 SrcReg2 = MI->getOperand(2).getReg();
+                 CmpMask = ~0;
+                 CmpValue = 0;
+                 return true;
+        case Cse523::SUB64ri32:
+                 SrcReg = MI->getOperand(1).getReg();
+                 SrcReg2 = 0;
+                 CmpMask = ~0;
+                 CmpValue = MI->getOperand(2).getImm();
+                 return true;
+        case Cse523::CMP64rr:
+                 SrcReg = MI->getOperand(0).getReg();
+                 SrcReg2 = MI->getOperand(1).getReg();
+                 CmpMask = ~0;
+                 CmpValue = 0;
+                 return true;
+        case Cse523::TEST64rr:
+                 SrcReg = MI->getOperand(0).getReg();
+                 if (MI->getOperand(1).getReg() != SrcReg) return false;
+                 // Compare against zero.
+                 SrcReg2 = 0;
+                 CmpMask = ~0;
+                 CmpValue = 0;
+                 return true;
     }
     return false;
 }
@@ -2327,128 +1942,91 @@ inline static bool isRedundantFlagInstr(MachineInstr *FlagI, unsigned SrcReg,
         unsigned SrcReg2, int ImmValue,
         MachineInstr *OI) {
 
-    assert(0);
-//    if (((FlagI->getOpcode() == Cse523::CMP64rr &&
-//                    OI->getOpcode() == Cse523::SUB64rr) ||
-//                (FlagI->getOpcode() == Cse523::CMP32rr &&
-//                 OI->getOpcode() == Cse523::SUB32rr)||
-//                (FlagI->getOpcode() == Cse523::CMP16rr &&
-//                 OI->getOpcode() == Cse523::SUB16rr)||
-//                (FlagI->getOpcode() == Cse523::CMP8rr &&
-//                 OI->getOpcode() == Cse523::SUB8rr)) &&
-//            ((OI->getOperand(1).getReg() == SrcReg &&
-//              OI->getOperand(2).getReg() == SrcReg2) ||
-//             (OI->getOperand(1).getReg() == SrcReg2 &&
-//              OI->getOperand(2).getReg() == SrcReg)))
-//        return true;
-//
-//    if (((FlagI->getOpcode() == Cse523::CMP64ri32 &&
-//                    OI->getOpcode() == Cse523::SUB64ri32) ||
-//                (FlagI->getOpcode() == Cse523::CMP64ri8 &&
-//                 OI->getOpcode() == Cse523::SUB64ri8) ||
-//                (FlagI->getOpcode() == Cse523::CMP32ri &&
-//                 OI->getOpcode() == Cse523::SUB32ri) ||
-//                (FlagI->getOpcode() == Cse523::CMP32ri8 &&
-//                 OI->getOpcode() == Cse523::SUB32ri8) ||
-//                (FlagI->getOpcode() == Cse523::CMP16ri &&
-//                 OI->getOpcode() == Cse523::SUB16ri) ||
-//                (FlagI->getOpcode() == Cse523::CMP16ri8 &&
-//                 OI->getOpcode() == Cse523::SUB16ri8) ||
-//                (FlagI->getOpcode() == Cse523::CMP8ri &&
-//                 OI->getOpcode() == Cse523::SUB8ri)) &&
-//            OI->getOperand(1).getReg() == SrcReg &&
-//            OI->getOperand(2).getImm() == ImmValue)
-//        return true;
+    if ((FlagI->getOpcode() == Cse523::CMP64rr &&
+                    OI->getOpcode() == Cse523::SUB64rr) &&
+            ((OI->getOperand(1).getReg() == SrcReg &&
+              OI->getOperand(2).getReg() == SrcReg2) ||
+             (OI->getOperand(1).getReg() == SrcReg2 &&
+              OI->getOperand(2).getReg() == SrcReg)))
+        return true;
+
+    if ((FlagI->getOpcode() == Cse523::CMP64ri32 &&
+                    OI->getOpcode() == Cse523::SUB64ri32) &&
+            OI->getOperand(1).getReg() == SrcReg &&
+            OI->getOperand(2).getImm() == ImmValue)
+        return true;
     return false;
 }
 
 /// isDefConvertible - check whether the definition can be converted
 /// to remove a comparison against zero.
 inline static bool isDefConvertible(MachineInstr *MI) {
-    assert(0);
     switch (MI->getOpcode()) {
         default: return false;
 
         // The shift instructions only modify ZF if their shift count is non-zero.
         // N.B.: The processor truncates the shift count depending on the encoding.
-//        case Cse523::SAR8ri:    case Cse523::SAR16ri:  case Cse523::SAR32ri:case Cse523::SAR64ri:
-//        case Cse523::SHR8ri:    case Cse523::SHR16ri:  case Cse523::SHR32ri:case Cse523::SHR64ri:
-//             return getTruncatedShiftCount(MI, 2) != 0;
-//
-//                 // Some left shift instructions can be turned into LEA instructions but only
-//                 // if their flags aren't used. Avoid transforming such instructions.
-//        case Cse523::SHL8ri:    case Cse523::SHL16ri:  case Cse523::SHL32ri:case Cse523::SHL64ri:
-//        {
-//            unsigned ShAmt = getTruncatedShiftCount(MI, 2);
-//            if (isTruncatedShiftCountForLEA(ShAmt)) return false;
-//            return ShAmt != 0;
-//        }
-//
-//        case Cse523::SHRD16rri8:case Cse523::SHRD32rri8:case Cse523::SHRD64rri8:
-//        case Cse523::SHLD16rri8:case Cse523::SHLD32rri8:case Cse523::SHLD64rri8:
-//            return getTruncatedShiftCount(MI, 3) != 0;
-//
-//        case Cse523::SUB64ri32: case Cse523::SUB64ri8: case Cse523::SUB32ri:
-//        case Cse523::SUB32ri8:  case Cse523::SUB16ri:  case Cse523::SUB16ri8:
-//        case Cse523::SUB8ri:    case Cse523::SUB64rr:  case Cse523::SUB32rr:
-//        case Cse523::SUB16rr:   case Cse523::SUB8rr:   case Cse523::SUB64rm:
-//        case Cse523::SUB32rm:   case Cse523::SUB16rm:  case Cse523::SUB8rm:
-//        case Cse523::DEC64r:    case Cse523::DEC32r:   case Cse523::DEC16r: case Cse523::DEC8r:
-//        case Cse523::DEC64_32r: case Cse523::DEC64_16r:
-//        case Cse523::ADD64ri32: case Cse523::ADD64ri8: case Cse523::ADD32ri:
-//        case Cse523::ADD32ri8:  case Cse523::ADD16ri:  case Cse523::ADD16ri8:
-//        case Cse523::ADD8ri:    case Cse523::ADD64rr:  case Cse523::ADD32rr:
-//        case Cse523::ADD16rr:   case Cse523::ADD8rr:   case Cse523::ADD64rm:
-//        case Cse523::ADD32rm:   case Cse523::ADD16rm:  case Cse523::ADD8rm:
-//        case Cse523::INC64r:    case Cse523::INC32r:   case Cse523::INC16r: case Cse523::INC8r:
-//        case Cse523::INC64_32r: case Cse523::INC64_16r:
-//        case Cse523::AND64ri32: case Cse523::AND64ri8: case Cse523::AND32ri:
-//        case Cse523::AND32ri8:  case Cse523::AND16ri:  case Cse523::AND16ri8:
-//        case Cse523::AND8ri:    case Cse523::AND64rr:  case Cse523::AND32rr:
-//        case Cse523::AND16rr:   case Cse523::AND8rr:   case Cse523::AND64rm:
-//        case Cse523::AND32rm:   case Cse523::AND16rm:  case Cse523::AND8rm:
-//        case Cse523::XOR64ri32: case Cse523::XOR64ri8: case Cse523::XOR32ri:
-//        case Cse523::XOR32ri8:  case Cse523::XOR16ri:  case Cse523::XOR16ri8:
-//        case Cse523::XOR8ri:    case Cse523::XOR64rr:  case Cse523::XOR32rr:
-//        case Cse523::XOR16rr:   case Cse523::XOR8rr:   case Cse523::XOR64rm:
-//        case Cse523::XOR32rm:   case Cse523::XOR16rm:  case Cse523::XOR8rm:
-//        case Cse523::OR64ri32:  case Cse523::OR64ri8:  case Cse523::OR32ri:
-//        case Cse523::OR32ri8:   case Cse523::OR16ri:   case Cse523::OR16ri8:
-//        case Cse523::OR8ri:     case Cse523::OR64rr:   case Cse523::OR32rr:
-//        case Cse523::OR16rr:    case Cse523::OR8rr:    case Cse523::OR64rm:
-//        case Cse523::OR32rm:    case Cse523::OR16rm:   case Cse523::OR8rm:
-//        case Cse523::NEG8r:     case Cse523::NEG16r:   case Cse523::NEG32r: case Cse523::NEG64r:
-//        case Cse523::SAR8r1:    case Cse523::SAR16r1:  case Cse523::SAR32r1:case Cse523::SAR64r1:
-//        case Cse523::SHR8r1:    case Cse523::SHR16r1:  case Cse523::SHR32r1:case Cse523::SHR64r1:
-//        case Cse523::SHL8r1:    case Cse523::SHL16r1:  case Cse523::SHL32r1:case Cse523::SHL64r1:
-//        case Cse523::ADC32ri:   case Cse523::ADC32ri8:
-//        case Cse523::ADC32rr:   case Cse523::ADC64ri32:
-//        case Cse523::ADC64ri8:  case Cse523::ADC64rr:
-//        case Cse523::SBB32ri:   case Cse523::SBB32ri8:
-//        case Cse523::SBB32rr:   case Cse523::SBB64ri32:
-//        case Cse523::SBB64ri8:  case Cse523::SBB64rr:
-//        case Cse523::ANDN32rr:  case Cse523::ANDN32rm:
-//        case Cse523::ANDN64rr:  case Cse523::ANDN64rm:
-//        case Cse523::BEXTR32rr: case Cse523::BEXTR64rr:
-//        case Cse523::BEXTR32rm: case Cse523::BEXTR64rm:
-//        case Cse523::BLSI32rr:  case Cse523::BLSI32rm:
-//        case Cse523::BLSI64rr:  case Cse523::BLSI64rm:
-//        case Cse523::BLSMSK32rr:case Cse523::BLSMSK32rm:
-//        case Cse523::BLSMSK64rr:case Cse523::BLSMSK64rm:
-//        case Cse523::BLSR32rr:  case Cse523::BLSR32rm:
-//        case Cse523::BLSR64rr:  case Cse523::BLSR64rm:
-//        case Cse523::BZHI32rr:  case Cse523::BZHI32rm:
-//        case Cse523::BZHI64rr:  case Cse523::BZHI64rm:
-//        case Cse523::LZCNT16rr: case Cse523::LZCNT16rm:
-//        case Cse523::LZCNT32rr: case Cse523::LZCNT32rm:
-//        case Cse523::LZCNT64rr: case Cse523::LZCNT64rm:
-//        case Cse523::POPCNT16rr:case Cse523::POPCNT16rm:
-//        case Cse523::POPCNT32rr:case Cse523::POPCNT32rm:
-//        case Cse523::POPCNT64rr:case Cse523::POPCNT64rm:
-//        case Cse523::TZCNT16rr: case Cse523::TZCNT16rm:
-//        case Cse523::TZCNT32rr: case Cse523::TZCNT32rm:
-//        case Cse523::TZCNT64rr: case Cse523::TZCNT64rm:
-//            return true;
+        case Cse523::SAR64ri:
+        case Cse523::SHR64ri:
+             return getTruncatedShiftCount(MI, 2) != 0;
+
+                 // Some left shift instructions can be turned into LEA instructions but only
+                 // if their flags aren't used. Avoid transforming such instructions.
+        case Cse523::SHL64ri:
+        {
+            unsigned ShAmt = getTruncatedShiftCount(MI, 2);
+            if (isTruncatedShiftCountForLEA(ShAmt)) return false;
+            return ShAmt != 0;
+        }
+
+        //case Cse523::SHRD64rri8:
+        //case Cse523::SHLD64rri8:
+        //    return getTruncatedShiftCount(MI, 3) != 0;
+
+        case Cse523::SUB64ri32:
+        case Cse523::SUB64rr:
+        case Cse523::SUB64rm:
+        case Cse523::DEC64r:
+        case Cse523::ADD64ri32:
+        case Cse523::ADD64rr:
+        case Cse523::ADD64rm:
+        case Cse523::INC64r:
+        case Cse523::AND64ri32:
+        case Cse523::AND64rr:
+        case Cse523::AND64rm:
+        case Cse523::XOR64ri32:
+        case Cse523::XOR64rr:
+        case Cse523::XOR64rm:
+        case Cse523::OR64ri32:
+        case Cse523::OR64rr:
+        case Cse523::OR64rm:
+        case Cse523::NEG64r:
+        case Cse523::SAR64r1:
+        case Cse523::SHR64r1:
+        case Cse523::SHL64r1:
+        case Cse523::ADC64rr:
+        //case Cse523::ADC64ri32:
+        //case Cse523::SBB64ri32:
+        //case Cse523::SBB64rr:
+        //case Cse523::ANDN64rr:
+        //case Cse523::ANDN64rm:
+        //case Cse523::BEXTR64rr:
+        //case Cse523::BEXTR64rm:
+        //case Cse523::BLSI64rr:  
+        //case Cse523::BLSI64rm:
+        //case Cse523::BLSMSK64rr:
+        //case Cse523::BLSMSK64rm:
+        //case Cse523::BLSR64rr:  
+        //case Cse523::BLSR64rm:
+        //case Cse523::BZHI64rr:  
+        //case Cse523::BZHI64rm:
+        //case Cse523::LZCNT64rr: 
+        //case Cse523::LZCNT64rm:
+        //case Cse523::POPCNT64rr:
+        //case Cse523::POPCNT64rm:
+        //case Cse523::TZCNT64rr: 
+        //case Cse523::TZCNT64rm:
+            return true;
     }
 }
 
@@ -2459,249 +2037,223 @@ bool Cse523InstrInfo::
 optimizeCompareInstr(MachineInstr *CmpInstr, unsigned SrcReg, unsigned SrcReg2,
         int CmpMask, int CmpValue,
         const MachineRegisterInfo *MRI) const {
-    assert(0);
     // Check whether we can replace SUB with CMP.
-//    unsigned NewOpcode = 0;
-//    switch (CmpInstr->getOpcode()) {
-//        default: break;
-//        case Cse523::SUB64ri32:
-//        case Cse523::SUB64ri8:
-//        case Cse523::SUB32ri:
-//        case Cse523::SUB32ri8:
-//        case Cse523::SUB16ri:
-//        case Cse523::SUB16ri8:
-//        case Cse523::SUB8ri:
-//        case Cse523::SUB64rm:
-//        case Cse523::SUB32rm:
-//        case Cse523::SUB16rm:
-//        case Cse523::SUB8rm:
-//        case Cse523::SUB64rr:
-//        case Cse523::SUB32rr:
-//        case Cse523::SUB16rr:
-//        case Cse523::SUB8rr: 
-//        {
-//            if (!MRI->use_nodbg_empty(CmpInstr->getOperand(0).getReg()))
-//                return false;
-//            // There is no use of the destination register, we can replace SUB with CMP.
-//            switch (CmpInstr->getOpcode()) {
-//                default: llvm_unreachable("Unreachable!");
-//                case Cse523::SUB64rm:   NewOpcode = Cse523::CMP64rm;   break;
-//                case Cse523::SUB32rm:   NewOpcode = Cse523::CMP32rm;   break;
-//                case Cse523::SUB16rm:   NewOpcode = Cse523::CMP16rm;   break;
-//                case Cse523::SUB8rm:    NewOpcode = Cse523::CMP8rm;    break;
-//                case Cse523::SUB64rr:   NewOpcode = Cse523::CMP64rr;   break;
-//                case Cse523::SUB32rr:   NewOpcode = Cse523::CMP32rr;   break;
-//                case Cse523::SUB16rr:   NewOpcode = Cse523::CMP16rr;   break;
-//                case Cse523::SUB8rr:    NewOpcode = Cse523::CMP8rr;    break;
-//                case Cse523::SUB64ri32: NewOpcode = Cse523::CMP64ri32; break;
-//                case Cse523::SUB64ri8:  NewOpcode = Cse523::CMP64ri8;  break;
-//                case Cse523::SUB32ri:   NewOpcode = Cse523::CMP32ri;   break;
-//                case Cse523::SUB32ri8:  NewOpcode = Cse523::CMP32ri8;  break;
-//                case Cse523::SUB16ri:   NewOpcode = Cse523::CMP16ri;   break;
-//                case Cse523::SUB16ri8:  NewOpcode = Cse523::CMP16ri8;  break;
-//                case Cse523::SUB8ri:    NewOpcode = Cse523::CMP8ri;    break;
-//            }
-//            CmpInstr->setDesc(get(NewOpcode));
-//            CmpInstr->RemoveOperand(0);
-//            // Fall through to optimize Cmp if Cmp is CMPrr or CMPri.
-//            if (NewOpcode == Cse523::CMP64rm || NewOpcode == Cse523::CMP32rm ||
-//                    NewOpcode == Cse523::CMP16rm || NewOpcode == Cse523::CMP8rm)
-//                return false;
-//        }
-//    }
-//
-//    // Get the unique definition of SrcReg.
-//    machineInstr *MI = MRI->getUniqueVRegDef(SrcReg);
-//    if (!MI) return false;
-//
-//    // CmpInstr is the first instruction of the BB.
-//    machineBasicBlock::iterator I = CmpInstr, Def = MI;
-//
-//    // If we are comparing against zero, check whether we can use MI to update
-//    // EFLAGS. If MI is not in the same BB as CmpInstr, do not optimize.
-//    bool IsCmpZero = (SrcReg2 == 0 && CmpValue == 0);
-//    if (IsCmpZero && (MI->getParent() != CmpInstr->getParent() ||
-//                !isDefConvertible(MI)))
-//        return false;
-//
-//    // We are searching for an earlier instruction that can make CmpInstr
-//    // redundant and that instruction will be saved in Sub.
-//    machineInstr *Sub = NULL;
-//    const TargetRegisterInfo *TRI = &getRegisterInfo();
-//
-//    // We iterate backward, starting from the instruction before CmpInstr and
-//    // stop when reaching the definition of a source register or done with the BB.
-//    // RI points to the instruction before CmpInstr.
-//    // If the definition is in this basic block, RE points to the definition;
-//    // otherwise, RE is the rend of the basic block.
-//    machineBasicBlock::reverse_iterator
-//        RI = MachineBasicBlock::reverse_iterator(I),
-//           RE = CmpInstr->getParent() == MI->getParent() ?
-//               MachineBasicBlock::reverse_iterator(++Def) /* points to MI */ :
-//               CmpInstr->getParent()->rend();
-//    machineInstr *Movr0Inst = 0;
-//    for (; RI != RE; ++RI) {
-//        MachineInstr *Instr = &*RI;
-//        // Check whether CmpInstr can be made redundant by the current instruction.
-//        if (!IsCmpZero &&
-//                isRedundantFlagInstr(CmpInstr, SrcReg, SrcReg2, CmpValue, Instr)) {
-//            Sub = Instr;
-//            break;
-//        }
-//
-//        if (Instr->modifiesRegister(Cse523::EFLAGS, TRI) ||
-//                Instr->readsRegister(Cse523::EFLAGS, TRI)) {
-//            // This instruction modifies or uses EFLAGS.
-//
-//            // MOV32r0 etc. are implemented with xor which clobbers condition code.
-//            // They are safe to move up, if the definition to EFLAGS is dead and
-//            // earlier instructions do not read or write EFLAGS.
-//            if (!Movr0Inst && Instr->getOpcode() == Cse523::MOV32r0 &&
-//                    Instr->registerDefIsDead(Cse523::EFLAGS, TRI)) {
-//                Movr0Inst = Instr;
-//                continue;
-//            }
-//
-//            // We can't remove CmpInstr.
-//            return false;
-//        }
-//    }
-//
-//    // Return false if no candidates exist.
-//    if (!IsCmpZero && !Sub)
-//        return false;
-//
-//    bool IsSwapped = (SrcReg2 != 0 && Sub->getOperand(1).getReg() == SrcReg2 &&
-//            Sub->getOperand(2).getReg() == SrcReg);
-//
-//    // Scan forward from the instruction after CmpInstr for uses of EFLAGS.
-//    // It is safe to remove CmpInstr if EFLAGS is redefined or killed.
-//    // If we are done with the basic block, we need to check whether EFLAGS is
-//    // live-out.
-//    bool IsSafe = false;
-//    smallVector<std::pair<MachineInstr*, unsigned /*NewOpc*/>, 4> OpsToUpdate;
-//    machineBasicBlock::iterator E = CmpInstr->getParent()->end();
-//    for (++I; I != E; ++I) {
-//        const MachineInstr &Instr = *I;
-//        bool ModifyEFLAGS = Instr.modifiesRegister(Cse523::EFLAGS, TRI);
-//        bool UseEFLAGS = Instr.readsRegister(Cse523::EFLAGS, TRI);
-//        // We should check the usage if this instruction uses and updates EFLAGS.
-//        if (!UseEFLAGS && ModifyEFLAGS) {
-//            // It is safe to remove CmpInstr if EFLAGS is updated again.
-//            IsSafe = true;
-//            break;
-//        }
-//        if (!UseEFLAGS && !ModifyEFLAGS)
-//            continue;
-//
-//        // EFLAGS is used by this instruction.
-//        Cse523::CondCode OldCC;
-//        bool OpcIsSET = false;
-//        if (IsCmpZero || IsSwapped) {
-//            // We decode the condition code from opcode.
-//            if (Instr.isBranch())
-//                OldCC = getCondFromBranchOpc(Instr.getOpcode());
-//            else {
-//                OldCC = getCondFromSETOpc(Instr.getOpcode());
-//                if (OldCC != Cse523::COND_INVALID)
-//                    OpcIsSET = true;
-//                else
-//                    OldCC = Cse523::getCondFromCMovOpc(Instr.getOpcode());
-//            }
-//            if (OldCC == Cse523::COND_INVALID) return false;
-//        }
-//        if (IsCmpZero) {
-//            switch (OldCC) {
-//                default: break;
-//                case Cse523::COND_A: case Cse523::COND_AE:
-//                case Cse523::COND_B: case Cse523::COND_BE:
-//                case Cse523::COND_G: case Cse523::COND_GE:
-//                case Cse523::COND_L: case Cse523::COND_LE:
-//                case Cse523::COND_O: case Cse523::COND_NO:
-//                         // CF and OF are used, we can't perform this optimization.
-//                         return false;
-//            }
-//        } else if (IsSwapped) {
-//            // If we have SUB(r1, r2) and CMP(r2, r1), the condition code needs
-//            // to be changed from r2 > r1 to r1 < r2, from r2 < r1 to r1 > r2, etc.
-//            // We swap the condition code and synthesize the new opcode.
-//            Cse523::CondCode NewCC = getSwappedCondition(OldCC);
-//            if (NewCC == Cse523::COND_INVALID) return false;
-//
-//            // Synthesize the new opcode.
-//            bool HasMemoryOperand = Instr.hasOneMemOperand();
-//            unsigned NewOpc;
-//            if (Instr.isBranch())
-//                NewOpc = GetCondBranchFromCond(NewCC);
-//            else if(OpcIsSET)
-//                NewOpc = getSETFromCond(NewCC, HasMemoryOperand);
-//            else {
-//                unsigned DstReg = Instr.getOperand(0).getReg();
-//                NewOpc = getCMovFromCond(NewCC, MRI->getRegClass(DstReg)->getSize(),
-//                        HasMemoryOperand);
-//            }
-//
-//            // Push the MachineInstr to OpsToUpdate.
-//            // If it is safe to remove CmpInstr, the condition code of these
-//            // instructions will be modified.
-//            OpsToUpdate.push_back(std::make_pair(&*I, NewOpc));
-//        }
-//        if (ModifyEFLAGS || Instr.killsRegister(Cse523::EFLAGS, TRI)) {
-//            // It is safe to remove CmpInstr if EFLAGS is updated again or killed.
-//            IsSafe = true;
-//            break;
-//        }
-//    }
-//
-//    // If EFLAGS is not killed nor re-defined, we should check whether it is
-//    // live-out. If it is live-out, do not optimize.
-//    if ((IsCmpZero || IsSwapped) && !IsSafe) {
-//        MachineBasicBlock *MBB = CmpInstr->getParent();
-//        for (MachineBasicBlock::succ_iterator SI = MBB->succ_begin(),
-//                SE = MBB->succ_end(); SI != SE; ++SI)
-//            if ((*SI)->isLiveIn(Cse523::EFLAGS))
-//                return false;
-//    }
-//
-//    // The instruction to be updated is either Sub or MI.
-//    sub = IsCmpZero ? MI : Sub;
-//    // Move Movr0Inst to the appropriate place before Sub.
-//    if (Movr0Inst) {
-//        // Look backwards until we find a def that doesn't use the current EFLAGS.
-//        Def = Sub;
-//        MachineBasicBlock::reverse_iterator
-//            InsertI = MachineBasicBlock::reverse_iterator(++Def),
-//                    InsertE = Sub->getParent()->rend();
-//        for (; InsertI != InsertE; ++InsertI) {
-//            MachineInstr *Instr = &*InsertI;
-//            if (!Instr->readsRegister(Cse523::EFLAGS, TRI) &&
-//                    Instr->modifiesRegister(Cse523::EFLAGS, TRI)) {
-//                Sub->getParent()->remove(Movr0Inst);
-//                Instr->getParent()->insert(MachineBasicBlock::iterator(Instr),
-//                        Movr0Inst);
-//                break;
-//            }
-//        }
-//        if (InsertI == InsertE)
-//            return false;
-//    }
-//
-//    // Make sure Sub instruction defines EFLAGS and mark the def live.
-//    unsigned i = 0, e = Sub->getNumOperands();
-//    for (; i != e; ++i) {
-//        MachineOperand &MO = Sub->getOperand(i);
-//        if (MO.isReg() && MO.isDef() && MO.getReg() == Cse523::EFLAGS) {
-//            MO.setIsDead(false);
-//            break;
-//        }
-//    }
-//    assert(i != e && "Unable to locate a def EFLAGS operand");
-//
-//    CmpInstr->eraseFromParent();
-//
-//    // Modify the condition code of instructions in OpsToUpdate.
-//    for (unsigned i = 0, e = OpsToUpdate.size(); i < e; i++)
-//        OpsToUpdate[i].first->setDesc(get(OpsToUpdate[i].second));
+    unsigned NewOpcode = 0;
+    switch (CmpInstr->getOpcode()) {
+        default: break;
+        case Cse523::SUB64ri32:
+        case Cse523::SUB64rm:
+        case Cse523::SUB64rr:
+        {
+            if (!MRI->use_nodbg_empty(CmpInstr->getOperand(0).getReg()))
+                return false;
+            // There is no use of the destination register, we can replace SUB with CMP.
+            switch (CmpInstr->getOpcode()) {
+                default: llvm_unreachable("Unreachable!");
+                case Cse523::SUB64rm:   NewOpcode = Cse523::CMP64rm;   break;
+                case Cse523::SUB64rr:   NewOpcode = Cse523::CMP64rr;   break;
+                case Cse523::SUB64ri32: NewOpcode = Cse523::CMP64ri32; break;
+            }
+            CmpInstr->setDesc(get(NewOpcode));
+            CmpInstr->RemoveOperand(0);
+            // Fall through to optimize Cmp if Cmp is CMPrr or CMPri.
+            if (NewOpcode == Cse523::CMP64rm)
+                return false;
+        }
+    }
+
+    // Get the unique definition of SrcReg.
+    MachineInstr *MI = MRI->getUniqueVRegDef(SrcReg);
+    if (!MI) return false;
+
+    // CmpInstr is the first instruction of the BB.
+    MachineBasicBlock::iterator I = CmpInstr, Def = MI;
+
+    // If we are comparing against zero, check whether we can use MI to update
+    // EFLAGS. If MI is not in the same BB as CmpInstr, do not optimize.
+    bool IsCmpZero = (SrcReg2 == 0 && CmpValue == 0);
+    if (IsCmpZero && (MI->getParent() != CmpInstr->getParent() ||
+                !isDefConvertible(MI)))
+        return false;
+
+    // We are searching for an earlier instruction that can make CmpInstr
+    // redundant and that instruction will be saved in Sub.
+    MachineInstr *Sub = NULL;
+    const TargetRegisterInfo *TRI = &getRegisterInfo();
+
+    // We iterate backward, starting from the instruction before CmpInstr and
+    // stop when reaching the definition of a source register or done with the BB.
+    // RI points to the instruction before CmpInstr.
+    // If the definition is in this basic block, RE points to the definition;
+    // otherwise, RE is the rend of the basic block.
+    MachineBasicBlock::reverse_iterator
+        RI = MachineBasicBlock::reverse_iterator(I),
+           RE = CmpInstr->getParent() == MI->getParent() ?
+               MachineBasicBlock::reverse_iterator(++Def) /* points to MI */ :
+               CmpInstr->getParent()->rend();
+    MachineInstr *Movr0Inst = 0;
+    for (; RI != RE; ++RI) {
+        MachineInstr *Instr = &*RI;
+        // Check whether CmpInstr can be made redundant by the current instruction.
+        if (!IsCmpZero &&
+                isRedundantFlagInstr(CmpInstr, SrcReg, SrcReg2, CmpValue, Instr)) {
+            Sub = Instr;
+            break;
+        }
+
+        if (Instr->modifiesRegister(Cse523::EFLAGS, TRI) ||
+                Instr->readsRegister(Cse523::EFLAGS, TRI)) {
+            // This instruction modifies or uses EFLAGS.
+
+            // MOV32r0 etc. are implemented with xor which clobbers condition code.
+            // They are safe to move up, if the definition to EFLAGS is dead and
+            // earlier instructions do not read or write EFLAGS.
+            if (!Movr0Inst && Instr->getOpcode() == Cse523::MOV64r0 &&
+                    Instr->registerDefIsDead(Cse523::EFLAGS, TRI)) {
+                Movr0Inst = Instr;
+                continue;
+            }
+
+            // We can't remove CmpInstr.
+            return false;
+        }
+    }
+
+    // Return false if no candidates exist.
+    if (!IsCmpZero && !Sub)
+        return false;
+
+    bool IsSwapped = (SrcReg2 != 0 && Sub->getOperand(1).getReg() == SrcReg2 &&
+            Sub->getOperand(2).getReg() == SrcReg);
+
+    // Scan forward from the instruction after CmpInstr for uses of EFLAGS.
+    // It is safe to remove CmpInstr if EFLAGS is redefined or killed.
+    // If we are done with the basic block, we need to check whether EFLAGS is
+    // live-out.
+    bool IsSafe = false;
+    SmallVector<std::pair<MachineInstr*, unsigned /*NewOpc*/>, 4> OpsToUpdate;
+    MachineBasicBlock::iterator E = CmpInstr->getParent()->end();
+    for (++I; I != E; ++I) {
+        const MachineInstr &Instr = *I;
+        bool ModifyEFLAGS = Instr.modifiesRegister(Cse523::EFLAGS, TRI);
+        bool UseEFLAGS = Instr.readsRegister(Cse523::EFLAGS, TRI);
+        // We should check the usage if this instruction uses and updates EFLAGS.
+        if (!UseEFLAGS && ModifyEFLAGS) {
+            // It is safe to remove CmpInstr if EFLAGS is updated again.
+            IsSafe = true;
+            break;
+        }
+        if (!UseEFLAGS && !ModifyEFLAGS)
+            continue;
+
+        // EFLAGS is used by this instruction.
+        Cse523::CondCode OldCC;
+        bool OpcIsSET = false;
+        if (IsCmpZero || IsSwapped) {
+            // We decode the condition code from opcode.
+            if (Instr.isBranch())
+                OldCC = getCondFromBranchOpc(Instr.getOpcode());
+            else {
+                OldCC = getCondFromSETOpc(Instr.getOpcode());
+                if (OldCC != Cse523::COND_INVALID)
+                    OpcIsSET = true;
+                else
+                    OldCC = Cse523::getCondFromCMovOpc(Instr.getOpcode());
+            }
+            if (OldCC == Cse523::COND_INVALID) return false;
+        }
+        if (IsCmpZero) {
+            switch (OldCC) {
+                default: break;
+                case Cse523::COND_A: case Cse523::COND_AE:
+                case Cse523::COND_B: case Cse523::COND_BE:
+                case Cse523::COND_G: case Cse523::COND_GE:
+                case Cse523::COND_L: case Cse523::COND_LE:
+                case Cse523::COND_O: case Cse523::COND_NO:
+                         // CF and OF are used, we can't perform this optimization.
+                         return false;
+            }
+        } else if (IsSwapped) {
+            // If we have SUB(r1, r2) and CMP(r2, r1), the condition code needs
+            // to be changed from r2 > r1 to r1 < r2, from r2 < r1 to r1 > r2, etc.
+            // We swap the condition code and synthesize the new opcode.
+            Cse523::CondCode NewCC = getSwappedCondition(OldCC);
+            if (NewCC == Cse523::COND_INVALID) return false;
+
+            // Synthesize the new opcode.
+            bool HasMemoryOperand = Instr.hasOneMemOperand();
+            unsigned NewOpc;
+            if (Instr.isBranch())
+                NewOpc = GetCondBranchFromCond(NewCC);
+            else if(OpcIsSET)
+                NewOpc = getSETFromCond(NewCC, HasMemoryOperand);
+            else {
+                unsigned DstReg = Instr.getOperand(0).getReg();
+                NewOpc = getCMovFromCond(NewCC, MRI->getRegClass(DstReg)->getSize(),
+                        HasMemoryOperand);
+            }
+
+            // Push the MachineInstr to OpsToUpdate.
+            // If it is safe to remove CmpInstr, the condition code of these
+            // instructions will be modified.
+            OpsToUpdate.push_back(std::make_pair(&*I, NewOpc));
+        }
+        if (ModifyEFLAGS || Instr.killsRegister(Cse523::EFLAGS, TRI)) {
+            // It is safe to remove CmpInstr if EFLAGS is updated again or killed.
+            IsSafe = true;
+            break;
+        }
+    }
+
+    // If EFLAGS is not killed nor re-defined, we should check whether it is
+    // live-out. If it is live-out, do not optimize.
+    if ((IsCmpZero || IsSwapped) && !IsSafe) {
+        MachineBasicBlock *MBB = CmpInstr->getParent();
+        for (MachineBasicBlock::succ_iterator SI = MBB->succ_begin(),
+                SE = MBB->succ_end(); SI != SE; ++SI)
+            if ((*SI)->isLiveIn(Cse523::EFLAGS))
+                return false;
+    }
+
+    // The instruction to be updated is either Sub or MI.
+    Sub = IsCmpZero ? MI : Sub;
+    // Move Movr0Inst to the appropriate place before Sub.
+    if (Movr0Inst) {
+        // Look backwards until we find a def that doesn't use the current EFLAGS.
+        Def = Sub;
+        MachineBasicBlock::reverse_iterator
+            InsertI = MachineBasicBlock::reverse_iterator(++Def),
+                    InsertE = Sub->getParent()->rend();
+        for (; InsertI != InsertE; ++InsertI) {
+            MachineInstr *Instr = &*InsertI;
+            if (!Instr->readsRegister(Cse523::EFLAGS, TRI) &&
+                    Instr->modifiesRegister(Cse523::EFLAGS, TRI)) {
+                Sub->getParent()->remove(Movr0Inst);
+                Instr->getParent()->insert(MachineBasicBlock::iterator(Instr),
+                        Movr0Inst);
+                break;
+            }
+        }
+        if (InsertI == InsertE)
+            return false;
+    }
+
+    // Make sure Sub instruction defines EFLAGS and mark the def live.
+    unsigned i = 0, e = Sub->getNumOperands();
+    for (; i != e; ++i) {
+        MachineOperand &MO = Sub->getOperand(i);
+        if (MO.isReg() && MO.isDef() && MO.getReg() == Cse523::EFLAGS) {
+            MO.setIsDead(false);
+            break;
+        }
+    }
+    assert(i != e && "Unable to locate a def EFLAGS operand");
+
+    CmpInstr->eraseFromParent();
+
+    // Modify the condition code of instructions in OpsToUpdate.
+    for (unsigned i = 0, e = OpsToUpdate.size(); i < e; i++)
+        OpsToUpdate[i].first->setDesc(get(OpsToUpdate[i].second));
     return true;
 }
 
@@ -3262,119 +2814,107 @@ bool Cse523InstrInfo::canFoldMemoryOperand(const MachineInstr *MI,
 bool Cse523InstrInfo::unfoldMemoryOperand(MachineFunction &MF, MachineInstr *MI,
         unsigned Reg, bool UnfoldLoad, bool UnfoldStore,
         SmallVectorImpl<MachineInstr*> &NewMIs) const {
-    assert(0);
-//    DenseMap<unsigned, std::pair<unsigned,unsigned> >::const_iterator I =
-//        MemOp2RegOpTable.find(MI->getOpcode());
-//    if (I == MemOp2RegOpTable.end())
-//        return false;
-//    unsigned Opc = I->second.first;
-//    unsigned Index = I->second.second & TB_INDEX_MASK;
-//    bool FoldedLoad = I->second.second & TB_FOLDED_LOAD;
-//    bool FoldedStore = I->second.second & TB_FOLDED_STORE;
-//    if (UnfoldLoad && !FoldedLoad)
-//        return false;
-//    UnfoldLoad &= FoldedLoad;
-//    if (UnfoldStore && !FoldedStore)
-//        return false;
-//    UnfoldStore &= FoldedStore;
-//
-//    const MCInstrDesc &MCID = get(Opc);
-//    const TargetRegisterClass *RC = getRegClass(MCID, Index, &RI, MF);
-//
-//    SmallVector<MachineOperand, Cse523::AddrNumOperands> AddrOps;
-//    SmallVector<MachineOperand,2> BeforeOps;
-//    SmallVector<MachineOperand,2> AfterOps;
-//    SmallVector<MachineOperand,4> ImpOps;
-//    for (unsigned i = 0, e = MI->getNumOperands(); i != e; ++i) {
-//        MachineOperand &Op = MI->getOperand(i);
-//        if (i >= Index && i < Index + Cse523::AddrNumOperands)
-//            AddrOps.push_back(Op);
-//        else if (Op.isReg() && Op.isImplicit())
-//            ImpOps.push_back(Op);
-//        else if (i < Index)
-//            BeforeOps.push_back(Op);
-//        else if (i > Index)
-//            AfterOps.push_back(Op);
-//    }
-//
-//    // Emit the load instruction.
-//    if (UnfoldLoad) {
-//        std::pair<MachineInstr::mmo_iterator,
-//            MachineInstr::mmo_iterator> MMOs =
-//                MF.extractLoadMemRefs(MI->memoperands_begin(),
-//                        MI->memoperands_end());
-//        loadRegFromAddr(MF, Reg, AddrOps, RC, MMOs.first, MMOs.second, NewMIs);
-//        if (UnfoldStore) {
-//            // Address operands cannot be marked isKill.
-//            for (unsigned i = 1; i != 1 + Cse523::AddrNumOperands; ++i) {
-//                MachineOperand &MO = NewMIs[0]->getOperand(i);
-//                if (MO.isReg())
-//                    MO.setIsKill(false);
-//            }
-//        }
-//    }
-//
-//    // Emit the data processing instruction.
-//    MachineInstr *DataMI = MF.CreateMachineInstr(MCID, MI->getDebugLoc(), true);
-//    MachineInstrBuilder MIB(MF, DataMI);
-//
-//    if (FoldedStore)
-//        MIB.addReg(Reg, RegState::Define);
-//    for (unsigned i = 0, e = BeforeOps.size(); i != e; ++i)
-//        MIB.addOperand(BeforeOps[i]);
-//    if (FoldedLoad)
-//        MIB.addReg(Reg);
-//    for (unsigned i = 0, e = AfterOps.size(); i != e; ++i)
-//        MIB.addOperand(AfterOps[i]);
-//    for (unsigned i = 0, e = ImpOps.size(); i != e; ++i) {
-//        MachineOperand &MO = ImpOps[i];
-//        MIB.addReg(MO.getReg(),
-//                getDefRegState(MO.isDef()) |
-//                RegState::Implicit |
-//                getKillRegState(MO.isKill()) |
-//                getDeadRegState(MO.isDead()) |
-//                getUndefRegState(MO.isUndef()));
-//    }
-//    // Change CMP32ri r, 0 back to TEST32rr r, r, etc.
-//    switch (DataMI->getOpcode()) {
-//        default: break;
-//        case Cse523::CMP64ri32:
-//        case Cse523::CMP64ri8:
-//        case Cse523::CMP32ri:
-//        case Cse523::CMP32ri8:
-//        case Cse523::CMP16ri:
-//        case Cse523::CMP16ri8:
-//        case Cse523::CMP8ri: {
-//                                 MachineOperand &MO0 = DataMI->getOperand(0);
-//                                 MachineOperand &MO1 = DataMI->getOperand(1);
-//                                 if (MO1.getImm() == 0) {
-//                                     unsigned NewOpc;
-//                                     switch (DataMI->getOpcode()) {
-//                                         default: llvm_unreachable("Unreachable!");
-//                                         case Cse523::CMP64ri8:
-//                                         case Cse523::CMP64ri32: NewOpc = Cse523::TEST64rr; break;
-//                                         case Cse523::CMP32ri8:
-//                                         case Cse523::CMP32ri:   NewOpc = Cse523::TEST32rr; break;
-//                                         case Cse523::CMP16ri8:
-//                                         case Cse523::CMP16ri:   NewOpc = Cse523::TEST16rr; break;
-//                                         case Cse523::CMP8ri:    NewOpc = Cse523::TEST8rr; break;
-//                                     }
-//                                     DataMI->setDesc(get(NewOpc));
-//                                     MO1.ChangeToRegister(MO0.getReg(), false);
-//                                 }
-//                             }
-//    }
-//    NewMIs.push_back(DataMI);
-//
-//    // Emit the store instruction.
-//    if (UnfoldStore) {
-//        const TargetRegisterClass *DstRC = getRegClass(MCID, 0, &RI, MF);
-//        std::pair<MachineInstr::mmo_iterator,
-//            MachineInstr::mmo_iterator> MMOs =
-//                MF.extractStoreMemRefs(MI->memoperands_begin(),
-//                        MI->memoperands_end());
-//        storeRegToAddr(MF, Reg, true, AddrOps, DstRC, MMOs.first, MMOs.second, NewMIs);
-//    }
+    DenseMap<unsigned, std::pair<unsigned,unsigned> >::const_iterator I =
+        MemOp2RegOpTable.find(MI->getOpcode());
+    if (I == MemOp2RegOpTable.end())
+        return false;
+    unsigned Opc = I->second.first;
+    unsigned Index = I->second.second & TB_INDEX_MASK;
+    bool FoldedLoad = I->second.second & TB_FOLDED_LOAD;
+    bool FoldedStore = I->second.second & TB_FOLDED_STORE;
+    if (UnfoldLoad && !FoldedLoad)
+        return false;
+    UnfoldLoad &= FoldedLoad;
+    if (UnfoldStore && !FoldedStore)
+        return false;
+    UnfoldStore &= FoldedStore;
+
+    const MCInstrDesc &MCID = get(Opc);
+    const TargetRegisterClass *RC = getRegClass(MCID, Index, &RI, MF);
+
+    SmallVector<MachineOperand, Cse523::AddrNumOperands> AddrOps;
+    SmallVector<MachineOperand,2> BeforeOps;
+    SmallVector<MachineOperand,2> AfterOps;
+    SmallVector<MachineOperand,4> ImpOps;
+    for (unsigned i = 0, e = MI->getNumOperands(); i != e; ++i) {
+        MachineOperand &Op = MI->getOperand(i);
+        if (i >= Index && i < Index + Cse523::AddrNumOperands)
+            AddrOps.push_back(Op);
+        else if (Op.isReg() && Op.isImplicit())
+            ImpOps.push_back(Op);
+        else if (i < Index)
+            BeforeOps.push_back(Op);
+        else if (i > Index)
+            AfterOps.push_back(Op);
+    }
+
+    // Emit the load instruction.
+    if (UnfoldLoad) {
+        std::pair<MachineInstr::mmo_iterator,
+            MachineInstr::mmo_iterator> MMOs =
+                MF.extractLoadMemRefs(MI->memoperands_begin(),
+                        MI->memoperands_end());
+        loadRegFromAddr(MF, Reg, AddrOps, RC, MMOs.first, MMOs.second, NewMIs);
+        if (UnfoldStore) {
+            // Address operands cannot be marked isKill.
+            for (unsigned i = 1; i != 1 + Cse523::AddrNumOperands; ++i) {
+                MachineOperand &MO = NewMIs[0]->getOperand(i);
+                if (MO.isReg())
+                    MO.setIsKill(false);
+            }
+        }
+    }
+
+    // Emit the data processing instruction.
+    MachineInstr *DataMI = MF.CreateMachineInstr(MCID, MI->getDebugLoc(), true);
+    MachineInstrBuilder MIB(MF, DataMI);
+
+    if (FoldedStore)
+        MIB.addReg(Reg, RegState::Define);
+    for (unsigned i = 0, e = BeforeOps.size(); i != e; ++i)
+        MIB.addOperand(BeforeOps[i]);
+    if (FoldedLoad)
+        MIB.addReg(Reg);
+    for (unsigned i = 0, e = AfterOps.size(); i != e; ++i)
+        MIB.addOperand(AfterOps[i]);
+    for (unsigned i = 0, e = ImpOps.size(); i != e; ++i) {
+        MachineOperand &MO = ImpOps[i];
+        MIB.addReg(MO.getReg(),
+                getDefRegState(MO.isDef()) |
+                RegState::Implicit |
+                getKillRegState(MO.isKill()) |
+                getDeadRegState(MO.isDead()) |
+                getUndefRegState(MO.isUndef()));
+    }
+    // Change CMP32ri r, 0 back to TEST32rr r, r, etc.
+    switch (DataMI->getOpcode()) {
+        default: break;
+        case Cse523::CMP64ri32:
+                            {
+                                 MachineOperand &MO0 = DataMI->getOperand(0);
+                                 MachineOperand &MO1 = DataMI->getOperand(1);
+                                 if (MO1.getImm() == 0) {
+                                     unsigned NewOpc;
+                                     switch (DataMI->getOpcode()) {
+                                         default: llvm_unreachable("Unreachable!");
+                                         case Cse523::CMP64ri32: NewOpc = Cse523::TEST64rr; break;
+                                     }
+                                     DataMI->setDesc(get(NewOpc));
+                                     MO1.ChangeToRegister(MO0.getReg(), false);
+                                 }
+                             }
+    }
+    NewMIs.push_back(DataMI);
+
+    // Emit the store instruction.
+    if (UnfoldStore) {
+        const TargetRegisterClass *DstRC = getRegClass(MCID, 0, &RI, MF);
+        std::pair<MachineInstr::mmo_iterator,
+            MachineInstr::mmo_iterator> MMOs =
+                MF.extractStoreMemRefs(MI->memoperands_begin(),
+                        MI->memoperands_end());
+        storeRegToAddr(MF, Reg, true, AddrOps, DstRC, MMOs.first, MMOs.second, NewMIs);
+    }
 
     return true;
 }
@@ -3664,6 +3204,7 @@ static const uint16_t ReplaceableInstrsAVX2[1][3] = {
 // domains, but they require a bit more work than just switching opcodes.
 
 static const uint16_t *lookup(unsigned opcode, unsigned domain) {
+    assert(0);
     for (unsigned i = 0, e = array_lengthof(ReplaceableInstrs); i != e; ++i)
         if (ReplaceableInstrs[i][domain-1] == opcode)
             return ReplaceableInstrs[i];
