@@ -1,0 +1,18 @@
+0000000000400460 <__libc_start_main>:
+  400460:	50                   	push   %rax
+  400461:	49 89 f8             	mov    %rdi,%r8
+  400464:	b8 0c 00 00 00       	mov    $0xc,%eax
+  400469:	31 ff                	xor    %edi,%edi
+  40046b:	0f 05                	syscall 
+  40046d:	48 89 05 8c 0b 20 00 	mov    %rax,0x200b8c(%rip)        # 601000 <__bss_start>
+  400474:	48 89 f7             	mov    %rsi,%rdi
+  400477:	48 89 d6             	mov    %rdx,%rsi
+  40047a:	31 d2                	xor    %edx,%edx
+  40047c:	41 ff d0             	callq  *%r8
+  40047f:	48 89 c1             	mov    %rax,%rcx
+  400482:	b8 3c 00 00 00       	mov    $0x3c,%eax
+  400487:	48 89 cf             	mov    %rcx,%rdi
+  40048a:	0f 05                	syscall 
+  40048c:	31 c0                	xor    %eax,%eax
+  40048e:	5a                   	pop    %rdx
+  40048f:	c3                   	retq   

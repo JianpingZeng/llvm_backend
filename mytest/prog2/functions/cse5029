@@ -1,0 +1,31 @@
+00000000004002d0 <LLreadchar>:
+  4002d0:	48 89 f8             	mov    %rdi,%rax
+  4002d3:	48 83 e0 f8          	and    $0xfffffffffffffff8,%rax
+  4002d7:	48 8b 00             	mov    (%rax),%rax
+  4002da:	48 83 e7 07          	and    $0x7,%rdi
+  4002de:	48 ff cf             	dec    %rdi
+  4002e1:	48 83 ff 06          	cmp    $0x6,%rdi
+  4002e5:	77 4d                	ja     400334 <LLreadchar+0x64>
+  4002e7:	ff 24 fd 18 0c 40 00 	jmpq   *0x400c18(,%rdi,8)
+  4002ee:	48 c1 e8 08          	shr    $0x8,%rax
+  4002f2:	48 25 ff 00 00 00    	and    $0xff,%rax
+  4002f8:	c3                   	retq   
+  4002f9:	48 c1 e8 10          	shr    $0x10,%rax
+  4002fd:	48 25 ff 00 00 00    	and    $0xff,%rax
+  400303:	c3                   	retq   
+  400304:	48 c1 e8 18          	shr    $0x18,%rax
+  400308:	48 25 ff 00 00 00    	and    $0xff,%rax
+  40030e:	c3                   	retq   
+  40030f:	48 c1 e8 20          	shr    $0x20,%rax
+  400313:	48 25 ff 00 00 00    	and    $0xff,%rax
+  400319:	c3                   	retq   
+  40031a:	48 c1 e8 28          	shr    $0x28,%rax
+  40031e:	48 25 ff 00 00 00    	and    $0xff,%rax
+  400324:	c3                   	retq   
+  400325:	48 c1 e8 30          	shr    $0x30,%rax
+  400329:	48 25 ff 00 00 00    	and    $0xff,%rax
+  40032f:	c3                   	retq   
+  400330:	48 c1 e8 38          	shr    $0x38,%rax
+  400334:	48 25 ff 00 00 00    	and    $0xff,%rax
+  40033a:	c3                   	retq   
+  40033b:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)

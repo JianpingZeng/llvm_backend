@@ -1,0 +1,12 @@
+00000000004002a0 <isspace>:
+  4002a0:	48 b8 01 00 00 00 00 	movabs $0x1,%rax
+  4002a7:	00 00 00 
+  4002aa:	48 83 ff 20          	cmp    $0x20,%rdi
+  4002ae:	74 0a                	je     4002ba <isspace+0x1a>
+  4002b0:	48 83 c7 f7          	add    $0xfffffffffffffff7,%rdi
+  4002b4:	48 83 ff 05          	cmp    $0x5,%rdi
+  4002b8:	9c                   	pushfq 
+  4002b9:	58                   	pop    %rax
+  4002ba:	48 83 e0 01          	and    $0x1,%rax
+  4002be:	c3                   	retq   
+  4002bf:	90                   	nop

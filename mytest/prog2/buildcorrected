@@ -1,0 +1,4 @@
+as -o crt1.o crt1.s
+as -o libc.c.o libc.S
+as -o prog2.c.o prog2.s
+ld -static -o prog2 *.o

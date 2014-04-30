@@ -1,0 +1,11 @@
+0000000000400260 <isspace>:
+  400260:	b0 01                	mov    $0x1,%al
+  400262:	48 83 ff 20          	cmp    $0x20,%rdi
+  400266:	74 0b                	je     400273 <isspace+0x13>
+  400268:	48 83 c7 f7          	add    $0xfffffffffffffff7,%rdi
+  40026c:	48 83 ff 05          	cmp    $0x5,%rdi
+  400270:	0f 92 c0             	setb   %al
+  400273:	0f b6 c0             	movzbl %al,%eax
+  400276:	c3                   	retq   
+  400277:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+  40027e:	00 00 

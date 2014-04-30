@@ -1,11 +1,8 @@
-//int a = 10;
-//int f() {
-//    return a;
-//}
-//int a = 10, b = 20, c;
-long main() {
-    //c = a + b;
-    //return f();
-    return 0;
+long c = 10;
+
+long main(int argc, char ** argv, char ** envp) {
+    if (argc)
+        c = argc;
+    return c;
 }
 

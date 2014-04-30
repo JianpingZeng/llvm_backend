@@ -1,0 +1,10 @@
+00000000004000f0 <_start>:
+  4000f0:	48 31 ed             	xor    %rbp,%rbp
+  4000f3:	49 89 d1             	mov    %rdx,%r9
+  4000f6:	5e                   	pop    %rsi
+  4000f7:	48 89 e2             	mov    %rsp,%rdx
+  4000fa:	48 83 e4 f0          	and    $0xfffffffffffffff0,%rsp
+  4000fe:	48 c7 c7 90 05 40 00 	mov    $0x400590,%rdi
+  400105:	e8 56 03 00 00       	callq  400460 <__libc_start_main>
+  40010a:	eb fe                	jmp    40010a <_start+0x1a>
+  40010c:	0f 1f 40 00          	nopl   0x0(%rax)

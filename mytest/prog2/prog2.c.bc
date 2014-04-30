@@ -1,0 +1,381 @@
+; ModuleID = 'prog2.c'
+target datalayout = "e-p:64:64:64-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64-f32:32:32-f64:64:64-v64:64:64-v128:128:128-a0:0:64-s0:64:64-f80:128:128-n8:16:32:64-S128"
+target triple = "x86_64-unknown-linux-gnu"
+
+@size = common global i64 0, align 8
+@powers = common global i64* null, align 8
+@term = common global i64* null, align 8
+@pi = common global i64* null, align 8
+@.str = private unnamed_addr constant [44 x i8] c"I need to know how many digits to compute.\0A\00", align 1
+@.str1 = private unnamed_addr constant [19 x i8] c"Invalid argument.\0A\00", align 1
+@.str2 = private unnamed_addr constant [35 x i8] c"Unable to allocate enough memory.\0A\00", align 1
+@.str3 = private unnamed_addr constant [18 x i8] c"Calculation time \00", align 1
+@.str4 = private unnamed_addr constant [9 x i8] c" cycles\0A\00", align 1
+
+define void @OutDig(i64 %dig) nounwind uwtable noimplicitfloat {
+entry:
+  %add = add nsw i64 %dig, 48
+  %call = tail call i64 @putchar(i64 %add) nounwind noimplicitfloat
+  ret void
+}
+
+declare i64 @putchar(i64) nounwind noimplicitfloat
+
+define void @PrintVal(i64 %val) nounwind uwtable noimplicitfloat {
+entry:
+  %cmp = icmp eq i64 %val, 0
+  br i1 %cmp, label %if.then, label %while.cond.preheader
+
+while.cond.preheader:                             ; preds = %entry
+  %cmp18 = icmp sgt i64 %val, 0
+  br i1 %cmp18, label %while.body, label %if.end
+
+if.then:                                          ; preds = %entry
+  %call.i = tail call i64 @putchar(i64 48) nounwind noimplicitfloat
+  br label %if.end
+
+while.body:                                       ; preds = %while.cond.preheader, %while.body
+  %val.addr.09 = phi i64 [ %sub, %while.body ], [ %val, %while.cond.preheader ]
+  %rem = srem i64 %val.addr.09, 10
+  %add.i = add nsw i64 %rem, 48
+  %call.i7 = tail call i64 @putchar(i64 %add.i) nounwind noimplicitfloat
+  %sub = sub nsw i64 %val.addr.09, %rem
+  %cmp1 = icmp sgt i64 %sub, 0
+  br i1 %cmp1, label %while.body, label %if.end
+
+if.end:                                           ; preds = %while.cond.preheader, %while.body, %if.then
+  ret void
+}
+
+define void @PrintShort(i64 %num) nounwind uwtable noimplicitfloat {
+entry:
+  %rem = srem i64 %num, 10
+  %div = sdiv i64 %num, 10
+  %rem.1 = srem i64 %div, 10
+  %add.i = add nsw i64 %rem.1, 48
+  %call.i = call i64 @putchar(i64 %add.i) nounwind noimplicitfloat
+  %add.i.1 = add nsw i64 %rem, 48
+  %call.i.1 = call i64 @putchar(i64 %add.i.1) nounwind noimplicitfloat
+  ret void
+}
+
+define void @Print(i64* nocapture %num) nounwind uwtable noimplicitfloat {
+entry:
+  %call = tail call i64 @putchar(i64 51) nounwind noimplicitfloat
+  %call1 = tail call i64 @putchar(i64 46) nounwind noimplicitfloat
+  %0 = load i64* @size, align 8, !tbaa !0
+  %cmp5 = icmp sgt i64 %0, 1
+  br i1 %cmp5, label %for.body, label %for.end
+
+for.body:                                         ; preds = %entry, %for.body
+  %x.06 = phi i64 [ %inc, %for.body ], [ 1, %entry ]
+  %arrayidx = getelementptr inbounds i64* %num, i64 %x.06
+  %1 = load i64* %arrayidx, align 8, !tbaa !0
+  %rem.i = srem i64 %1, 10
+  %div.i = sdiv i64 %1, 10
+  %rem.1.i = srem i64 %div.i, 10
+  %add.i.i = add nsw i64 %rem.1.i, 48
+  %call.i.i = tail call i64 @putchar(i64 %add.i.i) nounwind noimplicitfloat
+  %add.i.1.i = add nsw i64 %rem.i, 48
+  %call.i.1.i = tail call i64 @putchar(i64 %add.i.1.i) nounwind noimplicitfloat
+  %inc = add nsw i64 %x.06, 1
+  %2 = load i64* @size, align 8, !tbaa !0
+  %cmp = icmp slt i64 %inc, %2
+  br i1 %cmp, label %for.body, label %for.end
+
+for.end:                                          ; preds = %for.body, %entry
+  %call2 = tail call i64 @putchar(i64 10) nounwind noimplicitfloat
+  ret void
+}
+
+define void @arctan(i64 %multiplier, i64 %denom, i64 %sign) nounwind uwtable noimplicitfloat {
+entry:
+  %0 = load i64* @size, align 8, !tbaa !0
+  %cmp150 = icmp sgt i64 %0, 0
+  %1 = load i64** @powers, align 8, !tbaa !3
+  br i1 %cmp150, label %for.body, label %for.end
+
+for.body:                                         ; preds = %entry, %for.body
+  %x.0151 = phi i64 [ %inc, %for.body ], [ 0, %entry ]
+  %arrayidx = getelementptr inbounds i64* %1, i64 %x.0151
+  store i64 0, i64* %arrayidx, align 8, !tbaa !0
+  %inc = add nsw i64 %x.0151, 1
+  %2 = load i64* @size, align 8, !tbaa !0
+  %cmp = icmp slt i64 %inc, %2
+  br i1 %cmp, label %for.body, label %for.end
+
+for.end:                                          ; preds = %entry, %for.body
+  %3 = phi i64 [ %2, %for.body ], [ %0, %entry ]
+  %mul = mul nsw i64 %denom, %denom
+  %mul1 = mul nsw i64 %denom, %multiplier
+  %4 = load i64** @pi, align 8, !tbaa !3
+  %5 = load i64** @term, align 8, !tbaa !3
+  br label %while.cond.outer
+
+while.cond.loopexit:                              ; preds = %for.cond62
+  ret void
+
+while.cond.outer:                                 ; preds = %while.cond74, %for.end
+  %6 = phi i64 [ %3, %for.end ], [ %16, %while.cond74 ]
+  %sign.addr.0.ph = phi i64 [ %sign, %for.end ], [ %sub60, %while.cond74 ]
+  %remain.0.ph = phi i64 [ %mul1, %for.end ], [ 0, %while.cond74 ]
+  %divisor.0.ph = phi i64 [ 1, %for.end ], [ %add61, %while.cond74 ]
+  %adv.0.ph = phi i64 [ 0, %for.end ], [ %adv.1, %while.cond74 ]
+  %cmp3130 = icmp slt i64 %adv.0.ph, %6
+  br i1 %cmp3130, label %for.body4, label %for.cond13.loopexit
+
+for.body4:                                        ; preds = %while.cond.outer, %for.body4
+  %remain.1132 = phi i64 [ %mul9, %for.body4 ], [ %remain.0.ph, %while.cond.outer ]
+  %x.1131 = phi i64 [ %inc11, %for.body4 ], [ %adv.0.ph, %while.cond.outer ]
+  %arrayidx5 = getelementptr inbounds i64* %1, i64 %x.1131
+  %7 = load i64* %arrayidx5, align 8, !tbaa !0
+  %add = add nsw i64 %7, %remain.1132
+  %div = sdiv i64 %add, %mul
+  store i64 %div, i64* %arrayidx5, align 8, !tbaa !0
+  %mul8 = mul nsw i64 %div, %mul
+  %sub = sub nsw i64 %add, %mul8
+  %mul9 = mul nsw i64 %sub, 100
+  %inc11 = add nsw i64 %x.1131, 1
+  %8 = load i64* @size, align 8, !tbaa !0
+  %cmp3 = icmp slt i64 %inc11, %8
+  br i1 %cmp3, label %for.body4, label %for.cond13.loopexit
+
+for.cond13.loopexit:                              ; preds = %for.body4, %while.cond.outer
+  %9 = phi i64 [ %6, %while.cond.outer ], [ %8, %for.body4 ]
+  %cmp14133 = icmp slt i64 %adv.0.ph, %9
+  br i1 %cmp14133, label %for.body15, label %for.end26
+
+for.body15:                                       ; preds = %for.cond13.loopexit, %for.body15
+  %remain.2135 = phi i64 [ %mul23, %for.body15 ], [ 0, %for.cond13.loopexit ]
+  %x.2134 = phi i64 [ %inc25, %for.body15 ], [ %adv.0.ph, %for.cond13.loopexit ]
+  %arrayidx16 = getelementptr inbounds i64* %1, i64 %x.2134
+  %10 = load i64* %arrayidx16, align 8, !tbaa !0
+  %add17 = add nsw i64 %10, %remain.2135
+  %div18 = sdiv i64 %add17, %divisor.0.ph
+  %arrayidx19 = getelementptr inbounds i64* %5, i64 %x.2134
+  store i64 %div18, i64* %arrayidx19, align 8, !tbaa !0
+  %mul21 = mul nsw i64 %div18, %divisor.0.ph
+  %sub22 = sub nsw i64 %add17, %mul21
+  %mul23 = mul nsw i64 %sub22, 100
+  %inc25 = add nsw i64 %x.2134, 1
+  %11 = load i64* @size, align 8, !tbaa !0
+  %cmp14 = icmp slt i64 %inc25, %11
+  br i1 %cmp14, label %for.body15, label %for.end26
+
+for.end26:                                        ; preds = %for.body15, %for.cond13.loopexit
+  %.lcssa = phi i64 [ %9, %for.cond13.loopexit ], [ %11, %for.body15 ]
+  %cmp27 = icmp sgt i64 %sign.addr.0.ph, 0
+  %cmp30142 = icmp sgt i64 %.lcssa, 0
+  br i1 %cmp27, label %for.cond29.preheader, label %for.cond44.preheader
+
+for.cond29.preheader:                             ; preds = %for.end26
+  br i1 %cmp30142, label %for.body31, label %if.end59
+
+for.cond44.preheader:                             ; preds = %for.end26
+  br i1 %cmp30142, label %for.body46, label %if.end59
+
+for.body31:                                       ; preds = %for.cond29.preheader, %for.body31
+  %x.3144.in = phi i64 [ %x.3144, %for.body31 ], [ %.lcssa, %for.cond29.preheader ]
+  %carry.0143 = phi i64 [ %carry.1, %for.body31 ], [ 0, %for.cond29.preheader ]
+  %x.3144 = add nsw i64 %x.3144.in, -1
+  %arrayidx32 = getelementptr inbounds i64* %4, i64 %x.3144
+  %12 = load i64* %arrayidx32, align 8, !tbaa !0
+  %arrayidx33 = getelementptr inbounds i64* %5, i64 %x.3144
+  %13 = load i64* %arrayidx33, align 8, !tbaa !0
+  %add34 = add i64 %12, %carry.0143
+  %add35 = add i64 %add34, %13
+  %cmp36 = icmp sgt i64 %add35, 99
+  %sub38 = add nsw i64 %add35, -100
+  %carry.1 = zext i1 %cmp36 to i64
+  %sum.0 = select i1 %cmp36, i64 %sub38, i64 %add35
+  store i64 %sum.0, i64* %arrayidx32, align 8, !tbaa !0
+  %cmp30 = icmp sgt i64 %x.3144, 0
+  br i1 %cmp30, label %for.body31, label %if.end59
+
+for.body46:                                       ; preds = %for.cond44.preheader, %for.body46
+  %x.4139.in = phi i64 [ %x.4139, %for.body46 ], [ %.lcssa, %for.cond44.preheader ]
+  %borrow.0138 = phi i64 [ %sub50.lobit, %for.body46 ], [ 0, %for.cond44.preheader ]
+  %x.4139 = add nsw i64 %x.4139.in, -1
+  %arrayidx47 = getelementptr inbounds i64* %4, i64 %x.4139
+  %14 = load i64* %arrayidx47, align 8, !tbaa !0
+  %arrayidx48 = getelementptr inbounds i64* %5, i64 %x.4139
+  %15 = load i64* %arrayidx48, align 8, !tbaa !0
+  %sub49 = sub nsw i64 %14, %15
+  %sub50 = sub i64 %sub49, %borrow.0138
+  %cmp51 = icmp slt i64 %sub50, 0
+  %add53 = add nsw i64 %sub50, 100
+  %sub50.lobit = lshr i64 %sub50, 63
+  %sum42.0 = select i1 %cmp51, i64 %add53, i64 %sub50
+  store i64 %sum42.0, i64* %arrayidx47, align 8, !tbaa !0
+  %cmp45 = icmp sgt i64 %x.4139, 0
+  br i1 %cmp45, label %for.body46, label %if.end59
+
+if.end59:                                         ; preds = %for.cond29.preheader, %for.body31, %for.cond44.preheader, %for.body46
+  %sub60 = sub nsw i64 0, %sign.addr.0.ph
+  %add61 = add nsw i64 %divisor.0.ph, 2
+  %16 = load i64* @size, align 8, !tbaa !0
+  br label %for.cond62
+
+for.cond62:                                       ; preds = %for.body64, %if.end59
+  %x.5 = phi i64 [ %adv.0.ph, %if.end59 ], [ %inc70, %for.body64 ]
+  %cmp63 = icmp slt i64 %x.5, %16
+  br i1 %cmp63, label %for.body64, label %while.cond.loopexit
+
+for.body64:                                       ; preds = %for.cond62
+  %arrayidx65 = getelementptr inbounds i64* %1, i64 %x.5
+  %17 = load i64* %arrayidx65, align 8, !tbaa !0
+  %tobool66 = icmp eq i64 %17, 0
+  %inc70 = add nsw i64 %x.5, 1
+  br i1 %tobool66, label %for.cond62, label %while.cond74
+
+while.cond74:                                     ; preds = %for.body64, %while.cond74
+  %adv.1 = phi i64 [ %inc78, %while.cond74 ], [ %adv.0.ph, %for.body64 ]
+  %arrayidx75 = getelementptr inbounds i64* %1, i64 %adv.1
+  %18 = load i64* %arrayidx75, align 8, !tbaa !0
+  %cmp76 = icmp eq i64 %18, 0
+  %inc78 = add nsw i64 %adv.1, 1
+  br i1 %cmp76, label %while.cond74, label %while.cond.outer
+}
+
+define i64 @_main(i64 %argc, i8** nocapture %argv) nounwind uwtable noimplicitfloat {
+entry:
+  %cmp = icmp eq i64 %argc, 2
+  br i1 %cmp, label %if.end, label %if.then
+
+if.then:                                          ; preds = %entry
+  %call = tail call i64 @puts(i8* getelementptr inbounds ([44 x i8]* @.str, i64 0, i64 0)) nounwind noimplicitfloat
+  tail call void @llexit(i64 1) nounwind noimplicitfloat
+  br label %if.end
+
+if.end:                                           ; preds = %entry, %if.then
+  %arrayidx = getelementptr inbounds i8** %argv, i64 1
+  %0 = load i8** %arrayidx, align 8, !tbaa !3
+  %call1 = tail call i64 @atol(i8* %0) nounwind noimplicitfloat
+  store i64 %call1, i64* @size, align 8, !tbaa !0
+  %cmp2 = icmp slt i64 %call1, 1
+  br i1 %cmp2, label %if.then3, label %if.end5
+
+if.then3:                                         ; preds = %if.end
+  %call4 = tail call i64 @puts(i8* getelementptr inbounds ([19 x i8]* @.str1, i64 0, i64 0)) nounwind noimplicitfloat
+  tail call void @llexit(i64 1) nounwind noimplicitfloat
+  %.pre = load i64* @size, align 8, !tbaa !0
+  br label %if.end5
+
+if.end5:                                          ; preds = %if.then3, %if.end
+  %1 = phi i64 [ %.pre, %if.then3 ], [ %call1, %if.end ]
+  %sub = add nsw i64 %1, 1
+  %div = sdiv i64 %sub, 2
+  %add6 = add nsw i64 %div, 1
+  store i64 %add6, i64* @size, align 8, !tbaa !0
+  %mul = shl i64 %add6, 3
+  %call7 = tail call i8* @malloc(i64 %mul) nounwind noimplicitfloat
+  %2 = bitcast i8* %call7 to i64*
+  store i64* %2, i64** @pi, align 8, !tbaa !3
+  %call9 = tail call i8* @malloc(i64 %mul) nounwind noimplicitfloat
+  %3 = bitcast i8* %call9 to i64*
+  store i64* %3, i64** @powers, align 8, !tbaa !3
+  %call11 = tail call i8* @malloc(i64 %mul) nounwind noimplicitfloat
+  %4 = bitcast i8* %call11 to i64*
+  store i64* %4, i64** @term, align 8, !tbaa !3
+  %cmp12 = icmp eq i8* %call7, null
+  %cmp13 = icmp eq i8* %call9, null
+  %or.cond = or i1 %cmp12, %cmp13
+  %cmp15 = icmp eq i8* %call11, null
+  %or.cond26 = or i1 %or.cond, %cmp15
+  br i1 %or.cond26, label %if.then16, label %for.cond.preheader
+
+if.then16:                                        ; preds = %if.end5
+  %call17 = tail call i64 @puts(i8* getelementptr inbounds ([35 x i8]* @.str2, i64 0, i64 0)) nounwind noimplicitfloat
+  tail call void @llexit(i64 1) nounwind noimplicitfloat
+  %.pre32 = load i64* @size, align 8, !tbaa !0
+  br label %for.cond.preheader
+
+for.cond.preheader:                               ; preds = %if.end5, %if.then16
+  %5 = phi i64 [ %add6, %if.end5 ], [ %.pre32, %if.then16 ]
+  %cmp1930 = icmp sgt i64 %5, 0
+  br i1 %cmp1930, label %for.body.lr.ph, label %for.end
+
+for.body.lr.ph:                                   ; preds = %for.cond.preheader
+  %6 = load i64** @pi, align 8, !tbaa !3
+  br label %for.body
+
+for.body:                                         ; preds = %for.body.lr.ph, %for.body
+  %x.031 = phi i64 [ 0, %for.body.lr.ph ], [ %inc, %for.body ]
+  %arrayidx20 = getelementptr inbounds i64* %6, i64 %x.031
+  store i64 0, i64* %arrayidx20, align 8, !tbaa !0
+  %inc = add nsw i64 %x.031, 1
+  %7 = load i64* @size, align 8, !tbaa !0
+  %cmp19 = icmp slt i64 %inc, %7
+  br i1 %cmp19, label %for.body, label %for.end
+
+for.end:                                          ; preds = %for.body, %for.cond.preheader
+  %call21 = tail call i64 @time(i64* null) nounwind noimplicitfloat
+  tail call void @arctan(i64 16, i64 5, i64 1) noimplicitfloat
+  tail call void @arctan(i64 4, i64 239, i64 -1) noimplicitfloat
+  %call22 = tail call i64 @time(i64* null) nounwind noimplicitfloat
+  %8 = load i64** @pi, align 8, !tbaa !3
+  %call.i = tail call i64 @putchar(i64 51) nounwind noimplicitfloat
+  %call1.i = tail call i64 @putchar(i64 46) nounwind noimplicitfloat
+  %9 = load i64* @size, align 8, !tbaa !0
+  %cmp5.i = icmp sgt i64 %9, 1
+  br i1 %cmp5.i, label %for.body.i, label %Print.exit
+
+for.body.i:                                       ; preds = %for.end, %for.body.i
+  %x.06.i = phi i64 [ %inc.i, %for.body.i ], [ 1, %for.end ]
+  %arrayidx.i = getelementptr inbounds i64* %8, i64 %x.06.i
+  %10 = load i64* %arrayidx.i, align 8, !tbaa !0
+  %rem.i.i = srem i64 %10, 10
+  %div.i.i = sdiv i64 %10, 10
+  %rem.1.i.i = srem i64 %div.i.i, 10
+  %add.i.i.i = add nsw i64 %rem.1.i.i, 48
+  %call.i.i.i = tail call i64 @putchar(i64 %add.i.i.i) nounwind noimplicitfloat
+  %add.i.1.i.i = add nsw i64 %rem.i.i, 48
+  %call.i.1.i.i = tail call i64 @putchar(i64 %add.i.1.i.i) nounwind noimplicitfloat
+  %inc.i = add nsw i64 %x.06.i, 1
+  %11 = load i64* @size, align 8, !tbaa !0
+  %cmp.i = icmp slt i64 %inc.i, %11
+  br i1 %cmp.i, label %for.body.i, label %Print.exit
+
+Print.exit:                                       ; preds = %for.body.i, %for.end
+  %call2.i = tail call i64 @putchar(i64 10) nounwind noimplicitfloat
+  %call23 = tail call i64 @puts(i8* getelementptr inbounds ([18 x i8]* @.str3, i64 0, i64 0)) nounwind noimplicitfloat
+  %sub24 = sub nsw i64 %call22, %call21
+  %cmp.i29 = icmp eq i64 %call22, %call21
+  br i1 %cmp.i29, label %if.then.i, label %while.cond.preheader.i
+
+while.cond.preheader.i:                           ; preds = %Print.exit
+  %cmp18.i = icmp sgt i64 %sub24, 0
+  br i1 %cmp18.i, label %while.body.i, label %PrintVal.exit
+
+if.then.i:                                        ; preds = %Print.exit
+  %call.i.i = tail call i64 @putchar(i64 48) nounwind noimplicitfloat
+  br label %PrintVal.exit
+
+while.body.i:                                     ; preds = %while.cond.preheader.i, %while.body.i
+  %val.addr.09.i = phi i64 [ %sub.i, %while.body.i ], [ %sub24, %while.cond.preheader.i ]
+  %rem.i = srem i64 %val.addr.09.i, 10
+  %add.i.i = add nsw i64 %rem.i, 48
+  %call.i7.i = tail call i64 @putchar(i64 %add.i.i) nounwind noimplicitfloat
+  %sub.i = sub nsw i64 %val.addr.09.i, %rem.i
+  %cmp1.i = icmp sgt i64 %sub.i, 0
+  br i1 %cmp1.i, label %while.body.i, label %PrintVal.exit
+
+PrintVal.exit:                                    ; preds = %while.body.i, %while.cond.preheader.i, %if.then.i
+  %call25 = tail call i64 @puts(i8* getelementptr inbounds ([9 x i8]* @.str4, i64 0, i64 0)) nounwind noimplicitfloat
+  ret i64 0
+}
+
+declare i64 @puts(i8* nocapture) nounwind noimplicitfloat
+
+declare void @llexit(i64) noimplicitfloat
+
+declare i64 @atol(i8* nocapture) nounwind readonly noimplicitfloat
+
+declare noalias i8* @malloc(i64) nounwind noimplicitfloat
+
+declare i64 @time(i64*) noimplicitfloat
+
+!0 = metadata !{metadata !"long long", metadata !1}
+!1 = metadata !{metadata !"omnipotent char", metadata !2}
+!2 = metadata !{metadata !"Simple C/C++ TBAA"}
+!3 = metadata !{metadata !"any pointer", metadata !1}

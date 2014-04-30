@@ -1,0 +1,516 @@
+digraph "legalize input for _main:entry" {
+	graph [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		rankdir = "BT"
+		label = "legalize input for _main:entry"
+	]
+	node [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		shape = "ellipse"
+		style = "solid"
+	]
+	edge [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x349f728" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{EntryToken [ORD=4] [ID=0]|0x349f728|{<d0>ch}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34ca040" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{GlobalAddress\<[100 x i64]* @powers\> 0 [ORD=3] [ID=1] dbg:prog3.c:91|0x34ca040|{<d0>i64}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34ca140" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{Constant\<0\> [ID=2]|0x34ca140|{<d0>i64}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34ca240" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{undef [ORD=4] [ID=3]|0x34ca240|{<d0>i64}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34ca440" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{Constant\<1\> [ORD=5] [ID=4]|0x34ca440|{<d0>i64}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34ca640" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{Constant\<100\> [ORD=7] [ID=5]|0x34ca640|{<d0>i64}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34ca740" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{setgt [ORD=7] [ID=6]|0x34ca740|{<d0>ch}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34ca940" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{Constant\<-99\> [ORD=8] [ID=7]|0x34ca940|{<d0>i64}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34cd560" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{Constant\<48\> [ORD=11] [ID=8]|0x34cd560|{<d0>i64}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34cd860" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{TargetConstant\<0\> [ORD=12] [ID=9]|0x34cd860|{<d0>i64}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34cda60" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{Register %RDI [ORD=12] [ID=10]|0x34cda60|{<d0>i64}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34cdc60" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{TargetGlobalAddress\<i64 (i64)* @putchar\> 0 [ORD=12] [ID=11] dbg:prog3.c:96|0x34cdc60|{<d0>i64}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34cdd60" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{RegisterMask [ORD=12] [ID=12]|0x34cdd60|{<d0>Untyped}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34ce3a0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{Register %RAX [ORD=12] [ID=13]|0x34ce3a0|{<d0>i64}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34ce7a0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{GlobalAddress\<[100 x i64]* @pi\> + 8 [ID=14]|0x34ce7a0|{<d0>i64}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34ca340" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{{<s0>0|<s1>1|<s2>2}|load\<LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!\"long long\")\> [ORD=4] [ID=15] dbg:prog3.c:91|0x34ca340|{<d0>i64|<d1>ch}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34ca540" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{{<s0>0|<s1>1}|add [ORD=5] [ID=16] dbg:prog3.c:91|0x34ca540|{<d0>i64}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34c9c40" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{{<s0>0|<s1>1|<s2>2}|setcc [ID=17] dbg:prog3.c:92|0x34c9c40|{<d0>i64}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34caa40" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{{<s0>0|<s1>1|<s2>2}|select [ORD=8] [ID=18] dbg:prog3.c:92|0x34caa40|{<d0>i64}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34cd660" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{{<s0>0|<s1>1}|add [ORD=11] [ID=19] dbg:prog3.c:96|0x34cd660|{<d0>i64}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34cd460" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{{<s0>0|<s1>1|<s2>2|<s3>3}|store\<ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!\"long long\")\> [ORD=10] [ID=20] dbg:prog3.c:94|0x34cd460|{<d0>ch}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34cd960" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{{<s0>0|<s1>1}|callseq_start [ORD=12] [ID=21]|0x34cd960|{<d0>ch|<d1>glue}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34cdb60" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{{<s0>0|<s1>1|<s2>2}|CopyToReg [ORD=12] [ID=22] dbg:prog3.c:96|0x34cdb60|{<d0>ch|<d1>glue}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34cde60" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{{<s0>0|<s1>1|<s2>2|<s3>3|<s4>4}|X86ISD::CALL [ORD=12] [ID=23] dbg:prog3.c:96|0x34cde60|{<d0>ch|<d1>glue}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34cdf60" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{{<s0>0|<s1>1|<s2>2|<s3>3}|callseq_end [ORD=12] [ID=24]|0x34cdf60|{<d0>ch|<d1>glue}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34ce4a0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{{<s0>0|<s1>1|<s2>2}|CopyFromReg [ORD=12] [ID=25] dbg:prog3.c:96|0x34ce4a0|{<d0>i64|<d1>ch|<d2>glue}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34ce5a0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{{<s0>0|<s1>1|<s2>2}|CopyToReg [ID=26] dbg:prog3.c:97|0x34ce5a0|{<d0>ch|<d1>glue}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x34ce6a0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		label = "{{<s0>0|<s1>1|<s2>2}|X86ISD::RET_FLAG [ID=27] dbg:prog3.c:97|0x34ce6a0|{<d0>ch}}"
+		shape = "Mrecord"
+		style = "solid"
+	]
+	"Node0x0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		plaintext = "circle"
+		label = "GraphRoot"
+		shape = "ellipse"
+		style = "solid"
+	]
+	"Node0x34ca340":"s0" -> "Node0x349f728":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "dashed"
+		color = "blue"
+	]
+	"Node0x34ca340":"s1" -> "Node0x34ca040":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34ca340":"s2" -> "Node0x34ca240":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34ca540":"s0" -> "Node0x34ca340":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34ca540":"s1" -> "Node0x34ca440":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34c9c40":"s0" -> "Node0x34ca540":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34c9c40":"s1" -> "Node0x34ca640":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34c9c40":"s2" -> "Node0x34ca740":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "dashed"
+		color = "blue"
+	]
+	"Node0x34caa40":"s0" -> "Node0x34c9c40":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34caa40":"s1" -> "Node0x34ca940":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34caa40":"s2" -> "Node0x34ca540":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34cd660":"s0" -> "Node0x34caa40":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34cd660":"s1" -> "Node0x34cd560":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34cd460":"s0" -> "Node0x34ca340":"d1" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "dashed"
+		color = "blue"
+	]
+	"Node0x34cd460":"s1" -> "Node0x34caa40":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34cd460":"s2" -> "Node0x34ce7a0":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34cd460":"s3" -> "Node0x34ca240":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34cd960":"s0" -> "Node0x34cd460":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "dashed"
+		color = "blue"
+	]
+	"Node0x34cd960":"s1" -> "Node0x34cd860":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34cdb60":"s0" -> "Node0x34cd960":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "dashed"
+		color = "blue"
+	]
+	"Node0x34cdb60":"s1" -> "Node0x34cda60":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34cdb60":"s2" -> "Node0x34cd660":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34cde60":"s0" -> "Node0x34cdb60":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "dashed"
+		color = "blue"
+	]
+	"Node0x34cde60":"s1" -> "Node0x34cdc60":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34cde60":"s2" -> "Node0x34cda60":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34cde60":"s3" -> "Node0x34cdd60":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34cde60":"s4" -> "Node0x34cdb60":"d1" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "bold"
+		color = "red"
+	]
+	"Node0x34cdf60":"s0" -> "Node0x34cde60":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "dashed"
+		color = "blue"
+	]
+	"Node0x34cdf60":"s1" -> "Node0x34cd860":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34cdf60":"s2" -> "Node0x34cd860":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34cdf60":"s3" -> "Node0x34cde60":"d1" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "bold"
+		color = "red"
+	]
+	"Node0x34ce4a0":"s0" -> "Node0x34cdf60":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "dashed"
+		color = "blue"
+	]
+	"Node0x34ce4a0":"s1" -> "Node0x34ce3a0":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34ce4a0":"s2" -> "Node0x34cdf60":"d1" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "bold"
+		color = "red"
+	]
+	"Node0x34ce5a0":"s0" -> "Node0x34ce4a0":"d1" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "dashed"
+		color = "blue"
+	]
+	"Node0x34ce5a0":"s1" -> "Node0x34ce3a0":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34ce5a0":"s2" -> "Node0x34ca140":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34ce6a0":"s0" -> "Node0x34ce5a0":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "dashed"
+		color = "blue"
+	]
+	"Node0x34ce6a0":"s1" -> "Node0x34cd860":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "solid"
+	]
+	"Node0x34ce6a0":"s2" -> "Node0x34ce5a0":"d1" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "bold"
+		color = "red"
+	]
+	"Node0x0" -> "Node0x34ce6a0":"d0" [
+		fontsize = "14"
+		fontname = "Times-Roman"
+		fontcolor = "black"
+		style = "dashed"
+		color = "blue"
+	]
+}

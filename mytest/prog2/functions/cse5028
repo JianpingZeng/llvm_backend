@@ -1,0 +1,7 @@
+00000000004002c0 <isdigit>:
+  4002c0:	48 83 c7 d0          	add    $0xffffffffffffffd0,%rdi
+  4002c4:	48 83 ff 0a          	cmp    $0xa,%rdi
+  4002c8:	9c                   	pushfq 
+  4002c9:	58                   	pop    %rax
+  4002ca:	c3                   	retq   
+  4002cb:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)

@@ -1,0 +1,67 @@
+0000000000400120 <llstrlen>:
+  400120:	48 89 f9             	mov    %rdi,%rcx
+  400123:	48 83 e1 f8          	and    $0xfffffffffffffff8,%rcx
+  400127:	48 83 e7 07          	and    $0x7,%rdi
+  40012b:	48 89 f8             	mov    %rdi,%rax
+  40012e:	48 f7 d8             	neg    %rax
+  400131:	48 83 ff 06          	cmp    $0x6,%rdi
+  400135:	77 0c                	ja     400143 <llstrlen+0x23>
+  400137:	ff 24 fd e0 0b 40 00 	jmpq   *0x400be0(,%rdi,8)
+  40013e:	48 8b 11             	mov    (%rcx),%rdx
+  400141:	eb 35                	jmp    400178 <llstrlen+0x58>
+  400143:	48 8b 11             	mov    (%rcx),%rdx
+  400146:	e9 98 00 00 00       	jmpq   4001e3 <llstrlen+0xc3>
+  40014b:	48 8b 11             	mov    (%rcx),%rdx
+  40014e:	eb 35                	jmp    400185 <llstrlen+0x65>
+  400150:	48 8b 11             	mov    (%rcx),%rdx
+  400153:	eb 3e                	jmp    400193 <llstrlen+0x73>
+  400155:	48 8b 11             	mov    (%rcx),%rdx
+  400158:	eb 4d                	jmp    4001a7 <llstrlen+0x87>
+  40015a:	48 8b 11             	mov    (%rcx),%rdx
+  40015d:	eb 5c                	jmp    4001bb <llstrlen+0x9b>
+  40015f:	48 8b 11             	mov    (%rcx),%rdx
+  400162:	eb 6b                	jmp    4001cf <llstrlen+0xaf>
+  400164:	48 83 c1 08          	add    $0x8,%rcx
+  400168:	48 83 c0 08          	add    $0x8,%rax
+  40016c:	48 8b 11             	mov    (%rcx),%rdx
+  40016f:	48 f7 c2 ff 00 00 00 	test   $0xff,%rdx
+  400176:	74 7c                	je     4001f4 <llstrlen+0xd4>
+  400178:	48 f7 c2 00 ff 00 00 	test   $0xff00,%rdx
+  40017f:	75 04                	jne    400185 <llstrlen+0x65>
+  400181:	48 ff c0             	inc    %rax
+  400184:	c3                   	retq   
+  400185:	48 f7 c2 00 00 ff 00 	test   $0xff0000,%rdx
+  40018c:	75 05                	jne    400193 <llstrlen+0x73>
+  40018e:	48 83 c0 02          	add    $0x2,%rax
+  400192:	c3                   	retq   
+  400193:	48 be 00 00 00 ff 00 	movabs $0xff000000,%rsi
+  40019a:	00 00 00 
+  40019d:	48 85 f2             	test   %rsi,%rdx
+  4001a0:	75 05                	jne    4001a7 <llstrlen+0x87>
+  4001a2:	48 83 c0 03          	add    $0x3,%rax
+  4001a6:	c3                   	retq   
+  4001a7:	48 be 00 00 00 00 ff 	movabs $0xff00000000,%rsi
+  4001ae:	00 00 00 
+  4001b1:	48 85 f2             	test   %rsi,%rdx
+  4001b4:	75 05                	jne    4001bb <llstrlen+0x9b>
+  4001b6:	48 83 c0 04          	add    $0x4,%rax
+  4001ba:	c3                   	retq   
+  4001bb:	48 be 00 00 00 00 00 	movabs $0xff0000000000,%rsi
+  4001c2:	ff 00 00 
+  4001c5:	48 85 f2             	test   %rsi,%rdx
+  4001c8:	75 05                	jne    4001cf <llstrlen+0xaf>
+  4001ca:	48 83 c0 05          	add    $0x5,%rax
+  4001ce:	c3                   	retq   
+  4001cf:	48 be 00 00 00 00 00 	movabs $0xff000000000000,%rsi
+  4001d6:	00 ff 00 
+  4001d9:	48 85 f2             	test   %rsi,%rdx
+  4001dc:	75 05                	jne    4001e3 <llstrlen+0xc3>
+  4001de:	48 83 c0 06          	add    $0x6,%rax
+  4001e2:	c3                   	retq   
+  4001e3:	48 c1 ea 38          	shr    $0x38,%rdx
+  4001e7:	48 85 d2             	test   %rdx,%rdx
+  4001ea:	0f 85 74 ff ff ff    	jne    400164 <llstrlen+0x44>
+  4001f0:	48 83 c0 07          	add    $0x7,%rax
+  4001f4:	c3                   	retq   
+  4001f5:	66 66 2e 0f 1f 84 00 	data32 nopw %cs:0x0(%rax,%rax,1)
+  4001fc:	00 00 00 00 

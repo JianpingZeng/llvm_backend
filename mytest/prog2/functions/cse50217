@@ -1,0 +1,120 @@
+0000000000400760 <arctan>:
+  400760:	41 56                	push   %r14
+  400762:	53                   	push   %rbx
+  400763:	49 89 d0             	mov    %rdx,%r8
+  400766:	48 31 c9             	xor    %rcx,%rcx
+  400769:	4c 8b 0d 38 08 20 00 	mov    0x200838(%rip),%r9        # 600fa8 <powers>
+  400770:	48 8b 05 41 08 20 00 	mov    0x200841(%rip),%rax        # 600fb8 <size>
+  400777:	48 85 c0             	test   %rax,%rax
+  40077a:	7e 1b                	jle    400797 <arctan+0x37>
+  40077c:	0f 1f 40 00          	nopl   0x0(%rax)
+  400780:	49 c7 04 c9 00 00 00 	movq   $0x0,(%r9,%rcx,8)
+  400787:	00 
+  400788:	48 ff c1             	inc    %rcx
+  40078b:	48 8b 05 26 08 20 00 	mov    0x200826(%rip),%rax        # 600fb8 <size>
+  400792:	48 39 c1             	cmp    %rax,%rcx
+  400795:	7c e9                	jl     400780 <arctan+0x20>
+  400797:	48 0f af fe          	imul   %rsi,%rdi
+  40079b:	48 31 db             	xor    %rbx,%rbx
+  40079e:	48 0f af f6          	imul   %rsi,%rsi
+  4007a2:	49 ba 01 00 00 00 00 	movabs $0x1,%r10
+  4007a9:	00 00 00 
+  4007ac:	4c 8b 1d fd 07 20 00 	mov    0x2007fd(%rip),%r11        # 600fb0 <term>
+  4007b3:	4c 8b 35 06 08 20 00 	mov    0x200806(%rip),%r14        # 600fc0 <pi>
+  4007ba:	48 39 c3             	cmp    %rax,%rbx
+  4007bd:	48 89 d9             	mov    %rbx,%rcx
+  4007c0:	7d 38                	jge    4007fa <arctan+0x9a>
+  4007c2:	66 66 66 66 66 2e 0f 	data32 data32 data32 data32 nopw %cs:0x0(%rax,%rax,1)
+  4007c9:	1f 84 00 00 00 00 00 
+  4007d0:	49 03 3c c9          	add    (%r9,%rcx,8),%rdi
+  4007d4:	48 89 f8             	mov    %rdi,%rax
+  4007d7:	48 99                	cqto   
+  4007d9:	48 f7 fe             	idiv   %rsi
+  4007dc:	49 89 04 c9          	mov    %rax,(%r9,%rcx,8)
+  4007e0:	48 0f af c6          	imul   %rsi,%rax
+  4007e4:	48 29 c7             	sub    %rax,%rdi
+  4007e7:	48 6b ff 64          	imul   $0x64,%rdi,%rdi
+  4007eb:	48 ff c1             	inc    %rcx
+  4007ee:	48 8b 05 c3 07 20 00 	mov    0x2007c3(%rip),%rax        # 600fb8 <size>
+  4007f5:	48 39 c1             	cmp    %rax,%rcx
+  4007f8:	7c d6                	jl     4007d0 <arctan+0x70>
+  4007fa:	48 31 ff             	xor    %rdi,%rdi
+  4007fd:	48 39 c3             	cmp    %rax,%rbx
+  400800:	48 89 d9             	mov    %rbx,%rcx
+  400803:	7d 35                	jge    40083a <arctan+0xda>
+  400805:	66 66 2e 0f 1f 84 00 	data32 nopw %cs:0x0(%rax,%rax,1)
+  40080c:	00 00 00 00 
+  400810:	49 03 3c c9          	add    (%r9,%rcx,8),%rdi
+  400814:	48 89 f8             	mov    %rdi,%rax
+  400817:	48 99                	cqto   
+  400819:	49 f7 fa             	idiv   %r10
+  40081c:	49 89 04 cb          	mov    %rax,(%r11,%rcx,8)
+  400820:	49 0f af c2          	imul   %r10,%rax
+  400824:	48 29 c7             	sub    %rax,%rdi
+  400827:	48 6b ff 64          	imul   $0x64,%rdi,%rdi
+  40082b:	48 ff c1             	inc    %rcx
+  40082e:	48 8b 05 83 07 20 00 	mov    0x200783(%rip),%rax        # 600fb8 <size>
+  400835:	48 39 c1             	cmp    %rax,%rcx
+  400838:	7c d6                	jl     400810 <arctan+0xb0>
+  40083a:	4d 85 c0             	test   %r8,%r8
+  40083d:	7e 41                	jle    400880 <arctan+0x120>
+  40083f:	48 31 c9             	xor    %rcx,%rcx
+  400842:	48 85 c0             	test   %rax,%rax
+  400845:	7f 09                	jg     400850 <arctan+0xf0>
+  400847:	eb 73                	jmp    4008bc <arctan+0x15c>
+  400849:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+  400850:	49 03 4c c6 f8       	add    -0x8(%r14,%rax,8),%rcx
+  400855:	49 8b 54 c3 f8       	mov    -0x8(%r11,%rax,8),%rdx
+  40085a:	48 8d 7c 0a 9c       	lea    -0x64(%rdx,%rcx,1),%rdi
+  40085f:	48 01 d1             	add    %rdx,%rcx
+  400862:	48 83 f9 63          	cmp    $0x63,%rcx
+  400866:	9c                   	pushfq 
+  400867:	5a                   	pop    %rdx
+  400868:	48 0f 4f cf          	cmovg  %rdi,%rcx
+  40086c:	49 89 4c c6 f8       	mov    %rcx,-0x8(%r14,%rax,8)
+  400871:	48 ff c8             	dec    %rax
+  400874:	48 85 c0             	test   %rax,%rax
+  400877:	48 89 d1             	mov    %rdx,%rcx
+  40087a:	7f d4                	jg     400850 <arctan+0xf0>
+  40087c:	eb 3e                	jmp    4008bc <arctan+0x15c>
+  40087e:	66 90                	xchg   %ax,%ax
+  400880:	48 31 d2             	xor    %rdx,%rdx
+  400883:	48 85 c0             	test   %rax,%rax
+  400886:	7f 08                	jg     400890 <arctan+0x130>
+  400888:	eb 32                	jmp    4008bc <arctan+0x15c>
+  40088a:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+  400890:	49 8b 4c c6 f8       	mov    -0x8(%r14,%rax,8),%rcx
+  400895:	49 2b 4c c3 f8       	sub    -0x8(%r11,%rax,8),%rcx
+  40089a:	48 29 d1             	sub    %rdx,%rcx
+  40089d:	48 8d 51 64          	lea    0x64(%rcx),%rdx
+  4008a1:	48 85 c9             	test   %rcx,%rcx
+  4008a4:	48 0f 49 d1          	cmovns %rcx,%rdx
+  4008a8:	49 89 54 c6 f8       	mov    %rdx,-0x8(%r14,%rax,8)
+  4008ad:	48 c1 e9 3f          	shr    $0x3f,%rcx
+  4008b1:	48 ff c8             	dec    %rax
+  4008b4:	48 85 c0             	test   %rax,%rax
+  4008b7:	48 89 ca             	mov    %rcx,%rdx
+  4008ba:	7f d4                	jg     400890 <arctan+0x130>
+  4008bc:	49 83 c2 02          	add    $0x2,%r10
+  4008c0:	49 f7 d8             	neg    %r8
+  4008c3:	48 8b 05 ee 06 20 00 	mov    0x2006ee(%rip),%rax        # 600fb8 <size>
+  4008ca:	48 89 d9             	mov    %rbx,%rcx
+  4008cd:	0f 1f 00             	nopl   (%rax)
+  4008d0:	48 39 c1             	cmp    %rax,%rcx
+  4008d3:	7d 2f                	jge    400904 <arctan+0x1a4>
+  4008d5:	49 83 3c c9 00       	cmpq   $0x0,(%r9,%rcx,8)
+  4008da:	48 8d 49 01          	lea    0x1(%rcx),%rcx
+  4008de:	74 f0                	je     4008d0 <arctan+0x170>
+  4008e0:	48 ff cb             	dec    %rbx
+  4008e3:	66 66 66 66 2e 0f 1f 	data32 data32 data32 nopw %cs:0x0(%rax,%rax,1)
+  4008ea:	84 00 00 00 00 00 
+  4008f0:	48 31 ff             	xor    %rdi,%rdi
+  4008f3:	49 83 7c d9 08 00    	cmpq   $0x0,0x8(%r9,%rbx,8)
+  4008f9:	48 8d 5b 01          	lea    0x1(%rbx),%rbx
+  4008fd:	74 f1                	je     4008f0 <arctan+0x190>
+  4008ff:	e9 b6 fe ff ff       	jmpq   4007ba <arctan+0x5a>
+  400904:	5b                   	pop    %rbx
+  400905:	41 5e                	pop    %r14
+  400907:	c3                   	retq   
+  400908:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+  40090f:	00 

@@ -1,0 +1,1954 @@
+Args: llc -march=x86-64 -mcpu=CSE502 -debug -O3 -o prog3.S prog3.bc 
+
+Features:+64bit,+sse2,+64bit
+CPU:CSE502
+
+Subtarget features: SSELevel 3, 3DNowLevel 0, 64bit 1
+PointerSize8
+CGP: Found      local addrmode: [GV:@powers]
+CGP: Found      local addrmode: [GV:@pi + 8]
+Computing probabilities for entry
+
+
+
+=== _main
+5
+is64bit 1
+5
+is64bit 1
+Argument does not have assigned frame index!
+Dropping debug location info for:
+    tail call void @llvm.dbg.value(metadata !{i64 %argc}, i64 0, metadata !15), !dbg !28
+  Last seen at:
+    i64 %argc
+Argument does not have assigned frame index!
+Dropping debug location info for:
+    tail call void @llvm.dbg.value(metadata !{i8** %argv}, i64 0, metadata !16), !dbg !28
+  Last seen at:
+    i8** %argv
+Dropping debug location info for:
+    tail call void @llvm.dbg.value(metadata !{i64 %add}, i64 0, metadata !17), !dbg !29
+  Last seen at:
+      %add = add nsw i64 %0, 1, !dbg !29
+Inside ICMP! setcc maybe  
+I've changed this to i64 from i16! Might break returns!Initial selection DAG: BB#0 '_main:entry'
+SelectionDAG has 35 nodes:
+  0x2c4fad8: ch = EntryToken [ORD=4]
+
+    0x2c4fad8: <multiple use>
+    0x2c7a4e0: i64 = Register %vreg0
+
+  0x2c7a5e0: i64,ch = CopyFromReg 0x2c4fad8, 0x2c7a4e0
+
+    0x2c4fad8: <multiple use>
+    0x2c7a6e0: i64 = Register %vreg1
+
+  0x2c7a7e0: i64,ch = CopyFromReg 0x2c4fad8, 0x2c7a6e0
+
+  0x2c7aae0: i64 = undef [ORD=4]
+
+    0x2c4fad8: <multiple use>
+    0x2c7a8e0: i64 = GlobalAddress<[100 x i64]* @powers> 0 [ORD=3] dbg:prog3.c:91
+
+    0x2c7aae0: <multiple use>
+  0x2c7abe0: i64,ch = load 0x2c4fad8, 0x2c7a8e0, 0x2c7aae0<LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long")> [ORD=4] dbg:prog3.c:91
+
+    0x2c7abe0: <multiple use>
+    0x2c7ace0: i64 = Constant<1> [ORD=5]
+
+  0x2c7ade0: i64 = add 0x2c7abe0, 0x2c7ace0 [ORD=5] dbg:prog3.c:91
+
+      0x2c7ade0: <multiple use>
+      0x2c7aee0: i64 = Constant<100> [ORD=7]
+
+      0x2c7afe0: ch = setgt [ORD=7]
+
+    0x2c7b0e0: i1 = setcc 0x2c7ade0, 0x2c7aee0, 0x2c7afe0 [ORD=7] dbg:prog3.c:92
+
+    0x2c7b1e0: i64 = Constant<-99> [ORD=8]
+
+    0x2c7ade0: <multiple use>
+  0x2c7b2e0: i64 = select 0x2c7b0e0, 0x2c7b1e0, 0x2c7ade0 [ORD=8] dbg:prog3.c:92
+
+  0x2c7e000: i64 = GlobalAddress<i64 (i64)* @putchar> 0 dbg:prog3.c:96
+
+  0x2c7e100: i64 = TargetConstant<0> [ORD=12]
+
+  0x2c7e300: i64 = Register %RDI [ORD=12]
+
+        0x2c7abe0: <multiple use>
+        0x2c7b2e0: <multiple use>
+          0x2c7da00: i64 = GlobalAddress<[100 x i64]* @pi> 0 [ORD=9] dbg:prog3.c:94
+
+          0x2c7db00: i64 = Constant<8> [ORD=9]
+
+        0x2c7dc00: i64 = add 0x2c7da00, 0x2c7db00 [ORD=9] dbg:prog3.c:94
+
+        0x2c7aae0: <multiple use>
+      0x2c7dd00: ch = store 0x2c7abe0:1, 0x2c7b2e0, 0x2c7dc00, 0x2c7aae0<ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long")> [ORD=10] dbg:prog3.c:94
+
+      0x2c7e100: <multiple use>
+    0x2c7e200: ch,glue = callseq_start 0x2c7dd00, 0x2c7e100 [ORD=12]
+
+    0x2c7e300: <multiple use>
+      0x2c7b2e0: <multiple use>
+      0x2c7de00: i64 = Constant<48> [ORD=11]
+
+    0x2c7df00: i64 = add 0x2c7b2e0, 0x2c7de00 [ORD=11] dbg:prog3.c:96
+
+  0x2c7e400: ch,glue = CopyToReg 0x2c7e200, 0x2c7e300, 0x2c7df00 [ORD=12] dbg:prog3.c:96
+
+    0x2c7e400: <multiple use>
+    0x2c7e500: i64 = TargetGlobalAddress<i64 (i64)* @putchar> 0 [ORD=12] dbg:prog3.c:96
+
+    0x2c7e300: <multiple use>
+    0x2c7e600: Untyped = RegisterMask [ORD=12]
+
+    0x2c7e400: <multiple use>
+  0x2c7e700: ch,glue = X86ISD::CALL 0x2c7e400, 0x2c7e500, 0x2c7e300, 0x2c7e600, 0x2c7e400:1 [ORD=12] dbg:prog3.c:96
+
+    0x2c7e700: <multiple use>
+    0x2c7e100: <multiple use>
+    0x2c7e100: <multiple use>
+    0x2c7e700: <multiple use>
+  0x2c7e800: ch,glue = callseq_end 0x2c7e700, 0x2c7e100, 0x2c7e100, 0x2c7e700:1 [ORD=12]
+
+  0x2c7ec40: i64 = Register %RAX [ORD=12]
+
+      0x2c7e800: <multiple use>
+      0x2c7ec40: <multiple use>
+      0x2c7e800: <multiple use>
+    0x2c7ed40: i64,ch,glue = CopyFromReg 0x2c7e800, 0x2c7ec40, 0x2c7e800:1 [ORD=12] dbg:prog3.c:96
+
+    0x2c7ec40: <multiple use>
+    0x2c7a9e0: i64 = Constant<0>
+
+  0x2c7ee40: ch,glue = CopyToReg 0x2c7ed40:1, 0x2c7ec40, 0x2c7a9e0 dbg:prog3.c:97
+
+    0x2c7ee40: <multiple use>
+    0x2c7e100: <multiple use>
+    0x2c7ee40: <multiple use>
+  0x2c7ef40: ch = X86ISD::RET_FLAG 0x2c7ee40, 0x2c7e100, 0x2c7ee40:1 dbg:prog3.c:97
+
+
+
+Replacing.3 0x2c7dc00: i64 = add 0x2c7da00, 0x2c7db00 [ORD=9] dbg:prog3.c:94
+
+With: 0x2c7f040: i64 = GlobalAddress<[100 x i64]* @pi> + 8
+
+Optimized lowered selection DAG: BB#0 '_main:entry'
+SelectionDAG has 28 nodes:
+  0x2c7aae0: i64 = undef [ORD=4]
+
+    0x2c4fad8: ch = EntryToken [ORD=4]
+
+    0x2c7a8e0: i64 = GlobalAddress<[100 x i64]* @powers> 0 [ORD=3] dbg:prog3.c:91
+
+    0x2c7aae0: <multiple use>
+  0x2c7abe0: i64,ch = load 0x2c4fad8, 0x2c7a8e0, 0x2c7aae0<LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long")> [ORD=4] dbg:prog3.c:91
+
+    0x2c7abe0: <multiple use>
+    0x2c7ace0: i64 = Constant<1> [ORD=5]
+
+  0x2c7ade0: i64 = add 0x2c7abe0, 0x2c7ace0 [ORD=5] dbg:prog3.c:91
+
+      0x2c7ade0: <multiple use>
+      0x2c7aee0: i64 = Constant<100> [ORD=7]
+
+      0x2c7afe0: ch = setgt [ORD=7]
+
+    0x2c7b0e0: i1 = setcc 0x2c7ade0, 0x2c7aee0, 0x2c7afe0 [ORD=7] dbg:prog3.c:92
+
+    0x2c7b1e0: i64 = Constant<-99> [ORD=8]
+
+    0x2c7ade0: <multiple use>
+  0x2c7b2e0: i64 = select 0x2c7b0e0, 0x2c7b1e0, 0x2c7ade0 [ORD=8] dbg:prog3.c:92
+
+  0x2c7e100: i64 = TargetConstant<0> [ORD=12]
+
+  0x2c7e300: i64 = Register %RDI [ORD=12]
+
+        0x2c7abe0: <multiple use>
+        0x2c7b2e0: <multiple use>
+        0x2c7f040: i64 = GlobalAddress<[100 x i64]* @pi> + 8
+
+        0x2c7aae0: <multiple use>
+      0x2c7dd00: ch = store 0x2c7abe0:1, 0x2c7b2e0, 0x2c7f040, 0x2c7aae0<ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long")> [ORD=10] dbg:prog3.c:94
+
+      0x2c7e100: <multiple use>
+    0x2c7e200: ch,glue = callseq_start 0x2c7dd00, 0x2c7e100 [ORD=12]
+
+    0x2c7e300: <multiple use>
+      0x2c7b2e0: <multiple use>
+      0x2c7de00: i64 = Constant<48> [ORD=11]
+
+    0x2c7df00: i64 = add 0x2c7b2e0, 0x2c7de00 [ORD=11] dbg:prog3.c:96
+
+  0x2c7e400: ch,glue = CopyToReg 0x2c7e200, 0x2c7e300, 0x2c7df00 [ORD=12] dbg:prog3.c:96
+
+    0x2c7e400: <multiple use>
+    0x2c7e500: i64 = TargetGlobalAddress<i64 (i64)* @putchar> 0 [ORD=12] dbg:prog3.c:96
+
+    0x2c7e300: <multiple use>
+    0x2c7e600: Untyped = RegisterMask [ORD=12]
+
+    0x2c7e400: <multiple use>
+  0x2c7e700: ch,glue = X86ISD::CALL 0x2c7e400, 0x2c7e500, 0x2c7e300, 0x2c7e600, 0x2c7e400:1 [ORD=12] dbg:prog3.c:96
+
+    0x2c7e700: <multiple use>
+    0x2c7e100: <multiple use>
+    0x2c7e100: <multiple use>
+    0x2c7e700: <multiple use>
+  0x2c7e800: ch,glue = callseq_end 0x2c7e700, 0x2c7e100, 0x2c7e100, 0x2c7e700:1 [ORD=12]
+
+  0x2c7ec40: i64 = Register %RAX [ORD=12]
+
+      0x2c7e800: <multiple use>
+      0x2c7ec40: <multiple use>
+      0x2c7e800: <multiple use>
+    0x2c7ed40: i64,ch,glue = CopyFromReg 0x2c7e800, 0x2c7ec40, 0x2c7e800:1 [ORD=12] dbg:prog3.c:96
+
+    0x2c7ec40: <multiple use>
+    0x2c7a9e0: i64 = Constant<0>
+
+  0x2c7ee40: ch,glue = CopyToReg 0x2c7ed40:1, 0x2c7ec40, 0x2c7a9e0 dbg:prog3.c:97
+
+    0x2c7ee40: <multiple use>
+    0x2c7e100: <multiple use>
+    0x2c7ee40: <multiple use>
+  0x2c7ef40: ch = X86ISD::RET_FLAG 0x2c7ee40, 0x2c7e100, 0x2c7ee40:1 dbg:prog3.c:97
+
+
+Legally typed node: 0x2c7f040: i64 = GlobalAddress<[100 x i64]* @pi> + 8 [ID=0]
+
+Legally typed node: 0x2c7ec40: i64 = Register %RAX [ORD=12] [ID=0]
+
+Legally typed node: 0x2c7e600: Untyped = RegisterMask [ORD=12] [ID=0]
+
+Legally typed node: 0x2c7e500: i64 = TargetGlobalAddress<i64 (i64)* @putchar> 0 [ORD=12] [ID=0] dbg:prog3.c:96
+
+Legally typed node: 0x2c7e300: i64 = Register %RDI [ORD=12] [ID=0]
+
+Legally typed node: 0x2c7e100: i64 = TargetConstant<0> [ORD=12] [ID=0]
+
+Legally typed node: 0x2c7de00: i64 = Constant<48> [ORD=11] [ID=0]
+
+Legally typed node: 0x2c7b1e0: i64 = Constant<-99> [ORD=8] [ID=0]
+
+Legally typed node: 0x2c7afe0: ch = setgt [ORD=7] [ID=0]
+
+Legally typed node: 0x2c7aee0: i64 = Constant<100> [ORD=7] [ID=0]
+
+Legally typed node: 0x2c7ace0: i64 = Constant<1> [ORD=5] [ID=0]
+
+Legally typed node: 0x2c7aae0: i64 = undef [ORD=4] [ID=0]
+
+Legally typed node: 0x2c7a9e0: i64 = Constant<0> [ID=0]
+
+Legally typed node: 0x2c7a8e0: i64 = GlobalAddress<[100 x i64]* @powers> 0 [ORD=3] [ID=0] dbg:prog3.c:91
+
+Legally typed node: 0x2c4fad8: ch = EntryToken [ORD=4] [ID=0]
+
+Legally typed node: 0x2c7abe0: i64,ch = load 0x2c4fad8, 0x2c7a8e0, 0x2c7aae0<LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long")> [ORD=4] [ID=0] dbg:prog3.c:91
+
+Legally typed node: 0x2c7ade0: i64 = add 0x2c7abe0, 0x2c7ace0 [ORD=5] [ID=0] dbg:prog3.c:91
+
+Promote integer result: 0x2c7b0e0: i1 = setcc 0x2c7ade0, 0x2c7aee0, 0x2c7afe0 [ORD=7] [ID=0] dbg:prog3.c:92
+
+Set Promoted Integer! Opcode0x2c7a4e0: i64 = setcc 0x2c7ade0, 0x2c7aee0, 0x2c7afe0 [ID=0]
+5
+Promote integer operand: 0x2c7b2e0: i64 = select 0x2c7b0e0, 0x2c7b1e0, 0x2c7ade0 [ORD=8] [ID=0] dbg:prog3.c:92
+102 0 105 1
+Res.getNode(), N0x2c7b2e0 0x2c7b2e0: Promote integer operand: 0x2c7a5e0: i64 = zero_extend 0x2c7b0e0 [ID=0] dbg:prog3.c:92
+110 0 105 1
+0x2c7b0e0: i1 = setcc 0x2c7ade0, 0x2c7aee0, 0x2c7afe0 [ID=-3]
+ 1
+105 5
+105 5
+In PIO_ZERO_EXTEND105 5
+Res.getNode(), N0x2c7a6e0 0x2c7a5e0: Legally typed node: 0x2c7a4e0: i64 = setcc 0x2c7ade0, 0x2c7aee0, 0x2c7afe0 [ID=0] dbg:prog3.c:92
+
+Legally typed node: 0x2c7a6e0: i64 = and 0x2c7a4e0, 0x2c7ace0 [ID=0] dbg:prog3.c:92
+
+Legally typed node: 0x2c7b2e0: i64 = select 0x2c7a6e0, 0x2c7b1e0, 0x2c7ade0 [ORD=8] [ID=0] dbg:prog3.c:92
+
+Legally typed node: 0x2c7dd00: ch = store 0x2c7abe0:1, 0x2c7b2e0, 0x2c7f040, 0x2c7aae0<ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long")> [ORD=10] [ID=0] dbg:prog3.c:94
+
+Legally typed node: 0x2c7e200: ch,glue = callseq_start 0x2c7dd00, 0x2c7e100 [ORD=12] [ID=0]
+
+Legally typed node: 0x2c7df00: i64 = add 0x2c7b2e0, 0x2c7de00 [ORD=11] [ID=0] dbg:prog3.c:96
+
+Legally typed node: 0x2c7e400: ch,glue = CopyToReg 0x2c7e200, 0x2c7e300, 0x2c7df00 [ORD=12] [ID=0] dbg:prog3.c:96
+
+Legally typed node: 0x2c7e700: ch,glue = X86ISD::CALL 0x2c7e400, 0x2c7e500, 0x2c7e300, 0x2c7e600, 0x2c7e400:1 [ORD=12] [ID=0] dbg:prog3.c:96
+
+Legally typed node: 0x2c7e800: ch,glue = callseq_end 0x2c7e700, 0x2c7e100, 0x2c7e100, 0x2c7e700:1 [ORD=12] [ID=0]
+
+Legally typed node: 0x2c7ed40: i64,ch,glue = CopyFromReg 0x2c7e800, 0x2c7ec40, 0x2c7e800:1 [ORD=12] [ID=0] dbg:prog3.c:96
+
+Legally typed node: 0x2c7ee40: ch,glue = CopyToReg 0x2c7ed40:1, 0x2c7ec40, 0x2c7a9e0 [ID=0] dbg:prog3.c:97
+
+Legally typed node: 0x2c7ef40: ch = X86ISD::RET_FLAG 0x2c7ee40, 0x2c7e100, 0x2c7ee40:1 [ID=0] dbg:prog3.c:97
+
+Legally typed node: 0x7ffff3dbfb30: ch = handlenode 0x2c7ef40 [ID=0]
+
+Type-legalized selection DAG: BB#0 '_main:entry'
+SelectionDAG has 29 nodes:
+  0x2c7aae0: i64 = undef [ORD=4] [ID=-3]
+
+    0x2c4fad8: ch = EntryToken [ORD=4] [ID=-3]
+
+    0x2c7a8e0: i64 = GlobalAddress<[100 x i64]* @powers> 0 [ORD=3] [ID=-3] dbg:prog3.c:91
+
+    0x2c7aae0: <multiple use>
+  0x2c7abe0: i64,ch = load 0x2c4fad8, 0x2c7a8e0, 0x2c7aae0<LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long")> [ORD=4] [ID=-3] dbg:prog3.c:91
+
+  0x2c7ace0: i64 = Constant<1> [ORD=5] [ID=-3]
+
+    0x2c7abe0: <multiple use>
+    0x2c7ace0: <multiple use>
+  0x2c7ade0: i64 = add 0x2c7abe0, 0x2c7ace0 [ORD=5] [ID=-3] dbg:prog3.c:91
+
+        0x2c7ade0: <multiple use>
+        0x2c7aee0: i64 = Constant<100> [ORD=7] [ID=-3]
+
+        0x2c7afe0: ch = setgt [ORD=7] [ID=-3]
+
+      0x2c7a4e0: i64 = setcc 0x2c7ade0, 0x2c7aee0, 0x2c7afe0 [ID=-3] dbg:prog3.c:92
+
+      0x2c7ace0: <multiple use>
+    0x2c7a6e0: i64 = and 0x2c7a4e0, 0x2c7ace0 [ID=-3] dbg:prog3.c:92
+
+    0x2c7b1e0: i64 = Constant<-99> [ORD=8] [ID=-3]
+
+    0x2c7ade0: <multiple use>
+  0x2c7b2e0: i64 = select 0x2c7a6e0, 0x2c7b1e0, 0x2c7ade0 [ORD=8] [ID=-3] dbg:prog3.c:92
+
+  0x2c7e100: i64 = TargetConstant<0> [ORD=12] [ID=-3]
+
+  0x2c7e300: i64 = Register %RDI [ORD=12] [ID=-3]
+
+        0x2c7abe0: <multiple use>
+        0x2c7b2e0: <multiple use>
+        0x2c7f040: i64 = GlobalAddress<[100 x i64]* @pi> + 8 [ID=-3]
+
+        0x2c7aae0: <multiple use>
+      0x2c7dd00: ch = store 0x2c7abe0:1, 0x2c7b2e0, 0x2c7f040, 0x2c7aae0<ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long")> [ORD=10] [ID=-3] dbg:prog3.c:94
+
+      0x2c7e100: <multiple use>
+    0x2c7e200: ch,glue = callseq_start 0x2c7dd00, 0x2c7e100 [ORD=12] [ID=-3]
+
+    0x2c7e300: <multiple use>
+      0x2c7b2e0: <multiple use>
+      0x2c7de00: i64 = Constant<48> [ORD=11] [ID=-3]
+
+    0x2c7df00: i64 = add 0x2c7b2e0, 0x2c7de00 [ORD=11] [ID=-3] dbg:prog3.c:96
+
+  0x2c7e400: ch,glue = CopyToReg 0x2c7e200, 0x2c7e300, 0x2c7df00 [ORD=12] [ID=-3] dbg:prog3.c:96
+
+    0x2c7e400: <multiple use>
+    0x2c7e500: i64 = TargetGlobalAddress<i64 (i64)* @putchar> 0 [ORD=12] [ID=-3] dbg:prog3.c:96
+
+    0x2c7e300: <multiple use>
+    0x2c7e600: Untyped = RegisterMask [ORD=12] [ID=-3]
+
+    0x2c7e400: <multiple use>
+  0x2c7e700: ch,glue = X86ISD::CALL 0x2c7e400, 0x2c7e500, 0x2c7e300, 0x2c7e600, 0x2c7e400:1 [ORD=12] [ID=-3] dbg:prog3.c:96
+
+    0x2c7e700: <multiple use>
+    0x2c7e100: <multiple use>
+    0x2c7e100: <multiple use>
+    0x2c7e700: <multiple use>
+  0x2c7e800: ch,glue = callseq_end 0x2c7e700, 0x2c7e100, 0x2c7e100, 0x2c7e700:1 [ORD=12] [ID=-3]
+
+  0x2c7ec40: i64 = Register %RAX [ORD=12] [ID=-3]
+
+      0x2c7e800: <multiple use>
+      0x2c7ec40: <multiple use>
+      0x2c7e800: <multiple use>
+    0x2c7ed40: i64,ch,glue = CopyFromReg 0x2c7e800, 0x2c7ec40, 0x2c7e800:1 [ORD=12] [ID=-3] dbg:prog3.c:96
+
+    0x2c7ec40: <multiple use>
+    0x2c7a9e0: i64 = Constant<0> [ID=-3]
+
+  0x2c7ee40: ch,glue = CopyToReg 0x2c7ed40:1, 0x2c7ec40, 0x2c7a9e0 [ID=-3] dbg:prog3.c:97
+
+    0x2c7ee40: <multiple use>
+    0x2c7e100: <multiple use>
+    0x2c7ee40: <multiple use>
+  0x2c7ef40: ch = X86ISD::RET_FLAG 0x2c7ee40, 0x2c7e100, 0x2c7ee40:1 [ID=-3] dbg:prog3.c:97
+
+
+
+Replacing.2 0x2c7a6e0: i64 = and 0x2c7a4e0, 0x2c7ace0 [ID=-3] dbg:prog3.c:92
+
+With: 0x2c7a4e0: i64 = setcc 0x2c7ade0, 0x2c7aee0, 0x2c7afe0 [ID=-3] dbg:prog3.c:92
+
+Optimized type-legalized selection DAG: BB#0 '_main:entry'
+SelectionDAG has 28 nodes:
+  0x2c7aae0: i64 = undef [ORD=4] [ID=-3]
+
+    0x2c4fad8: ch = EntryToken [ORD=4] [ID=-3]
+
+    0x2c7a8e0: i64 = GlobalAddress<[100 x i64]* @powers> 0 [ORD=3] [ID=-3] dbg:prog3.c:91
+
+    0x2c7aae0: <multiple use>
+  0x2c7abe0: i64,ch = load 0x2c4fad8, 0x2c7a8e0, 0x2c7aae0<LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long")> [ORD=4] [ID=-3] dbg:prog3.c:91
+
+    0x2c7abe0: <multiple use>
+    0x2c7ace0: i64 = Constant<1> [ORD=5] [ID=-3]
+
+  0x2c7ade0: i64 = add 0x2c7abe0, 0x2c7ace0 [ORD=5] [ID=-3] dbg:prog3.c:91
+
+      0x2c7ade0: <multiple use>
+      0x2c7aee0: i64 = Constant<100> [ORD=7] [ID=-3]
+
+      0x2c7afe0: ch = setgt [ORD=7] [ID=-3]
+
+    0x2c7a4e0: i64 = setcc 0x2c7ade0, 0x2c7aee0, 0x2c7afe0 [ID=-3] dbg:prog3.c:92
+
+    0x2c7b1e0: i64 = Constant<-99> [ORD=8] [ID=-3]
+
+    0x2c7ade0: <multiple use>
+  0x2c7b2e0: i64 = select 0x2c7a4e0, 0x2c7b1e0, 0x2c7ade0 [ORD=8] [ID=-3] dbg:prog3.c:92
+
+  0x2c7e100: i64 = TargetConstant<0> [ORD=12] [ID=-3]
+
+  0x2c7e300: i64 = Register %RDI [ORD=12] [ID=-3]
+
+        0x2c7abe0: <multiple use>
+        0x2c7b2e0: <multiple use>
+        0x2c7f040: i64 = GlobalAddress<[100 x i64]* @pi> + 8 [ID=-3]
+
+        0x2c7aae0: <multiple use>
+      0x2c7dd00: ch = store 0x2c7abe0:1, 0x2c7b2e0, 0x2c7f040, 0x2c7aae0<ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long")> [ORD=10] [ID=-3] dbg:prog3.c:94
+
+      0x2c7e100: <multiple use>
+    0x2c7e200: ch,glue = callseq_start 0x2c7dd00, 0x2c7e100 [ORD=12] [ID=-3]
+
+    0x2c7e300: <multiple use>
+      0x2c7b2e0: <multiple use>
+      0x2c7de00: i64 = Constant<48> [ORD=11] [ID=-3]
+
+    0x2c7df00: i64 = add 0x2c7b2e0, 0x2c7de00 [ORD=11] [ID=-3] dbg:prog3.c:96
+
+  0x2c7e400: ch,glue = CopyToReg 0x2c7e200, 0x2c7e300, 0x2c7df00 [ORD=12] [ID=-3] dbg:prog3.c:96
+
+    0x2c7e400: <multiple use>
+    0x2c7e500: i64 = TargetGlobalAddress<i64 (i64)* @putchar> 0 [ORD=12] [ID=-3] dbg:prog3.c:96
+
+    0x2c7e300: <multiple use>
+    0x2c7e600: Untyped = RegisterMask [ORD=12] [ID=-3]
+
+    0x2c7e400: <multiple use>
+  0x2c7e700: ch,glue = X86ISD::CALL 0x2c7e400, 0x2c7e500, 0x2c7e300, 0x2c7e600, 0x2c7e400:1 [ORD=12] [ID=-3] dbg:prog3.c:96
+
+    0x2c7e700: <multiple use>
+    0x2c7e100: <multiple use>
+    0x2c7e100: <multiple use>
+    0x2c7e700: <multiple use>
+  0x2c7e800: ch,glue = callseq_end 0x2c7e700, 0x2c7e100, 0x2c7e100, 0x2c7e700:1 [ORD=12] [ID=-3]
+
+  0x2c7ec40: i64 = Register %RAX [ORD=12] [ID=-3]
+
+      0x2c7e800: <multiple use>
+      0x2c7ec40: <multiple use>
+      0x2c7e800: <multiple use>
+    0x2c7ed40: i64,ch,glue = CopyFromReg 0x2c7e800, 0x2c7ec40, 0x2c7e800:1 [ORD=12] [ID=-3] dbg:prog3.c:96
+
+    0x2c7ec40: <multiple use>
+    0x2c7a9e0: i64 = Constant<0> [ID=-3]
+
+  0x2c7ee40: ch,glue = CopyToReg 0x2c7ed40:1, 0x2c7ec40, 0x2c7a9e0 [ID=-3] dbg:prog3.c:97
+
+    0x2c7ee40: <multiple use>
+    0x2c7e100: <multiple use>
+    0x2c7ee40: <multiple use>
+  0x2c7ef40: ch = X86ISD::RET_FLAG 0x2c7ee40, 0x2c7e100, 0x2c7ee40:1 [ID=-3] dbg:prog3.c:97
+
+
+In LegalizeDAG() 211
+In legalize Op211
+0
+0
+5
+50
+In LegalizeDAG() 42
+In legalize Op42
+0
+50
+0
+5
+5
+In LegalizeDAG() 43
+In legalize Op43
+5
+0
+50
+0
+5
+50
+In LegalizeDAG() 156
+In legalize Op156
+0
+50
+0
+5
+5
+50
+In LegalizeDAG() 198
+In legalize Op198
+0
+50
+0
+5
+5
+52
+50
+In LegalizeDAG() 42
+In legalize Op42
+0
+50
+0
+5
+5
+In LegalizeDAG() 155
+In legalize Op155
+0
+50
+0
+5
+In LegalizeDAG() 144
+In legalize Op144
+0
+0
+5
+5
+5
+In LegalizeDAG() 48
+In legalize Op48
+5
+5
+5
+In LegalizeDAG() 102
+In legalize Op102
+5
+5
+5
+5
+Entered LowerSelect
+Cond before lowerSetCC: 105
+Lowering SETCC to CMP. Here are the operands' types 48 5 10 5
+Cond after lowerSetCC: 200 200
+Cond after the x86isd::setcc block: 200
+Cond shouldn't have changed: 200addTest= 1
+Cond in addTest 1: 200
+Cond after addTest 1:200addTest= 1
+Cond in addTest 2: 200
+Cond after addTest 2: 200addTest= 1
+Cond at end!: 200
+In LegalizeDAG() 48
+In legalize Op48
+5
+5
+5
+In LegalizeDAG() 143
+In legalize Op143
+5
+0
+0
+5
+5
+In LegalizeDAG() 12
+In legalize Op12
+5
+In LegalizeDAG() 8
+In legalize Op8
+5
+In LegalizeDAG() 9
+In legalize Op9
+52
+In LegalizeDAG() 31
+In legalize Op31
+5
+In LegalizeDAG() 8
+In legalize Op8
+5
+In LegalizeDAG() 29
+In LegalizeDAG() 10
+In legalize Op10
+5
+In LegalizeDAG() 10
+In legalize Op10
+5
+In LegalizeDAG() 10
+In legalize Op10
+5
+In LegalizeDAG() 10
+In legalize Op10
+5
+In LegalizeDAG() 44
+In legalize Op44
+5
+In LegalizeDAG() 10
+In legalize Op10
+5
+In LegalizeDAG() 12
+In legalize Op12
+5
+In LegalizeDAG() 1
+In legalize Op1
+0
+In LegalizeDAG() 215
+In legalize Op215
+5
+5
+In LegalizeDAG() 31
+In legalize Op31
+5
+In LegalizeDAG() 215
+In legalize Op215
+5
+5
+In LegalizeDAG() 31
+In legalize Op31
+5
+In LegalizeDAG() 209
+In legalize Op209
+5
+50
+5
+5
+2
+5
+In LegalizeDAG() 200
+In legalize Op200
+5
+5
+5
+In LegalizeDAG() 10
+In legalize Op10
+5
+In LegalizeDAG() 200
+In legalize Op200
+5
+5
+5
+5
+In LegalizeDAG() 10
+In legalize Op10
+5
+Legalized selection DAG: BB#0 '_main:entry'
+SelectionDAG has 32 nodes:
+  0x2c7a9e0: i64 = Constant<0> [ID=2]
+
+  0x2c7aae0: i64 = undef [ORD=4] [ID=3]
+
+  0x2c7e100: i64 = TargetConstant<0> [ORD=12] [ID=9]
+
+  0x2c7e300: i64 = Register %RDI [ORD=12] [ID=10]
+
+  0x2c7ec40: i64 = Register %RAX [ORD=12] [ID=13]
+
+    0x2c4fad8: ch = EntryToken [ORD=4] [ID=0]
+
+      0x2c7f040: i64 = TargetGlobalAddress<[100 x i64]* @powers> 0 dbg:prog3.c:91
+
+    0x2c7b2e0: i64 = X86ISD::Wrapper 0x2c7f040 dbg:prog3.c:91
+
+    0x2c7aae0: <multiple use>
+  0x2c7abe0: i64,ch = load 0x2c4fad8, 0x2c7b2e0, 0x2c7aae0<LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long")> [ORD=4] [ID=15] dbg:prog3.c:91
+
+    0x2c7abe0: <multiple use>
+    0x2c7ace0: i64 = Constant<1> [ORD=5] [ID=4]
+
+  0x2c7ade0: i64 = add 0x2c7abe0, 0x2c7ace0 [ORD=5] [ID=16] dbg:prog3.c:91
+
+        0x2c7abe0: <multiple use>
+        0x2c7da00: <multiple use>
+          0x2c7afe0: i64 = TargetGlobalAddress<[100 x i64]* @pi> + 8
+
+        0x2c7a4e0: i64 = X86ISD::Wrapper 0x2c7afe0
+
+        0x2c7aae0: <multiple use>
+      0x2c7dd00: ch = store 0x2c7abe0:1, 0x2c7da00, 0x2c7a4e0, 0x2c7aae0<ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long")> [ORD=10] [ID=20] dbg:prog3.c:94
+
+      0x2c7e100: <multiple use>
+    0x2c7e200: ch,glue = callseq_start 0x2c7dd00, 0x2c7e100 [ORD=12] [ID=21]
+
+    0x2c7e300: <multiple use>
+      0x2c7da00: <multiple use>
+      0x2c7de00: i64 = Constant<48> [ORD=11] [ID=8]
+
+    0x2c7df00: i64 = add 0x2c7da00, 0x2c7de00 [ORD=11] [ID=19] dbg:prog3.c:96
+
+  0x2c7e400: ch,glue = CopyToReg 0x2c7e200, 0x2c7e300, 0x2c7df00 [ORD=12] [ID=22] dbg:prog3.c:96
+
+    0x2c7e400: <multiple use>
+    0x2c7e500: i64 = TargetGlobalAddress<i64 (i64)* @putchar> 0 [ORD=12] [ID=11] dbg:prog3.c:96
+
+    0x2c7e300: <multiple use>
+    0x2c7e600: Untyped = RegisterMask [ORD=12] [ID=12]
+
+    0x2c7e400: <multiple use>
+  0x2c7e700: ch,glue = X86ISD::CALL 0x2c7e400, 0x2c7e500, 0x2c7e300, 0x2c7e600, 0x2c7e400:1 [ORD=12] [ID=23] dbg:prog3.c:96
+
+    0x2c7e700: <multiple use>
+    0x2c7e100: <multiple use>
+    0x2c7e100: <multiple use>
+    0x2c7e700: <multiple use>
+  0x2c7e800: ch,glue = callseq_end 0x2c7e700, 0x2c7e100, 0x2c7e100, 0x2c7e700:1 [ORD=12] [ID=24]
+
+      0x2c7e800: <multiple use>
+      0x2c7ec40: <multiple use>
+      0x2c7e800: <multiple use>
+    0x2c7ed40: i64,ch,glue = CopyFromReg 0x2c7e800, 0x2c7ec40, 0x2c7e800:1 [ORD=12] [ID=25] dbg:prog3.c:96
+
+    0x2c7ec40: <multiple use>
+    0x2c7a9e0: <multiple use>
+  0x2c7ee40: ch,glue = CopyToReg 0x2c7ed40:1, 0x2c7ec40, 0x2c7a9e0 [ID=26] dbg:prog3.c:97
+
+    0x2c7ade0: <multiple use>
+    0x2c7b1e0: i64 = Constant<-99> [ORD=8] [ID=7]
+
+    0x2c7a5e0: i64 = Constant<9>
+
+        0x2c7ade0: <multiple use>
+        0x2c7aee0: i64 = Constant<100> [ORD=7] [ID=5]
+
+        0x2c7a6e0: i64 = Constant<5>
+
+      0x2c7b0e0: i64 = X86ISD::CMP 0x2c7ade0, 0x2c7aee0, 0x2c7a6e0 dbg:prog3.c:92
+
+      0x2c7a9e0: <multiple use>
+    0x2c7a7e0: i64 = X86ISD::CMP 0x2c7b0e0, 0x2c7a9e0 dbg:prog3.c:92
+
+  0x2c7da00: i64,glue = X86ISD::CMOV 0x2c7ade0, 0x2c7b1e0, 0x2c7a5e0, 0x2c7a7e0 dbg:prog3.c:92
+
+    0x2c7ee40: <multiple use>
+    0x2c7e100: <multiple use>
+    0x2c7ee40: <multiple use>
+  0x2c7ef40: ch = X86ISD::RET_FLAG 0x2c7ee40, 0x2c7e100, 0x2c7ee40:1 [ID=27] dbg:prog3.c:97
+
+
+Optimized legalized selection DAG: BB#0 '_main:entry'
+SelectionDAG has 32 nodes:
+  0x2c7a9e0: i64 = Constant<0> [ID=2]
+
+  0x2c7aae0: i64 = undef [ORD=4] [ID=3]
+
+  0x2c7e100: i64 = TargetConstant<0> [ORD=12] [ID=9]
+
+  0x2c7e300: i64 = Register %RDI [ORD=12] [ID=10]
+
+  0x2c7ec40: i64 = Register %RAX [ORD=12] [ID=13]
+
+    0x2c4fad8: ch = EntryToken [ORD=4] [ID=0]
+
+      0x2c7f040: i64 = TargetGlobalAddress<[100 x i64]* @powers> 0 dbg:prog3.c:91
+
+    0x2c7b2e0: i64 = X86ISD::Wrapper 0x2c7f040 dbg:prog3.c:91
+
+    0x2c7aae0: <multiple use>
+  0x2c7abe0: i64,ch = load 0x2c4fad8, 0x2c7b2e0, 0x2c7aae0<LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long")> [ORD=4] [ID=15] dbg:prog3.c:91
+
+    0x2c7abe0: <multiple use>
+    0x2c7ace0: i64 = Constant<1> [ORD=5] [ID=4]
+
+  0x2c7ade0: i64 = add 0x2c7abe0, 0x2c7ace0 [ORD=5] [ID=16] dbg:prog3.c:91
+
+        0x2c7abe0: <multiple use>
+        0x2c7da00: <multiple use>
+          0x2c7afe0: i64 = TargetGlobalAddress<[100 x i64]* @pi> + 8
+
+        0x2c7a4e0: i64 = X86ISD::Wrapper 0x2c7afe0
+
+        0x2c7aae0: <multiple use>
+      0x2c7dd00: ch = store 0x2c7abe0:1, 0x2c7da00, 0x2c7a4e0, 0x2c7aae0<ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long")> [ORD=10] [ID=20] dbg:prog3.c:94
+
+      0x2c7e100: <multiple use>
+    0x2c7e200: ch,glue = callseq_start 0x2c7dd00, 0x2c7e100 [ORD=12] [ID=21]
+
+    0x2c7e300: <multiple use>
+      0x2c7da00: <multiple use>
+      0x2c7de00: i64 = Constant<48> [ORD=11] [ID=8]
+
+    0x2c7df00: i64 = add 0x2c7da00, 0x2c7de00 [ORD=11] [ID=19] dbg:prog3.c:96
+
+  0x2c7e400: ch,glue = CopyToReg 0x2c7e200, 0x2c7e300, 0x2c7df00 [ORD=12] [ID=22] dbg:prog3.c:96
+
+    0x2c7e400: <multiple use>
+    0x2c7e500: i64 = TargetGlobalAddress<i64 (i64)* @putchar> 0 [ORD=12] [ID=11] dbg:prog3.c:96
+
+    0x2c7e300: <multiple use>
+    0x2c7e600: Untyped = RegisterMask [ORD=12] [ID=12]
+
+    0x2c7e400: <multiple use>
+  0x2c7e700: ch,glue = X86ISD::CALL 0x2c7e400, 0x2c7e500, 0x2c7e300, 0x2c7e600, 0x2c7e400:1 [ORD=12] [ID=23] dbg:prog3.c:96
+
+    0x2c7e700: <multiple use>
+    0x2c7e100: <multiple use>
+    0x2c7e100: <multiple use>
+    0x2c7e700: <multiple use>
+  0x2c7e800: ch,glue = callseq_end 0x2c7e700, 0x2c7e100, 0x2c7e100, 0x2c7e700:1 [ORD=12] [ID=24]
+
+      0x2c7e800: <multiple use>
+      0x2c7ec40: <multiple use>
+      0x2c7e800: <multiple use>
+    0x2c7ed40: i64,ch,glue = CopyFromReg 0x2c7e800, 0x2c7ec40, 0x2c7e800:1 [ORD=12] [ID=25] dbg:prog3.c:96
+
+    0x2c7ec40: <multiple use>
+    0x2c7a9e0: <multiple use>
+  0x2c7ee40: ch,glue = CopyToReg 0x2c7ed40:1, 0x2c7ec40, 0x2c7a9e0 [ID=26] dbg:prog3.c:97
+
+    0x2c7ade0: <multiple use>
+    0x2c7b1e0: i64 = Constant<-99> [ORD=8] [ID=7]
+
+    0x2c7a5e0: i64 = Constant<9>
+
+        0x2c7ade0: <multiple use>
+        0x2c7aee0: i64 = Constant<100> [ORD=7] [ID=5]
+
+        0x2c7a6e0: i64 = Constant<5>
+
+      0x2c7b0e0: i64 = X86ISD::CMP 0x2c7ade0, 0x2c7aee0, 0x2c7a6e0 dbg:prog3.c:92
+
+      0x2c7a9e0: <multiple use>
+    0x2c7a7e0: i64 = X86ISD::CMP 0x2c7b0e0, 0x2c7a9e0 dbg:prog3.c:92
+
+  0x2c7da00: i64,glue = X86ISD::CMOV 0x2c7ade0, 0x2c7b1e0, 0x2c7a5e0, 0x2c7a7e0 dbg:prog3.c:92
+
+    0x2c7ee40: <multiple use>
+    0x2c7e100: <multiple use>
+    0x2c7ee40: <multiple use>
+  0x2c7ef40: ch = X86ISD::RET_FLAG 0x2c7ee40, 0x2c7e100, 0x2c7ee40:1 [ID=27] dbg:prog3.c:97
+
+
+===== Instruction selection begins: BB#0 'entry'
+Selecting: 0x2c7ef40: ch = X86ISD::RET_FLAG 0x2c7ee40, 0x2c7e100, 0x2c7ee40:1 [ID=31] dbg:prog3.c:97
+
+ISEL: Starting pattern match on root node: 0x2c7ef40: ch = X86ISD::RET_FLAG 0x2c7ee40, 0x2c7e100, 0x2c7ee40:1 [ID=31] dbg:prog3.c:97
+
+  Morphed node: 0x2c7ef40: ch = RET 0x2c7ee40, 0x2c7ee40:1 dbg:prog3.c:97
+
+ISEL: Match complete!
+=> 0x2c7ef40: ch = RET 0x2c7ee40, 0x2c7ee40:1 dbg:prog3.c:97
+
+Selecting: 0x2c7ee40: ch,glue = CopyToReg 0x2c7ed40:1, 0x2c7ec40, 0x2c7a9e0 [ID=30] dbg:prog3.c:97
+
+=> 0x2c7ee40: ch,glue = CopyToReg 0x2c7ed40:1, 0x2c7ec40, 0x2c7a9e0 dbg:prog3.c:97
+
+Selecting: 0x2c7ed40: i64,ch,glue = CopyFromReg 0x2c7e800, 0x2c7ec40, 0x2c7e800:1 [ORD=12] [ID=29] dbg:prog3.c:96
+
+=> 0x2c7ed40: i64,ch,glue = CopyFromReg 0x2c7e800, 0x2c7ec40, 0x2c7e800:1 [ORD=12] dbg:prog3.c:96
+
+Selecting: 0x2c7e800: ch,glue = callseq_end 0x2c7e700, 0x2c7e100, 0x2c7e100, 0x2c7e700:1 [ORD=12] [ID=28]
+
+ISEL: Starting pattern match on root node: 0x2c7e800: ch,glue = callseq_end 0x2c7e700, 0x2c7e100, 0x2c7e100, 0x2c7e700:1 [ORD=12] [ID=28]
+
+  Initial Opcode index to 80996
+  Skipped scope entry (due to false predicate) at index 81014, continuing at 81026
+  Morphed node: 0x2c7e800: i64,ch,glue = ADJCALLSTACKUP64 0x2c7e100, 0x2c7e100, 0x2c7e700, 0x2c7e700:1 [ORD=12]
+
+ISEL: Match complete!
+=> 0x2c7e800: i64,ch,glue = ADJCALLSTACKUP64 0x2c7e100, 0x2c7e100, 0x2c7e700, 0x2c7e700:1 [ORD=12]
+
+Selecting: 0x2c7e700: ch,glue = X86ISD::CALL 0x2c7e400, 0x2c7e500, 0x2c7e300, 0x2c7e600, 0x2c7e400:1 [ORD=12] [ID=27] dbg:prog3.c:96
+
+ISEL: Starting pattern match on root node: 0x2c7e700: ch,glue = X86ISD::CALL 0x2c7e400, 0x2c7e500, 0x2c7e300, 0x2c7e600, 0x2c7e400:1 [ORD=12] [ID=27] dbg:prog3.c:96
+
+  Initial Opcode index to 64937
+  Match failed at index 64943
+  Continuing at 65004
+  OpcodeSwitch from 65010 to 65014
+  TypeSwitch[i64] from 65014 to 65017
+  Morphed node: 0x2c7e700: ch,glue = CALL64pcrel32 0x2c7e500, 0x2c7e300, 0x2c7e600, 0x2c7e400, 0x2c7e400:1 [ORD=12] dbg:prog3.c:96
+
+ISEL: Match complete!
+=> 0x2c7e700: ch,glue = CALL64pcrel32 0x2c7e500, 0x2c7e300, 0x2c7e600, 0x2c7e400, 0x2c7e400:1 [ORD=12] dbg:prog3.c:96
+
+Selecting: 0x2c7e400: ch,glue = CopyToReg 0x2c7e200, 0x2c7e300, 0x2c7df00 [ORD=12] [ID=26] dbg:prog3.c:96
+
+=> 0x2c7e400: ch,glue = CopyToReg 0x2c7e200, 0x2c7e300, 0x2c7df00 [ORD=12] dbg:prog3.c:96
+
+Selecting: 0x2c7e200: ch,glue = callseq_start 0x2c7dd00, 0x2c7e100 [ORD=12] [ID=25]
+
+ISEL: Starting pattern match on root node: 0x2c7e200: ch,glue = callseq_start 0x2c7dd00, 0x2c7e100 [ORD=12] [ID=25]
+
+  Initial Opcode index to 83129
+  Skipped scope entry (due to false predicate) at index 83139, continuing at 83150
+  Morphed node: 0x2c7e200: i64,ch,glue = ADJCALLSTACKDOWN64 0x2c7e100, 0x2c7dd00 [ORD=12]
+
+ISEL: Match complete!
+=> 0x2c7e200: i64,ch,glue = ADJCALLSTACKDOWN64 0x2c7e100, 0x2c7dd00 [ORD=12]
+
+Selecting: 0x2c7df00: i64 = add 0x2c7da00, 0x2c7de00 [ORD=11] [ID=24] dbg:prog3.c:96
+
+ISEL: Starting pattern match on root node: 0x2c7df00: i64 = add 0x2c7da00, 0x2c7de00 [ORD=11] [ID=24] dbg:prog3.c:96
+
+  Initial Opcode index to 67013
+  Match failed at index 67018
+  Continuing at 67125
+  Match failed at index 67129
+  Continuing at 67324
+  Match failed at index 67328
+  Continuing at 67409
+  TypeSwitch[i64] from 67411 to 67454
+MatchAddress: X86ISelAddressMode 0x7ffff3dbec10
+Base_Reg nul Base.FrameIndex 0
+ Scale1
+IndexReg nul Disp 0
+GV nul CP nul
+ES nul JT-1 Align0
+MatchAddress: X86ISelAddressMode 0x7ffff3dbec10
+Base_Reg nul Base.FrameIndex 0
+ Scale1
+IndexReg nul Disp 0
+GV nul CP nul
+ES nul JT-1 Align0
+MatchAddress: X86ISelAddressMode 0x7ffff3dbec10
+Base_Reg 0x2c7da00: i64,glue = <<Unknown Node #209>> 0x2c7ade0, 0x2c7b1e0, 0x2c7a5e0, 0x2c7a7e0 [ID=22]
+ Base.FrameIndex 0
+ Scale1
+IndexReg nul Disp 0
+GV nul CP nul
+ES nul JT-1 Align0
+  Match failed at index 67454
+  Continuing at 67470
+  Match failed at index 67474
+  Continuing at 67596
+  Match failed at index 67600
+  Continuing at 67728
+  Skipped scope entry (due to false predicate) at index 67738, continuing at 67821
+  Skipped scope entry (due to false predicate) at index 67822, continuing at 67914
+  Skipped scope entry (due to false predicate) at index 67915, continuing at 67997
+  Skipped scope entry (due to false predicate) at index 67998, continuing at 68029
+  Match failed at index 67736
+  Continuing at 68030
+  Match failed at index 68045
+  Continuing at 68059
+  Match failed at index 68063
+  Continuing at 68077
+  Morphed node: 0x2c7df00: i64,i32 = ADD64ri8 0x2c7da00, 0x2c7e000 [ORD=11] dbg:prog3.c:96
+
+ISEL: Match complete!
+=> 0x2c7df00: i64,i32 = ADD64ri8 0x2c7da00, 0x2c7e000 [ORD=11] dbg:prog3.c:96
+
+Selecting: 0x2c7dd00: ch = store 0x2c7abe0:1, 0x2c7da00, 0x2c7a4e0, 0x2c7aae0<ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long")> [ORD=10] [ID=23] dbg:prog3.c:94
+
+ISEL: Starting pattern match on root node: 0x2c7dd00: ch = store 0x2c7abe0:1, 0x2c7da00, 0x2c7a4e0, 0x2c7aae0<ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long")> [ORD=10] [ID=23] dbg:prog3.c:94
+
+  Initial Opcode index to 5
+  Skipped scope entry (due to false predicate) at index 13, continuing at 58
+  Skipped scope entry (due to false predicate) at index 59, continuing at 104
+  Skipped scope entry (due to false predicate) at index 105, continuing at 150
+  Skipped scope entry (due to false predicate) at index 151, continuing at 174
+  Skipped scope entry (due to false predicate) at index 175, continuing at 198
+  Skipped scope entry (due to false predicate) at index 199, continuing at 222
+  Skipped scope entry (due to false predicate) at index 223, continuing at 246
+  Match failed at index 250
+  Continuing at 270
+  Continuing at 271
+  Match failed at index 275
+  Continuing at 11364
+  Match failed at index 11369
+  Continuing at 11681
+  Match failed at index 11685
+  Continuing at 12065
+  Match failed at index 12069
+  Continuing at 12186
+  Match failed at index 12190
+  Continuing at 12382
+  Skipped scope entry (due to false predicate) at index 12387, continuing at 12454
+  Skipped scope entry (due to false predicate) at index 12455, continuing at 12549
+  Skipped scope entry (due to false predicate) at index 12550, continuing at 12622
+  Skipped scope entry (due to false predicate) at index 12623, continuing at 12648
+  Skipped scope entry (due to false predicate) at index 12649, continuing at 12674
+  Skipped scope entry (due to false predicate) at index 12675, continuing at 12700
+MatchAddress: X86ISelAddressMode 0x7ffff3dbec10
+Base_Reg nul Base.FrameIndex 0
+ Scale1
+IndexReg nul Disp 0
+GV nul CP nul
+ES nul JT-1 Align0
+  Morphed node: 0x2c7dd00: ch = MOV64mr 0x2c7de00, 0x2c7dc00, 0x2c7db00, 0x2c7f140, 0x2c7a8e0, 0x2c7da00, 0x2c7abe0:1<Mem:ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long")> [ORD=10] dbg:prog3.c:94
+
+ISEL: Match complete!
+=> 0x2c7dd00: ch = MOV64mr 0x2c7de00, 0x2c7dc00, 0x2c7db00, 0x2c7f140, 0x2c7a8e0, 0x2c7da00, 0x2c7abe0:1<Mem:ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long")> [ORD=10] dbg:prog3.c:94
+
+Selecting: 0x2c7da00: i64,glue = X86ISD::CMOV 0x2c7ade0, 0x2c7b1e0, 0x2c7a5e0, 0x2c7a7e0 [ID=22] dbg:prog3.c:92
+
+ISEL: Starting pattern match on root node: 0x2c7da00: i64,glue = X86ISD::CMOV 0x2c7ade0, 0x2c7b1e0, 0x2c7a5e0, 0x2c7a7e0 [ID=22] dbg:prog3.c:92
+
+  Initial Opcode index to 52697
+  Match failed at index 52703
+  Continuing at 54346
+  Match failed at index 54350
+  Continuing at 56041
+  Skipped scope entry (due to false predicate) at index 56052, continuing at 56106
+  Skipped scope entry (due to false predicate) at index 56107, continuing at 56161
+  Skipped scope entry (due to false predicate) at index 56162, continuing at 56216
+  Skipped scope entry (due to false predicate) at index 56217, continuing at 56271
+  Skipped scope entry (due to false predicate) at index 56272, continuing at 56326
+  TypeSwitch[i64] from 56331 to 56366
+  Morphed node: 0x2c7da00: i64 = CMOVNE64rr 0x2c7ade0, 0x2c7b1e0, 0x2c7a4e0:1 dbg:prog3.c:92
+
+ISEL: Match complete!
+=> 0x2c7da00: i64 = CMOVNE64rr 0x2c7ade0, 0x2c7b1e0, 0x2c7a4e0:1 dbg:prog3.c:92
+
+Selecting: 0x2c7a7e0: i64 = X86ISD::CMP 0x2c7b0e0, 0x2c7a9e0 [ID=21] dbg:prog3.c:92
+
+ISEL: Starting pattern match on root node: 0x2c7a7e0: i64 = X86ISD::CMP 0x2c7b0e0, 0x2c7a9e0 [ID=21] dbg:prog3.c:92
+
+  Initial Opcode index to 15658
+  Match failed at index 15663
+  Continuing at 16336
+  Skipped scope entry (due to false predicate) at index 16341, continuing at 16376
+  Skipped scope entry (due to false predicate) at index 16377, continuing at 16412
+  Skipped scope entry (due to false predicate) at index 16413, continuing at 16448
+  Match failed at index 16453
+  Continuing at 16482
+  Continuing at 16483
+  Match failed at index 16486
+  Continuing at 16589
+  Skipped scope entry (due to false predicate) at index 16593, continuing at 16651
+  Skipped scope entry (due to false predicate) at index 16652, continuing at 16710
+  Match failed at index 16591
+  Continuing at 16711
+  Match failed at index 16715
+  Continuing at 16903
+  Skipped scope entry (due to false predicate) at index 16908, continuing at 16965
+  Skipped scope entry (due to false predicate) at index 16966, continuing at 17043
+  Skipped scope entry (due to false predicate) at index 17044, continuing at 17121
+  Morphed node: 0x2c7a7e0: i32 = TEST64rr 0x2c7b0e0, 0x2c7b0e0 dbg:prog3.c:92
+
+ISEL: Match complete!
+=> 0x2c7a7e0: i32 = TEST64rr 0x2c7b0e0, 0x2c7b0e0 dbg:prog3.c:92
+
+Selecting: 0x2c7b0e0: i64 = X86ISD::CMP 0x2c7ade0, 0x2c7aee0, 0x2c7a6e0 [ID=20] dbg:prog3.c:92
+
+ISEL: Starting pattern match on root node: 0x2c7b0e0: i64 = X86ISD::CMP 0x2c7ade0, 0x2c7aee0, 0x2c7a6e0 [ID=20] dbg:prog3.c:92
+
+  Initial Opcode index to 15658
+  Match failed at index 15663
+  Continuing at 16336
+  Skipped scope entry (due to false predicate) at index 16341, continuing at 16376
+  Skipped scope entry (due to false predicate) at index 16377, continuing at 16412
+  Skipped scope entry (due to false predicate) at index 16413, continuing at 16448
+  Match failed at index 16453
+  Continuing at 16482
+  Continuing at 16483
+  Match failed at index 16486
+  Continuing at 16589
+  Skipped scope entry (due to false predicate) at index 16593, continuing at 16651
+  Skipped scope entry (due to false predicate) at index 16652, continuing at 16710
+  Match failed at index 16591
+  Continuing at 16711
+  Match failed at index 16715
+  Continuing at 16903
+  Skipped scope entry (due to false predicate) at index 16908, continuing at 16965
+  Skipped scope entry (due to false predicate) at index 16966, continuing at 17043
+  Skipped scope entry (due to false predicate) at index 17044, continuing at 17121
+  Match failed at index 17128
+  Continuing at 17140
+  Morphed node: 0x2c7b0e0: i32 = CMP64ri8 0x2c7ade0, 0x2c7a5e0 dbg:prog3.c:92
+
+ISEL: Match complete!
+=> 0x2c7b0e0: i32 = CMP64ri8 0x2c7ade0, 0x2c7a5e0 dbg:prog3.c:92
+
+Selecting: 0x2c7ade0: i64 = add 0x2c7abe0, 0x2c7ace0 [ORD=5] [ID=19] dbg:prog3.c:91
+
+ISEL: Starting pattern match on root node: 0x2c7ade0: i64 = add 0x2c7abe0, 0x2c7ace0 [ORD=5] [ID=19] dbg:prog3.c:91
+
+  Initial Opcode index to 67013
+  Match failed at index 67018
+  Continuing at 67125
+  OpcodeSwitch from 67129 to 67133
+  Match failed at index 67135
+  Continuing at 67324
+  Match failed at index 67328
+  Continuing at 67409
+  TypeSwitch[i64] from 67411 to 67454
+MatchAddress: X86ISelAddressMode 0x7ffff3dbec10
+Base_Reg nul Base.FrameIndex 0
+ Scale1
+IndexReg nul Disp 0
+GV nul CP nul
+ES nul JT-1 Align0
+MatchAddress: X86ISelAddressMode 0x7ffff3dbec10
+Base_Reg nul Base.FrameIndex 0
+ Scale1
+IndexReg nul Disp 0
+GV nul CP nul
+ES nul JT-1 Align0
+MatchAddress: X86ISelAddressMode 0x7ffff3dbec10
+Base_Reg 0x2c7abe0: i64,ch = load 0x2c4fad8, 0x2c7b2e0, 0x2c7aae0<LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long")> [ID=18]
+ Base.FrameIndex 0
+ Scale1
+IndexReg nul Disp 0
+GV nul CP nul
+ES nul JT-1 Align0
+  Match failed at index 67454
+  Continuing at 67470
+  Match failed at index 67474
+  Continuing at 67596
+  Match failed at index 67600
+  Continuing at 67728
+  TypeSwitch[i64] from 67741 to 67800
+  Morphed node: 0x2c7ade0: i64,i32 = INC64r 0x2c7abe0 [ORD=5] dbg:prog3.c:91
+
+ISEL: Match complete!
+=> 0x2c7ade0: i64,i32 = INC64r 0x2c7abe0 [ORD=5] dbg:prog3.c:91
+
+Selecting: 0x2c7abe0: i64,ch = load 0x2c4fad8, 0x2c7b2e0, 0x2c7aae0<LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long")> [ORD=4] [ID=18] dbg:prog3.c:91
+
+ISEL: Starting pattern match on root node: 0x2c7abe0: i64,ch = load 0x2c4fad8, 0x2c7b2e0, 0x2c7aae0<LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long")> [ORD=4] [ID=18] dbg:prog3.c:91
+
+  Initial Opcode index to 72777
+  Match failed at index 72789
+  Continuing at 72809
+  Match failed at index 72812
+  Continuing at 72832
+  Match failed at index 72835
+  Continuing at 72855
+MatchAddress: X86ISelAddressMode 0x7ffff3dbec10
+Base_Reg nul Base.FrameIndex 0
+ Scale1
+IndexReg nul Disp 0
+GV nul CP nul
+ES nul JT-1 Align0
+  Morphed node: 0x2c7abe0: i64,ch = MOV64rm 0x2c7de00, 0x2c7dc00, 0x2c7db00, 0x2c7ace0, 0x2c7a8e0, 0x2c4fad8<Mem:LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long")> [ORD=4] dbg:prog3.c:91
+
+ISEL: Match complete!
+=> 0x2c7abe0: i64,ch = MOV64rm 0x2c7de00, 0x2c7dc00, 0x2c7db00, 0x2c7ace0, 0x2c7a8e0, 0x2c4fad8<Mem:LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long")> [ORD=4] dbg:prog3.c:91
+
+Selecting: 0x2c7ec40: i64 = Register %RAX [ORD=12] [ID=11]
+
+=> 0x2c7ec40: i64 = Register %RAX [ORD=12]
+
+Selecting: 0x2c7e600: Untyped = RegisterMask [ORD=12] [ID=10]
+
+=> 0x2c7e600: Untyped = RegisterMask [ORD=12]
+
+Selecting: 0x2c7e500: i64 = TargetGlobalAddress<i64 (i64)* @putchar> 0 [ORD=12] [ID=9] dbg:prog3.c:96
+
+=> 0x2c7e500: i64 = TargetGlobalAddress<i64 (i64)* @putchar> 0 [ORD=12] dbg:prog3.c:96
+
+Selecting: 0x2c7e300: i64 = Register %RDI [ORD=12] [ID=8]
+
+=> 0x2c7e300: i64 = Register %RDI [ORD=12]
+
+Selecting: 0x2c7e100: i64 = TargetConstant<0> [ORD=12] [ID=7]
+
+=> 0x2c7e100: i64 = TargetConstant<0> [ORD=12]
+
+Selecting: 0x2c7b1e0: i64 = Constant<-99> [ORD=8] [ID=5]
+
+ISEL: Starting pattern match on root node: 0x2c7b1e0: i64 = Constant<-99> [ORD=8] [ID=5]
+
+  Initial Opcode index to 83167
+  Skipped scope entry (due to false predicate) at index 83169, continuing at 83219
+  TypeSwitch[i64] from 83221 to 83224
+  Skipped scope entry (due to false predicate) at index 83226, continuing at 83238
+  Morphed node: 0x2c7b1e0: i64 = MOV64ri32 0x2c7f040 [ORD=8]
+
+ISEL: Match complete!
+=> 0x2c7b1e0: i64 = MOV64ri32 0x2c7f040 [ORD=8]
+
+Selecting: 0x2c7a9e0: i64 = Constant<0> [ID=1]
+
+ISEL: Starting pattern match on root node: 0x2c7a9e0: i64 = Constant<0> [ID=1]
+
+  Initial Opcode index to 83167
+  TypeSwitch[i64] from 83171 to 83174
+  Morphed node: 0x2c7a9e0: i64,i32 = MOV64r0
+
+ISEL: Match complete!
+=> 0x2c7a9e0: i64,i32 = MOV64r0
+
+Selecting: 0x2c4fad8: ch = EntryToken [ORD=4] [ID=0]
+
+=> 0x2c4fad8: ch = EntryToken [ORD=4]
+
+===== Instruction selection ends:
+Selected selection DAG: BB#0 '_main:entry'
+SelectionDAG has 33 nodes:
+  0x2c4fad8: ch = EntryToken [ORD=4]
+
+  0x2c7e100: i64 = TargetConstant<0> [ORD=12]
+
+  0x2c7e300: i64 = Register %RDI [ORD=12]
+
+  0x2c7ec40: i64 = Register %RAX [ORD=12]
+
+    0x2c7de00: <multiple use>
+    0x2c7dc00: <multiple use>
+    0x2c7db00: <multiple use>
+    0x2c7ace0: i32 = TargetGlobalAddress<[100 x i64]* @powers> 0
+
+    0x2c7a8e0: <multiple use>
+    0x2c4fad8: <multiple use>
+  0x2c7abe0: i64,ch = MOV64rm 0x2c7de00, 0x2c7dc00, 0x2c7db00, 0x2c7ace0, 0x2c7a8e0, 0x2c4fad8<Mem:LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long")> [ORD=4] dbg:prog3.c:91
+
+    0x2c7abe0: <multiple use>
+  0x2c7ade0: i64,i32 = INC64r 0x2c7abe0 [ORD=5] dbg:prog3.c:91
+
+    0x2c7ade0: <multiple use>
+    0x2c7a5e0: i64 = TargetConstant<100>
+
+  0x2c7b0e0: i32 = CMP64ri8 0x2c7ade0, 0x2c7a5e0 dbg:prog3.c:92
+
+    0x2c7ade0: <multiple use>
+      0x2c7f040: i64 = TargetConstant<-99>
+
+    0x2c7b1e0: i64 = MOV64ri32 0x2c7f040 [ORD=8]
+
+      0x2c4fad8: <multiple use>
+      0x2c7afe0: i64 = Register %EFLAGS
+
+        0x2c7b0e0: <multiple use>
+        0x2c7b0e0: <multiple use>
+      0x2c7a7e0: i32 = TEST64rr 0x2c7b0e0, 0x2c7b0e0 dbg:prog3.c:92
+
+    0x2c7a4e0: ch,glue = CopyToReg 0x2c4fad8, 0x2c7afe0, 0x2c7a7e0 dbg:prog3.c:92
+
+  0x2c7da00: i64 = CMOVNE64rr 0x2c7ade0, 0x2c7b1e0, 0x2c7a4e0:1 dbg:prog3.c:92
+
+      0x2c7e100: <multiple use>
+        0x2c7de00: <multiple use>
+        0x2c7dc00: <multiple use>
+        0x2c7db00: <multiple use>
+        0x2c7f140: i32 = TargetGlobalAddress<[100 x i64]* @pi> + 8
+
+        0x2c7a8e0: <multiple use>
+        0x2c7da00: <multiple use>
+        0x2c7abe0: <multiple use>
+      0x2c7dd00: ch = MOV64mr 0x2c7de00, 0x2c7dc00, 0x2c7db00, 0x2c7f140, 0x2c7a8e0, 0x2c7da00, 0x2c7abe0:1<Mem:ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long")> [ORD=10] dbg:prog3.c:94
+
+    0x2c7e200: i64,ch,glue = ADJCALLSTACKDOWN64 0x2c7e100, 0x2c7dd00 [ORD=12]
+
+    0x2c7e300: <multiple use>
+      0x2c7da00: <multiple use>
+      0x2c7e000: i64 = TargetConstant<48>
+
+    0x2c7df00: i64,i32 = ADD64ri8 0x2c7da00, 0x2c7e000 [ORD=11] dbg:prog3.c:96
+
+  0x2c7e400: ch,glue = CopyToReg 0x2c7e200:1, 0x2c7e300, 0x2c7df00 [ORD=12] dbg:prog3.c:96
+
+    0x2c7e500: i64 = TargetGlobalAddress<i64 (i64)* @putchar> 0 [ORD=12] dbg:prog3.c:96
+
+    0x2c7e300: <multiple use>
+    0x2c7e600: Untyped = RegisterMask [ORD=12]
+
+    0x2c7e400: <multiple use>
+    0x2c7e400: <multiple use>
+  0x2c7e700: ch,glue = CALL64pcrel32 0x2c7e500, 0x2c7e300, 0x2c7e600, 0x2c7e400, 0x2c7e400:1 [ORD=12] dbg:prog3.c:96
+
+    0x2c7e100: <multiple use>
+    0x2c7e100: <multiple use>
+    0x2c7e700: <multiple use>
+    0x2c7e700: <multiple use>
+  0x2c7e800: i64,ch,glue = ADJCALLSTACKUP64 0x2c7e100, 0x2c7e100, 0x2c7e700, 0x2c7e700:1 [ORD=12]
+
+      0x2c7e800: <multiple use>
+      0x2c7ec40: <multiple use>
+      0x2c7e800: <multiple use>
+    0x2c7ed40: i64,ch,glue = CopyFromReg 0x2c7e800:1, 0x2c7ec40, 0x2c7e800:2 [ORD=12] dbg:prog3.c:96
+
+    0x2c7ec40: <multiple use>
+    0x2c7a9e0: i64,i32 = MOV64r0
+
+  0x2c7ee40: ch,glue = CopyToReg 0x2c7ed40:1, 0x2c7ec40, 0x2c7a9e0 dbg:prog3.c:97
+
+  0x2c7a8e0: i32 = Register %noreg
+
+  0x2c7db00: i64 = Register %noreg
+
+  0x2c7de00: i64 = Register %RIP
+
+  0x2c7dc00: i64 = TargetConstant<1>
+
+    0x2c7ee40: <multiple use>
+    0x2c7ee40: <multiple use>
+  0x2c7ef40: ch = RET 0x2c7ee40, 0x2c7ee40:1 dbg:prog3.c:97
+
+
+********** List Scheduling BB#0 'entry' **********
+SU(0): 0x2c7ef40: ch = RET 0x2c7ee40, 0x2c7ee40:1 [ID=0] dbg:prog3.c:97
+
+    0x2c7ee40: ch,glue = CopyToReg 0x2c7ed40:1, 0x2c7ec40, 0x2c7a9e0 [ID=0] dbg:prog3.c:97
+
+  # preds left       : 2
+  # succs left       : 0
+  # rdefs left       : 0
+  Latency            : 1
+  Depth              : 0
+  Height             : 0
+  Predecessors:
+   ch  SU(2): Latency=1
+   val SU(1): Latency=1
+
+SU(1): 0x2c7a9e0: i64,i32 = MOV64r0 [ID=1]
+
+  # preds left       : 0
+  # succs left       : 1
+  # rdefs left       : 1
+  Latency            : 1
+  Depth              : 0
+  Height             : 0
+  Successors:
+   val SU(0): Latency=1
+
+SU(2): 0x2c7ed40: i64,ch,glue = CopyFromReg 0x2c7e800:1, 0x2c7ec40, 0x2c7e800:2 [ORD=12] [ID=2] dbg:prog3.c:96
+
+    0x2c7e400: ch,glue = CopyToReg 0x2c7e200:1, 0x2c7e300, 0x2c7df00 [ORD=12] [ID=2] dbg:prog3.c:96
+
+    0x2c7e700: ch,glue = CALL64pcrel32 0x2c7e500, 0x2c7e300, 0x2c7e600, 0x2c7e400, 0x2c7e400:1 [ORD=12] [ID=2] dbg:prog3.c:96
+
+    0x2c7e800: i64,ch,glue = ADJCALLSTACKUP64 0x2c7e100, 0x2c7e100, 0x2c7e700, 0x2c7e700:1 [ORD=12] [ID=2]
+
+  # preds left       : 2
+  # succs left       : 1
+  # rdefs left       : 0
+  Latency            : 1
+  Depth              : 0
+  Height             : 0
+  Predecessors:
+   ch  SU(10): Latency=1
+   val SU(3): Latency=1
+  Successors:
+   ch  SU(0): Latency=1
+
+SU(3): 0x2c7df00: i64,i32 = ADD64ri8 0x2c7da00, 0x2c7e000 [ORD=11] [ID=3] dbg:prog3.c:96
+
+  # preds left       : 1
+  # succs left       : 1
+  # rdefs left       : 1
+  Latency            : 1
+  Depth              : 0
+  Height             : 0
+  Predecessors:
+   val SU(4): Latency=1
+  Successors:
+   val SU(2): Latency=1
+
+SU(4): 0x2c7da00: i64 = CMOVNE64rr 0x2c7ade0, 0x2c7b1e0, 0x2c7a4e0:1 [ID=4] dbg:prog3.c:92
+
+    0x2c7a4e0: ch,glue = CopyToReg 0x2c4fad8, 0x2c7afe0, 0x2c7a7e0 [ID=4] dbg:prog3.c:92
+
+  # preds left       : 3
+  # succs left       : 2
+  # rdefs left       : 1
+  Latency            : 1
+  Depth              : 0
+  Height             : 0
+  Predecessors:
+   val SU(8): Latency=1
+   val SU(7): Latency=1
+   val SU(5): Latency=1 Reg=%EFLAGS
+  Successors:
+   val SU(3): Latency=1
+   val SU(11): Latency=1
+
+SU(5): 0x2c7a7e0: i32 = TEST64rr 0x2c7b0e0, 0x2c7b0e0 [ID=5] dbg:prog3.c:92
+
+  # preds left       : 1
+  # succs left       : 1
+  # rdefs left       : 0
+  Latency            : 1
+  Depth              : 0
+  Height             : 0
+  Predecessors:
+   val SU(6): Latency=1
+  Successors:
+   val SU(4): Latency=1
+
+SU(6): 0x2c7b0e0: i32 = CMP64ri8 0x2c7ade0, 0x2c7a5e0 [ID=6] dbg:prog3.c:92
+
+  # preds left       : 1
+  # succs left       : 1
+  # rdefs left       : 0
+  Latency            : 1
+  Depth              : 0
+  Height             : 0
+  Predecessors:
+   val SU(8): Latency=1
+  Successors:
+   val SU(5): Latency=1
+
+SU(7): 0x2c7b1e0: i64 = MOV64ri32 0x2c7f040 [ORD=8] [ID=7]
+
+  # preds left       : 0
+  # succs left       : 1
+  # rdefs left       : 1
+  Latency            : 1
+  Depth              : 0
+  Height             : 0
+  Successors:
+   val SU(4): Latency=1
+
+SU(8): 0x2c7ade0: i64,i32 = INC64r 0x2c7abe0 [ORD=5] [ID=8] dbg:prog3.c:91
+
+  # preds left       : 1
+  # succs left       : 2
+  # rdefs left       : 1
+  Latency            : 1
+  Depth              : 0
+  Height             : 0
+  Predecessors:
+   val SU(9): Latency=1
+  Successors:
+   val SU(4): Latency=1
+   val SU(6): Latency=1
+
+SU(9): 0x2c7abe0: i64,ch = MOV64rm 0x2c7de00, 0x2c7dc00, 0x2c7db00, 0x2c7ace0, 0x2c7a8e0, 0x2c4fad8<Mem:LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long")> [ORD=4] [ID=9] dbg:prog3.c:91
+
+  # preds left       : 0
+  # succs left       : 2
+  # rdefs left       : 1
+  Latency            : 1
+  Depth              : 0
+  Height             : 0
+  Successors:
+   val SU(8): Latency=1
+   ch  SU(11): Latency=1
+
+SU(10): 0x2c7e200: i64,ch,glue = ADJCALLSTACKDOWN64 0x2c7e100, 0x2c7dd00 [ORD=12] [ID=10]
+
+  # preds left       : 1
+  # succs left       : 1
+  # rdefs left       : 0
+  Latency            : 1
+  Depth              : 0
+  Height             : 0
+  Predecessors:
+   ch  SU(11): Latency=1
+  Successors:
+   ch  SU(2): Latency=1
+
+SU(11): 0x2c7dd00: ch = MOV64mr 0x2c7de00, 0x2c7dc00, 0x2c7db00, 0x2c7f140, 0x2c7a8e0, 0x2c7da00, 0x2c7abe0:1<Mem:ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long")> [ORD=10] [ID=11] dbg:prog3.c:94
+
+  # preds left       : 2
+  # succs left       : 1
+  # rdefs left       : 0
+  Latency            : 1
+  Depth              : 0
+  Height             : 0
+  Predecessors:
+   val SU(4): Latency=1
+   ch  SU(9): Latency=1
+  Successors:
+   ch  SU(10): Latency=1
+
+
+Examining Available:
+Height 0: SU(0): 0x2c7ef40: ch = RET 0x2c7ee40, 0x2c7ee40:1 [ID=0] dbg:prog3.c:97
+
+    0x2c7ee40: ch,glue = CopyToReg 0x2c7ed40:1, 0x2c7ec40, 0x2c7a9e0 [ID=0] dbg:prog3.c:97
+
+
+*** Scheduling [0]: SU(0): 0x2c7ef40: ch = RET 0x2c7ee40, 0x2c7ee40:1 [ID=0] dbg:prog3.c:97
+
+    0x2c7ee40: ch,glue = CopyToReg 0x2c7ed40:1, 0x2c7ec40, 0x2c7a9e0 [ID=0] dbg:prog3.c:97
+
+GR64: 1 / 12
+
+Examining Available:
+Height 1: SU(1): 0x2c7a9e0: i64,i32 = MOV64r0 [ID=1]
+
+Height 1: SU(2): 0x2c7ed40: i64,ch,glue = CopyFromReg 0x2c7e800:1, 0x2c7ec40, 0x2c7e800:2 [ORD=12] [ID=2] dbg:prog3.c:96
+
+    0x2c7e400: ch,glue = CopyToReg 0x2c7e200:1, 0x2c7e300, 0x2c7df00 [ORD=12] [ID=2] dbg:prog3.c:96
+
+    0x2c7e700: ch,glue = CALL64pcrel32 0x2c7e500, 0x2c7e300, 0x2c7e600, 0x2c7e400, 0x2c7e400:1 [ORD=12] [ID=2] dbg:prog3.c:96
+
+    0x2c7e800: i64,ch,glue = ADJCALLSTACKUP64 0x2c7e100, 0x2c7e100, 0x2c7e700, 0x2c7e700:1 [ORD=12] [ID=2]
+
+
+*** Scheduling [1]: SU(1): 0x2c7a9e0: i64,i32 = MOV64r0 [ID=1]
+
+
+Examining Available:
+Height 1: SU(2): 0x2c7ed40: i64,ch,glue = CopyFromReg 0x2c7e800:1, 0x2c7ec40, 0x2c7e800:2 [ORD=12] [ID=2] dbg:prog3.c:96
+
+    0x2c7e400: ch,glue = CopyToReg 0x2c7e200:1, 0x2c7e300, 0x2c7df00 [ORD=12] [ID=2] dbg:prog3.c:96
+
+    0x2c7e700: ch,glue = CALL64pcrel32 0x2c7e500, 0x2c7e300, 0x2c7e600, 0x2c7e400, 0x2c7e400:1 [ORD=12] [ID=2] dbg:prog3.c:96
+
+    0x2c7e800: i64,ch,glue = ADJCALLSTACKUP64 0x2c7e100, 0x2c7e100, 0x2c7e700, 0x2c7e700:1 [ORD=12] [ID=2]
+
+
+*** Scheduling [2]: SU(2): 0x2c7ed40: i64,ch,glue = CopyFromReg 0x2c7e800:1, 0x2c7ec40, 0x2c7e800:2 [ORD=12] [ID=2] dbg:prog3.c:96
+
+    0x2c7e400: ch,glue = CopyToReg 0x2c7e200:1, 0x2c7e300, 0x2c7df00 [ORD=12] [ID=2] dbg:prog3.c:96
+
+    0x2c7e700: ch,glue = CALL64pcrel32 0x2c7e500, 0x2c7e300, 0x2c7e600, 0x2c7e400, 0x2c7e400:1 [ORD=12] [ID=2] dbg:prog3.c:96
+
+    0x2c7e800: i64,ch,glue = ADJCALLSTACKUP64 0x2c7e100, 0x2c7e100, 0x2c7e700, 0x2c7e700:1 [ORD=12] [ID=2]
+
+GR64: 1 / 12
+
+Examining Available:
+Height 3: SU(10): 0x2c7e200: i64,ch,glue = ADJCALLSTACKDOWN64 0x2c7e100, 0x2c7dd00 [ORD=12] [ID=10]
+
+Height 3: SU(3): 0x2c7df00: i64,i32 = ADD64ri8 0x2c7da00, 0x2c7e000 [ORD=11] [ID=3] dbg:prog3.c:96
+
+
+*** Scheduling [3]: SU(10): 0x2c7e200: i64,ch,glue = ADJCALLSTACKDOWN64 0x2c7e100, 0x2c7dd00 [ORD=12] [ID=10]
+
+GR64: 1 / 12
+
+Examining Available:
+Height 3: SU(3): 0x2c7df00: i64,i32 = ADD64ri8 0x2c7da00, 0x2c7e000 [ORD=11] [ID=3] dbg:prog3.c:96
+
+Height 4: SU(11): 0x2c7dd00: ch = MOV64mr 0x2c7de00, 0x2c7dc00, 0x2c7db00, 0x2c7f140, 0x2c7a8e0, 0x2c7da00, 0x2c7abe0:1<Mem:ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long")> [ORD=10] [ID=11] dbg:prog3.c:94
+
+
+*** Scheduling [4]: SU(3): 0x2c7df00: i64,i32 = ADD64ri8 0x2c7da00, 0x2c7e000 [ORD=11] [ID=3] dbg:prog3.c:96
+
+GR64: 1 / 12
+
+Examining Available:
+Height 4: SU(11): 0x2c7dd00: ch = MOV64mr 0x2c7de00, 0x2c7dc00, 0x2c7db00, 0x2c7f140, 0x2c7a8e0, 0x2c7da00, 0x2c7abe0:1<Mem:ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long")> [ORD=10] [ID=11] dbg:prog3.c:94
+
+
+*** Scheduling [5]: SU(11): 0x2c7dd00: ch = MOV64mr 0x2c7de00, 0x2c7dc00, 0x2c7db00, 0x2c7f140, 0x2c7a8e0, 0x2c7da00, 0x2c7abe0:1<Mem:ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long")> [ORD=10] [ID=11] dbg:prog3.c:94
+
+GR64: 1 / 12
+
+Examining Available:
+Height 6: SU(4): 0x2c7da00: i64 = CMOVNE64rr 0x2c7ade0, 0x2c7b1e0, 0x2c7a4e0:1 [ID=4] dbg:prog3.c:92
+
+    0x2c7a4e0: ch,glue = CopyToReg 0x2c4fad8, 0x2c7afe0, 0x2c7a7e0 [ID=4] dbg:prog3.c:92
+
+
+*** Scheduling [6]: SU(4): 0x2c7da00: i64 = CMOVNE64rr 0x2c7ade0, 0x2c7b1e0, 0x2c7a4e0:1 [ID=4] dbg:prog3.c:92
+
+    0x2c7a4e0: ch,glue = CopyToReg 0x2c4fad8, 0x2c7afe0, 0x2c7a7e0 [ID=4] dbg:prog3.c:92
+
+GR64: 2 / 12
+
+Examining Available:
+  SU (7)  has no physreg SU(5)  defines a physreg
+Height 7: SU(5): 0x2c7a7e0: i32 = TEST64rr 0x2c7b0e0, 0x2c7b0e0 [ID=5] dbg:prog3.c:92
+
+Height 7: SU(7): 0x2c7b1e0: i64 = MOV64ri32 0x2c7f040 [ORD=8] [ID=7]
+
+  SU (7)  has no physreg SU(5)  defines a physreg
+
+*** Scheduling [7]: SU(5): 0x2c7a7e0: i32 = TEST64rr 0x2c7b0e0, 0x2c7b0e0 [ID=5] dbg:prog3.c:92
+
+GR64: 2 / 12
+
+Examining Available:
+  SU (7)  has no physreg SU(6)  defines a physreg
+Height 8: SU(6): 0x2c7b0e0: i32 = CMP64ri8 0x2c7ade0, 0x2c7a5e0 [ID=6] dbg:prog3.c:92
+
+Height 7: SU(7): 0x2c7b1e0: i64 = MOV64ri32 0x2c7f040 [ORD=8] [ID=7]
+
+  SU (7)  has no physreg SU(6)  defines a physreg
+
+*** Scheduling [8]: SU(6): 0x2c7b0e0: i32 = CMP64ri8 0x2c7ade0, 0x2c7a5e0 [ID=6] dbg:prog3.c:92
+
+GR64: 2 / 12
+
+Examining Available:
+Height 7: SU(7): 0x2c7b1e0: i64 = MOV64ri32 0x2c7f040 [ORD=8] [ID=7]
+
+Height 9: SU(8): 0x2c7ade0: i64,i32 = INC64r 0x2c7abe0 [ORD=5] [ID=8] dbg:prog3.c:91
+
+
+*** Scheduling [9]: SU(7): 0x2c7b1e0: i64 = MOV64ri32 0x2c7f040 [ORD=8] [ID=7]
+
+GR64: 1 / 12
+
+Examining Available:
+Height 9: SU(8): 0x2c7ade0: i64,i32 = INC64r 0x2c7abe0 [ORD=5] [ID=8] dbg:prog3.c:91
+
+
+*** Scheduling [10]: SU(8): 0x2c7ade0: i64,i32 = INC64r 0x2c7abe0 [ORD=5] [ID=8] dbg:prog3.c:91
+
+GR64: 1 / 12
+
+Examining Available:
+Height 11: SU(9): 0x2c7abe0: i64,ch = MOV64rm 0x2c7de00, 0x2c7dc00, 0x2c7db00, 0x2c7ace0, 0x2c7a8e0, 0x2c4fad8<Mem:LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long")> [ORD=4] [ID=9] dbg:prog3.c:91
+
+
+*** Scheduling [11]: SU(9): 0x2c7abe0: i64,ch = MOV64rm 0x2c7de00, 0x2c7dc00, 0x2c7db00, 0x2c7ace0, 0x2c7a8e0, 0x2c4fad8<Mem:LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long")> [ORD=4] [ID=9] dbg:prog3.c:91
+
+*** Final schedule ***
+SU(9): 0x2c7abe0: i64,ch = MOV64rm 0x2c7de00, 0x2c7dc00, 0x2c7db00, 0x2c7ace0, 0x2c7a8e0, 0x2c4fad8<Mem:LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long")> [ORD=4] [ID=9] dbg:prog3.c:91
+
+SU(8): 0x2c7ade0: i64,i32 = INC64r 0x2c7abe0 [ORD=5] [ID=8] dbg:prog3.c:91
+
+SU(7): 0x2c7b1e0: i64 = MOV64ri32 0x2c7f040 [ORD=8] [ID=7]
+
+SU(6): 0x2c7b0e0: i32 = CMP64ri8 0x2c7ade0, 0x2c7a5e0 [ID=6] dbg:prog3.c:92
+
+SU(5): 0x2c7a7e0: i32 = TEST64rr 0x2c7b0e0, 0x2c7b0e0 [ID=5] dbg:prog3.c:92
+
+SU(4): 0x2c7da00: i64 = CMOVNE64rr 0x2c7ade0, 0x2c7b1e0, 0x2c7a4e0:1 [ID=4] dbg:prog3.c:92
+
+    0x2c7a4e0: ch,glue = CopyToReg 0x2c4fad8, 0x2c7afe0, 0x2c7a7e0 [ID=4] dbg:prog3.c:92
+
+SU(11): 0x2c7dd00: ch = MOV64mr 0x2c7de00, 0x2c7dc00, 0x2c7db00, 0x2c7f140, 0x2c7a8e0, 0x2c7da00, 0x2c7abe0:1<Mem:ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long")> [ORD=10] [ID=11] dbg:prog3.c:94
+
+SU(3): 0x2c7df00: i64,i32 = ADD64ri8 0x2c7da00, 0x2c7e000 [ORD=11] [ID=3] dbg:prog3.c:96
+
+SU(10): 0x2c7e200: i64,ch,glue = ADJCALLSTACKDOWN64 0x2c7e100, 0x2c7dd00 [ORD=12] [ID=10]
+
+SU(2): 0x2c7ed40: i64,ch,glue = CopyFromReg 0x2c7e800:1, 0x2c7ec40, 0x2c7e800:2 [ORD=12] [ID=2] dbg:prog3.c:96
+
+    0x2c7e400: ch,glue = CopyToReg 0x2c7e200:1, 0x2c7e300, 0x2c7df00 [ORD=12] [ID=2] dbg:prog3.c:96
+
+    0x2c7e700: ch,glue = CALL64pcrel32 0x2c7e500, 0x2c7e300, 0x2c7e600, 0x2c7e400, 0x2c7e400:1 [ORD=12] [ID=2] dbg:prog3.c:96
+
+    0x2c7e800: i64,ch,glue = ADJCALLSTACKUP64 0x2c7e100, 0x2c7e100, 0x2c7e700, 0x2c7e700:1 [ORD=12] [ID=2]
+
+SU(1): 0x2c7a9e0: i64,i32 = MOV64r0 [ID=1]
+
+SU(0): 0x2c7ef40: ch = RET 0x2c7ee40, 0x2c7ee40:1 [ID=0] dbg:prog3.c:97
+
+    0x2c7ee40: ch,glue = CopyToReg 0x2c7ed40:1, 0x2c7ec40, 0x2c7a9e0 [ID=0] dbg:prog3.c:97
+
+
+TADA
+Total amount of phi nodes to update: 0
+# Machine code for function _main: SSA
+Function Live Outs: %RAX
+
+0B	BB#0: derived from LLVM BB %entry
+		DBG_VALUE %RDI, 0, !"argc"; line no:87
+		DBG_VALUE %RSI, 0, !"argv"; line no:87
+16B		%vreg2<def> = MOV64rm %RIP, 1, %noreg, <ga:@powers>, %noreg; mem:LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long") GR64:%vreg2 dbg:prog3.c:91
+32B		%vreg3<def,tied1> = INC64r %vreg2<tied0>, %EFLAGS<imp-def,dead>; GR64:%vreg3,%vreg2 dbg:prog3.c:91
+		DBG_VALUE %vreg3, 0, !"sum"; GR64:%vreg3 line no:89
+48B		%vreg4<def> = MOV64ri32 -99; GR64:%vreg4
+64B		CMP64ri8 %vreg3, 100, %EFLAGS<imp-def>; GR64:%vreg3 dbg:prog3.c:92
+80B		%vreg5<def> = COPY %EFLAGS; GR64:%vreg5 dbg:prog3.c:92
+96B		TEST64rr %vreg5, %vreg5, %EFLAGS<imp-def>; GR64:%vreg5 dbg:prog3.c:92
+112B		%vreg6<def,tied1> = CMOVNE64rr %vreg3<tied0>, %vreg4<kill>, %EFLAGS<imp-use>; GR64:%vreg6,%vreg3,%vreg4 dbg:prog3.c:92
+128B		MOV64mr %RIP, 1, %noreg, <ga:@pi+8>, %noreg, %vreg6; mem:ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long") GR64:%vreg6 dbg:prog3.c:94
+144B		%vreg7<def,tied1> = ADD64ri8 %vreg6<tied0>, 48, %EFLAGS<imp-def,dead>; GR64:%vreg7,%vreg6 dbg:prog3.c:96
+160B		ADJCALLSTACKDOWN64 0, %RSP<imp-def,dead>, %EFLAGS<imp-def,dead>, %RSP<imp-use>
+176B		%RDI<def> = COPY %vreg7; GR64:%vreg7 dbg:prog3.c:96
+192B		CALL64pcrel32 <ga:@putchar>, <regmask>, %RSP<imp-use>, %RDI<imp-use>, %RSP<imp-def>, %RAX<imp-def>; dbg:prog3.c:96
+208B		ADJCALLSTACKUP64 0, 0, %RSP<imp-def,dead>, %EFLAGS<imp-def,dead>, %RSP<imp-use>
+224B		%vreg8<def> = COPY %RAX; GR64:%vreg8 dbg:prog3.c:96
+240B		%vreg9<def> = MOV64r0 %EFLAGS<imp-def,dead>; GR64:%vreg9
+256B		%RAX<def> = COPY %vreg9; GR64:%vreg9 dbg:prog3.c:97
+272B		RET; dbg:prog3.c:97
+
+# End machine code for function _main.
+
+********** Stack Coloring **********
+********** Function: _main
+DeadMachineInstructionElim: DELETING: %vreg8<def> = COPY %RAX; GR64:%vreg8 dbg:prog3.c:96
+******** Pre-regalloc Machine LICM: _main ********
+Entering: entry
+Exiting: entry
+******** Machine Sinking ********
+********** PEEPHOLE OPTIMIZER **********
+********** Function: _main
+********** PROCESS IMPLICIT DEFS **********
+********** Function: _main
+********** REWRITING TWO-ADDR INSTRS **********
+********** Function: _main
+	%vreg3<def,tied1> = INC64r %vreg2<kill,tied0>, %EFLAGS<imp-def,dead>; GR64:%vreg3,%vreg2 dbg:prog3.c:91
+		prepend:	%vreg3<def> = COPY %vreg2; GR64:%vreg3,%vreg2 dbg:prog3.c:91
+		rewrite to:	%vreg3<def,tied1> = INC64r %vreg3<tied0>, %EFLAGS<imp-def,dead>; GR64:%vreg3 dbg:prog3.c:91
+	%vreg6<def,tied1> = CMOVNE64rr %vreg3<kill,tied0>, %vreg4<kill>, %EFLAGS<imp-use,kill>; GR64:%vreg6,%vreg3,%vreg4 dbg:prog3.c:92
+2addr: COMMUTING  : %vreg6<def,tied1> = CMOVNE64rr %vreg3<kill,tied0>, %vreg4<kill>, %EFLAGS<imp-use,kill>; GR64:%vreg6,%vreg3,%vreg4 dbg:prog3.c:92
+2addr: COMMUTED TO: %vreg6<def,tied1> = CMOVE64rr %vreg4<kill,tied0>, %vreg3<kill>, %EFLAGS<imp-use,kill>; GR64:%vreg6,%vreg4,%vreg3 dbg:prog3.c:92
+		prepend:	%vreg6<def> = COPY %vreg4; GR64:%vreg6,%vreg4 dbg:prog3.c:92
+		rewrite to:	%vreg6<def,tied1> = CMOVE64rr %vreg6<tied0>, %vreg3<kill>, %EFLAGS<imp-use,kill>; GR64:%vreg6,%vreg3 dbg:prog3.c:92
+	%vreg7<def,tied1> = ADD64ri8 %vreg6<kill,tied0>, 48, %EFLAGS<imp-def,dead>; GR64:%vreg7,%vreg6 dbg:prog3.c:96
+		prepend:	%vreg7<def> = COPY %vreg6; GR64:%vreg7,%vreg6 dbg:prog3.c:96
+		rewrite to:	%vreg7<def,tied1> = ADD64ri8 %vreg7<tied0>, 48, %EFLAGS<imp-def,dead>; GR64:%vreg7 dbg:prog3.c:96
+# Machine code for function _main: Post SSA
+Function Live Outs: %RAX
+
+0B	BB#0: derived from LLVM BB %entry
+		DBG_VALUE %RDI, 0, !"argc"; line no:87
+		DBG_VALUE %RSI, 0, !"argv"; line no:87
+16B		%vreg2<def> = MOV64rm %RIP, 1, %noreg, <ga:@powers>, %noreg; mem:LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long") GR64:%vreg2 dbg:prog3.c:91
+32B		%vreg3<def> = COPY %vreg2<kill>; GR64:%vreg3,%vreg2 dbg:prog3.c:91
+48B		%vreg3<def,tied1> = INC64r %vreg3<tied0>, %EFLAGS<imp-def,dead>; GR64:%vreg3 dbg:prog3.c:91
+		DBG_VALUE %vreg3, 0, !"sum"; GR64:%vreg3 line no:89
+64B		%vreg4<def> = MOV64ri32 -99; GR64:%vreg4
+80B		CMP64ri8 %vreg3, 100, %EFLAGS<imp-def>; GR64:%vreg3 dbg:prog3.c:92
+96B		%vreg5<def> = COPY %EFLAGS<kill>; GR64:%vreg5 dbg:prog3.c:92
+112B		TEST64rr %vreg5<kill>, %vreg5, %EFLAGS<imp-def>; GR64:%vreg5 dbg:prog3.c:92
+128B		%vreg6<def> = COPY %vreg4<kill>; GR64:%vreg6,%vreg4 dbg:prog3.c:92
+144B		%vreg6<def,tied1> = CMOVE64rr %vreg6<tied0>, %vreg3<kill>, %EFLAGS<imp-use,kill>; GR64:%vreg6,%vreg3 dbg:prog3.c:92
+160B		MOV64mr %RIP, 1, %noreg, <ga:@pi+8>, %noreg, %vreg6; mem:ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long") GR64:%vreg6 dbg:prog3.c:94
+176B		%vreg7<def> = COPY %vreg6<kill>; GR64:%vreg7,%vreg6 dbg:prog3.c:96
+192B		%vreg7<def,tied1> = ADD64ri8 %vreg7<tied0>, 48, %EFLAGS<imp-def,dead>; GR64:%vreg7 dbg:prog3.c:96
+208B		ADJCALLSTACKDOWN64 0, %RSP<imp-def>, %EFLAGS<imp-def,dead>, %RSP<imp-use>
+224B		%RDI<def> = COPY %vreg7<kill>; GR64:%vreg7 dbg:prog3.c:96
+240B		CALL64pcrel32 <ga:@putchar>, <regmask>, %RSP<imp-use>, %RDI<imp-use,kill>, %RSP<imp-def>, %RAX<imp-def,dead>; dbg:prog3.c:96
+256B		ADJCALLSTACKUP64 0, 0, %RSP<imp-def>, %EFLAGS<imp-def,dead>, %RSP<imp-use>
+272B		%vreg9<def> = MOV64r0 %EFLAGS<imp-def,dead>; GR64:%vreg9
+288B		%RAX<def> = COPY %vreg9<kill>; GR64:%vreg9 dbg:prog3.c:97
+304B		RET %RAX<imp-use,kill>; dbg:prog3.c:97
+
+# End machine code for function _main.
+
+********** COMPUTING LIVE INTERVALS **********
+********** Function: _main
+BB#0:		# derived from entry
+16B	DBG_VALUE %RDI, 0, !"argc"; line no:87
+16B	DBG_VALUE %RSI, 0, !"argv"; line no:87
+16B	%vreg2<def> = MOV64rm %RIP, 1, %noreg, <ga:@powers>, %noreg; mem:LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long") GR64:%vreg2 dbg:prog3.c:91
+		register: %vreg2 +[16r,32r:0)
+32B	%vreg3<def> = COPY %vreg2<kill>; GR64:%vreg3,%vreg2 dbg:prog3.c:91
+		register: %vreg3 +[32r,144r:0)
+48B	%vreg3<def,tied1> = INC64r %vreg3<tied0>, %EFLAGS<imp-def,dead>; GR64:%vreg3 dbg:prog3.c:91
+		register: %vreg3 replace range with [32r,48r:1) RESULT: [32r,48r:1)[48r,144r:0)  0@48r 1@32r
+64B	DBG_VALUE %vreg3, 0, !"sum"; GR64:%vreg3 line no:89
+64B	%vreg4<def> = MOV64ri32 -99; GR64:%vreg4
+		register: %vreg4 +[64r,128r:0)
+80B	CMP64ri8 %vreg3, 100, %EFLAGS<imp-def>; GR64:%vreg3 dbg:prog3.c:92
+96B	%vreg5<def> = COPY %EFLAGS<kill>; GR64:%vreg5 dbg:prog3.c:92
+		register: %vreg5 +[96r,112r:0)
+112B	TEST64rr %vreg5<kill>, %vreg5, %EFLAGS<imp-def>; GR64:%vreg5 dbg:prog3.c:92
+128B	%vreg6<def> = COPY %vreg4<kill>; GR64:%vreg6,%vreg4 dbg:prog3.c:92
+		register: %vreg6 +[128r,176r:0)
+144B	%vreg6<def,tied1> = CMOVE64rr %vreg6<tied0>, %vreg3<kill>, %EFLAGS<imp-use,kill>; GR64:%vreg6,%vreg3 dbg:prog3.c:92
+		register: %vreg6 replace range with [128r,144r:1) RESULT: [128r,144r:1)[144r,176r:0)  0@144r 1@128r
+160B	MOV64mr %RIP, 1, %noreg, <ga:@pi+8>, %noreg, %vreg6; mem:ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long") GR64:%vreg6 dbg:prog3.c:94
+176B	%vreg7<def> = COPY %vreg6<kill>; GR64:%vreg7,%vreg6 dbg:prog3.c:96
+		register: %vreg7 +[176r,224r:0)
+192B	%vreg7<def,tied1> = ADD64ri8 %vreg7<tied0>, 48, %EFLAGS<imp-def,dead>; GR64:%vreg7 dbg:prog3.c:96
+		register: %vreg7 replace range with [176r,192r:1) RESULT: [176r,192r:1)[192r,224r:0)  0@192r 1@176r
+208B	ADJCALLSTACKDOWN64 0, %RSP<imp-def>, %EFLAGS<imp-def,dead>, %RSP<imp-use>
+224B	%RDI<def> = COPY %vreg7<kill>; GR64:%vreg7 dbg:prog3.c:96
+240B	CALL64pcrel32 <ga:@putchar>, <regmask>, %RSP<imp-use>, %RDI<imp-use,kill>, %RSP<imp-def>, %RAX<imp-def,dead>; dbg:prog3.c:96
+256B	ADJCALLSTACKUP64 0, 0, %RSP<imp-def>, %EFLAGS<imp-def,dead>, %RSP<imp-use>
+272B	%vreg9<def> = MOV64r0 %EFLAGS<imp-def,dead>; GR64:%vreg9
+		register: %vreg9 +[272r,288r:0)
+288B	%RAX<def> = COPY %vreg9<kill>; GR64:%vreg9 dbg:prog3.c:97
+304B	RET %RAX<imp-use,kill>; dbg:prog3.c:97
+Computing live-in reg-units in ABI blocks.
+Created 0 new intervals.
+********** INTERVALS **********
+%vreg2 = [16r,32r:0)  0@16r
+%vreg3 = [32r,48r:1)[48r,144r:0)  0@48r 1@32r
+%vreg4 = [64r,128r:0)  0@64r
+%vreg5 = [96r,112r:0)  0@96r
+%vreg6 = [128r,144r:1)[144r,176r:0)  0@144r 1@128r
+%vreg7 = [176r,192r:1)[192r,224r:0)  0@192r 1@176r
+%vreg9 = [272r,288r:0)  0@272r
+RegMasks: 240r
+********** MACHINEINSTRS **********
+# Machine code for function _main: Post SSA
+Function Live Outs: %RAX
+
+0B	BB#0: derived from LLVM BB %entry
+		DBG_VALUE %RDI, 0, !"argc"; line no:87
+		DBG_VALUE %RSI, 0, !"argv"; line no:87
+16B		%vreg2<def> = MOV64rm %RIP, 1, %noreg, <ga:@powers>, %noreg; mem:LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long") GR64:%vreg2 dbg:prog3.c:91
+32B		%vreg3<def> = COPY %vreg2<kill>; GR64:%vreg3,%vreg2 dbg:prog3.c:91
+48B		%vreg3<def,tied1> = INC64r %vreg3<tied0>, %EFLAGS<imp-def,dead>; GR64:%vreg3 dbg:prog3.c:91
+		DBG_VALUE %vreg3, 0, !"sum"; GR64:%vreg3 line no:89
+64B		%vreg4<def> = MOV64ri32 -99; GR64:%vreg4
+80B		CMP64ri8 %vreg3, 100, %EFLAGS<imp-def>; GR64:%vreg3 dbg:prog3.c:92
+96B		%vreg5<def> = COPY %EFLAGS<kill>; GR64:%vreg5 dbg:prog3.c:92
+112B		TEST64rr %vreg5<kill>, %vreg5, %EFLAGS<imp-def>; GR64:%vreg5 dbg:prog3.c:92
+128B		%vreg6<def> = COPY %vreg4<kill>; GR64:%vreg6,%vreg4 dbg:prog3.c:92
+144B		%vreg6<def,tied1> = CMOVE64rr %vreg6<tied0>, %vreg3<kill>, %EFLAGS<imp-use,kill>; GR64:%vreg6,%vreg3 dbg:prog3.c:92
+160B		MOV64mr %RIP, 1, %noreg, <ga:@pi+8>, %noreg, %vreg6; mem:ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long") GR64:%vreg6 dbg:prog3.c:94
+176B		%vreg7<def> = COPY %vreg6<kill>; GR64:%vreg7,%vreg6 dbg:prog3.c:96
+192B		%vreg7<def,tied1> = ADD64ri8 %vreg7<tied0>, 48, %EFLAGS<imp-def,dead>; GR64:%vreg7 dbg:prog3.c:96
+208B		ADJCALLSTACKDOWN64 0, %RSP<imp-def>, %EFLAGS<imp-def,dead>, %RSP<imp-use>
+224B		%RDI<def> = COPY %vreg7<kill>; GR64:%vreg7 dbg:prog3.c:96
+240B		CALL64pcrel32 <ga:@putchar>, <regmask>, %RSP<imp-use>, %RDI<imp-use,kill>, %RSP<imp-def>, %RAX<imp-def,dead>; dbg:prog3.c:96
+256B		ADJCALLSTACKUP64 0, 0, %RSP<imp-def>, %EFLAGS<imp-def,dead>, %RSP<imp-use>
+272B		%vreg9<def> = MOV64r0 %EFLAGS<imp-def,dead>; GR64:%vreg9
+288B		%RAX<def> = COPY %vreg9<kill>; GR64:%vreg9 dbg:prog3.c:97
+304B		RET %RAX<imp-use,kill>; dbg:prog3.c:97
+
+# End machine code for function _main.
+
+********** COMPUTING LIVE DEBUG VARIABLES: _main **********
+********** DEBUG VARIABLES **********
+!"argc,87"	 [0B;320B):0 Loc0=%RDI
+!"argv,87"	 [0B;320B):0 Loc0=%RSI
+!"sum,89"	 [48r;144r):0 Loc0=%vreg3
+********** SIMPLE REGISTER COALESCING **********
+********** Function: _main
+********** JOINING INTERVALS ***********
+entry:
+32B	%vreg3<def> = COPY %vreg2<kill>; GR64:%vreg3,%vreg2 dbg:prog3.c:91
+	Considering merging to GR64 with %vreg2 in %vreg3
+		RHS = %vreg2 [16r,32r:0)  0@16r
+		LHS = %vreg3 [32r,48r:1)[48r,144r:0)  0@48r 1@32r
+		merge %vreg3:1@32r into %vreg2:0@16r --> @16r
+		erased:	32r	%vreg3<def> = COPY %vreg2<kill>; GR64:%vreg3,%vreg2 dbg:prog3.c:91
+AllocationOrder(GR64) = [ %RAX %RCX %RDX %RSI %RDI %R8 %R9 %R10 %R11 %RBX %R14 %R15 %R12 %R13 %RBP ]
+		updated: 16B	%vreg3<def> = MOV64rm %RIP, 1, %noreg, <ga:@powers>, %noreg; mem:LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long") GR64:%vreg3 dbg:prog3.c:91
+	Joined. Result = %vreg3[16r,48r:1)[48r,144r:0)  0@48r 1@16r
+96B	%vreg5<def> = COPY %EFLAGS<kill>; GR64:%vreg5 dbg:prog3.c:92
+	Not coalescable.
+128B	%vreg6<def> = COPY %vreg4<kill>; GR64:%vreg6,%vreg4 dbg:prog3.c:92
+	Considering merging to GR64 with %vreg4 in %vreg6
+		RHS = %vreg4 [64r,128r:0)  0@64r
+		LHS = %vreg6 [128r,144r:1)[144r,176r:0)  0@144r 1@128r
+		merge %vreg6:1@128r into %vreg4:0@64r --> @64r
+		erased:	128r	%vreg6<def> = COPY %vreg4<kill>; GR64:%vreg6,%vreg4 dbg:prog3.c:92
+		updated: 64B	%vreg6<def> = MOV64ri32 -99; GR64:%vreg6
+	Joined. Result = %vreg6[64r,144r:1)[144r,176r:0)  0@144r 1@64r
+176B	%vreg7<def> = COPY %vreg6; GR64:%vreg7,%vreg6 dbg:prog3.c:96
+	Considering merging to GR64 with %vreg6 in %vreg7
+		RHS = %vreg6 [64r,144r:1)[144r,176r:0)  0@144r 1@64r
+		LHS = %vreg7 [176r,192r:1)[192r,224r:0)  0@192r 1@176r
+		merge %vreg7:1@176r into %vreg6:0@144r --> @144r
+		erased:	176r	%vreg7<def> = COPY %vreg6; GR64:%vreg7,%vreg6 dbg:prog3.c:96
+		updated: 64B	%vreg7<def> = MOV64ri32 -99; GR64:%vreg7
+		updated: 144B	%vreg7<def,tied1> = CMOVE64rr %vreg7<tied0>, %vreg3, %EFLAGS<imp-use,kill>; GR64:%vreg7,%vreg3 dbg:prog3.c:92
+		updated: 160B	MOV64mr %RIP, 1, %noreg, <ga:@pi+8>, %noreg, %vreg7; mem:ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long") GR64:%vreg7 dbg:prog3.c:94
+	Joined. Result = %vreg7[64r,144r:2)[144r,192r:1)[192r,224r:0)  0@192r 1@144r 2@64r
+224B	%RDI<def> = COPY %vreg7; GR64:%vreg7 dbg:prog3.c:96
+	Considering merging %vreg7 with %RDI
+	Can only merge into reserved registers.
+288B	%RAX<def> = COPY %vreg9<kill>; GR64:%vreg9 dbg:prog3.c:97
+	Considering merging %vreg9 with %RAX
+	Can only merge into reserved registers.
+Remat: %RAX<def> = MOV64r0 %EFLAGS<imp-def,dead>
+Shrink: [272r,288r:0)  0@272r
+All defs dead: 272r	%vreg9<def,dead> = MOV64r0 %EFLAGS<imp-def,dead>; GR64:%vreg9
+Shrunk: [272r,272d:0)  0@272r
+Deleting dead def 272r	%vreg9<def,dead> = MOV64r0 %EFLAGS<imp-def,dead>; GR64:%vreg9
+Trying to inflate 0 regs.
+********** INTERVALS **********
+DIL = [224r,240r:0)  0@224r
+SIL = EMPTY
+%vreg3 = [16r,48r:1)[48r,144r:0)  0@48r 1@16r
+%vreg5 = [96r,112r:0)  0@96r
+%vreg7 = [64r,144r:2)[144r,192r:1)[192r,224r:0)  0@192r 1@144r 2@64r
+RegMasks: 240r
+********** MACHINEINSTRS **********
+# Machine code for function _main: Post SSA
+Function Live Outs: %RAX
+
+0B	BB#0: derived from LLVM BB %entry
+16B		%vreg3<def> = MOV64rm %RIP, 1, %noreg, <ga:@powers>, %noreg; mem:LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long") GR64:%vreg3 dbg:prog3.c:91
+48B		%vreg3<def,tied1> = INC64r %vreg3<tied0>, %EFLAGS<imp-def,dead>; GR64:%vreg3 dbg:prog3.c:91
+64B		%vreg7<def> = MOV64ri32 -99; GR64:%vreg7
+80B		CMP64ri8 %vreg3, 100, %EFLAGS<imp-def>; GR64:%vreg3 dbg:prog3.c:92
+96B		%vreg5<def> = COPY %EFLAGS<kill>; GR64:%vreg5 dbg:prog3.c:92
+112B		TEST64rr %vreg5<kill>, %vreg5, %EFLAGS<imp-def>; GR64:%vreg5 dbg:prog3.c:92
+144B		%vreg7<def,tied1> = CMOVE64rr %vreg7<tied0>, %vreg3, %EFLAGS<imp-use,kill>; GR64:%vreg7,%vreg3 dbg:prog3.c:92
+160B		MOV64mr %RIP, 1, %noreg, <ga:@pi+8>, %noreg, %vreg7; mem:ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long") GR64:%vreg7 dbg:prog3.c:94
+192B		%vreg7<def,tied1> = ADD64ri8 %vreg7<tied0>, 48, %EFLAGS<imp-def,dead>; GR64:%vreg7 dbg:prog3.c:96
+208B		ADJCALLSTACKDOWN64 0, %RSP<imp-def>, %EFLAGS<imp-def,dead>, %RSP<imp-use>
+224B		%RDI<def> = COPY %vreg7; GR64:%vreg7 dbg:prog3.c:96
+240B		CALL64pcrel32 <ga:@putchar>, <regmask>, %RSP<imp-use>, %RDI<imp-use>, %RSP<imp-def>, %RAX<imp-def,dead>; dbg:prog3.c:96
+256B		ADJCALLSTACKUP64 0, 0, %RSP<imp-def>, %EFLAGS<imp-def,dead>, %RSP<imp-use>
+288B		%RAX<def> = MOV64r0 %EFLAGS<imp-def,dead>
+304B		RET %RAX<imp-use,kill>; dbg:prog3.c:97
+
+# End machine code for function _main.
+
+********** DEBUG VARIABLES **********
+!"argc,87"	 [0B;320B):0 Loc0=%RDI
+!"argv,87"	 [0B;320B):0 Loc0=%RSI
+!"sum,89"	 [48r;144r):0 Loc0=%vreg3
+********** Compute Spill Weights **********
+********** Function: _main
+********** GREEDY REGISTER ALLOCATION **********
+********** Function: _main
+
+selectOrSplit GR64:%vreg7 [64r,144r:2)[144r,192r:1)[192r,224r:0)  0@192r 1@144r 2@64r
+AllocationOrder(GR64) = [ %RAX %RCX %RDX %RSI %RDI %R8 %R9 %R10 %R11 %RBX %R14 %R15 %R12 %R13 %RBP ]
+hints: %RDI
+assigning %vreg7 to %RDI: DIL
+
+selectOrSplit GR64:%vreg3 [16r,48r:1)[48r,144r:0)  0@48r 1@16r
+assigning %vreg3 to %RAX: AH AL
+
+selectOrSplit GR64:%vreg5 [96r,112r:0)  0@96r
+assigning %vreg5 to %RCX: CH CL
+********** REWRITE VIRTUAL REGISTERS **********
+********** Function: _main
+********** REGISTER MAP **********
+[%vreg3 -> %RAX] GR64
+[%vreg5 -> %RCX] GR64
+[%vreg7 -> %RDI] GR64
+
+0B	BB#0: derived from LLVM BB %entry
+16B		%vreg3<def> = MOV64rm %RIP, 1, %noreg, <ga:@powers>, %noreg; mem:LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long") GR64:%vreg3 dbg:prog3.c:91
+48B		%vreg3<def,tied1> = INC64r %vreg3<kill,tied0>, %EFLAGS<imp-def,dead>; GR64:%vreg3 dbg:prog3.c:91
+64B		%vreg7<def> = MOV64ri32 -99; GR64:%vreg7
+80B		CMP64ri8 %vreg3, 100, %EFLAGS<imp-def>; GR64:%vreg3 dbg:prog3.c:92
+96B		%vreg5<def> = COPY %EFLAGS<kill>; GR64:%vreg5 dbg:prog3.c:92
+112B		TEST64rr %vreg5<kill>, %vreg5, %EFLAGS<imp-def>; GR64:%vreg5 dbg:prog3.c:92
+144B		%vreg7<def,tied1> = CMOVE64rr %vreg7<kill,tied0>, %vreg3<kill>, %EFLAGS<imp-use,kill>; GR64:%vreg7,%vreg3 dbg:prog3.c:92
+160B		MOV64mr %RIP, 1, %noreg, <ga:@pi+8>, %noreg, %vreg7; mem:ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long") GR64:%vreg7 dbg:prog3.c:94
+192B		%vreg7<def,tied1> = ADD64ri8 %vreg7<kill,tied0>, 48, %EFLAGS<imp-def,dead>; GR64:%vreg7 dbg:prog3.c:96
+208B		ADJCALLSTACKDOWN64 0, %RSP<imp-def>, %EFLAGS<imp-def,dead>, %RSP<imp-use>
+224B		%RDI<def> = COPY %vreg7<kill>; GR64:%vreg7 dbg:prog3.c:96
+240B		CALL64pcrel32 <ga:@putchar>, <regmask>, %RSP<imp-use>, %RDI<imp-use>, %RSP<imp-def>, %RAX<imp-def,dead>; dbg:prog3.c:96
+256B		ADJCALLSTACKUP64 0, 0, %RSP<imp-def>, %EFLAGS<imp-def,dead>, %RSP<imp-use>
+288B		%RAX<def> = MOV64r0 %EFLAGS<imp-def,dead>
+304B		RET %RAX<imp-use>; dbg:prog3.c:97
+> %RAX<def> = MOV64rm %RIP, 1, %noreg, <ga:@powers>, %noreg; mem:LD8[getelementptr inbounds ([100 x i64]* @powers, i64 0, i64 0)](align=16)(tbaa=!"long long") dbg:prog3.c:91
+> %RAX<def,tied1> = INC64r %RAX<kill,tied0>, %EFLAGS<imp-def,dead>; dbg:prog3.c:91
+> %RDI<def> = MOV64ri32 -99
+> CMP64ri8 %RAX, 100, %EFLAGS<imp-def>; dbg:prog3.c:92
+> %RCX<def> = COPY %EFLAGS<kill>; dbg:prog3.c:92
+> TEST64rr %RCX<kill>, %RCX, %EFLAGS<imp-def>; dbg:prog3.c:92
+> %RDI<def,tied1> = CMOVE64rr %RDI<kill,tied0>, %RAX<kill>, %EFLAGS<imp-use,kill>; dbg:prog3.c:92
+> MOV64mr %RIP, 1, %noreg, <ga:@pi+8>, %noreg, %RDI; mem:ST8[getelementptr inbounds ([100 x i64]* @pi, i64 0, i64 1)](tbaa=!"long long") dbg:prog3.c:94
+> %RDI<def,tied1> = ADD64ri8 %RDI<kill,tied0>, 48, %EFLAGS<imp-def,dead>; dbg:prog3.c:96
+> ADJCALLSTACKDOWN64 0, %RSP<imp-def>, %EFLAGS<imp-def,dead>, %RSP<imp-use>
+> %RDI<def> = COPY %RDI<kill>; dbg:prog3.c:96
+Deleting identity copy.
+> CALL64pcrel32 <ga:@putchar>, <regmask>, %RSP<imp-use>, %RDI<imp-use>, %RSP<imp-def>, %RAX<imp-def,dead>; dbg:prog3.c:96
+> ADJCALLSTACKUP64 0, 0, %RSP<imp-def>, %EFLAGS<imp-def,dead>, %RSP<imp-use>
+> %RAX<def> = MOV64r0 %EFLAGS<imp-def,dead>
+> RET %RAX<imp-use>; dbg:prog3.c:97
+********** EMITTING LIVE DEBUG VARIABLES **********
+!"argc,87"	 [0B;320B):0 Loc0=%RDI
+	[0B;320B):0 BB#0-320B
+!"argv,87"	 [0B;320B):0 Loc0=%RSI
+	[0B;320B):0 BB#0-320B
+!"sum,89"	 [48r;144r):0 Loc0=%vreg3
+	[48r;144r):0 BB#0-320B
+********** Stack Slot Coloring **********
+********** Function: _main
+******** Post-regalloc Machine LICM: _main ********
+
+Setting up live-ins for BB#0 derived from entry.
+Block has no FP live-ins.
+
+FPInst:	RET %RAX<imp-use>; dbg:prog3.c:97
+Stack contents:
+Inserted instructions:
+	RET %RAX<imp-use>; dbg:prog3.c:97
+Stack contents:
+Machine Function
+********** EXPANDING POST-RA PSEUDO INSTRS **********
+********** Function: _main
+real copy:   %RCX<def> = COPY %EFLAGS<kill>; dbg:prog3.c:92
+replaced by: %RCX<def> = POP64r %RSP<imp-def>, %RSP<imp-use>; dbg:prog3.c:92
+RPO[BB#0 derived from LLVM BB entry] = 1
+POT: BB#0 derived from LLVM BB entry
+doLoop(BB#0 derived from LLVM BB entry, BB#0 derived from LLVM BB entry)
+doBlock(BB#0 derived from LLVM BB entry)
+Frequency(BB#0 derived from LLVM BB entry) = 0
+Frequency(BB#0 derived from LLVM BB entry) = 1024
+********** FIX EXECUTION DEPENDENCIES: VR128 **********
+BB#0: entry
+The instruction being printed 2121 1501 1647 1642 1506 1648 1643 1645 1640The instruction being printed 1507 1501 1647 1642 1506 1648 1643 1645 1640The instruction being printed 902 1501 1647 1642 1506 1648 1643 1645 1640The instruction being printed 1505 1501 1647 1642 1506 1648 1643 1645 1640The instruction being printed 530 1501 1647 1642 1506 1648 1643 1645 1640The instruction being printed 2133 1501 1647 1642 1506 1648 1643 1645 1640The instruction being printed 2001 1501 1647 1642 1506 1648 1643 1645 1640The instruction being printed 2684 1501 1647 1642 1506 1648 1643 1645 1640The instruction being printed 402 1501 1647 1642 1506 1648 1643 1645 1640The instruction being printed 1499 1501 1647 1642 1506 1648 1643 1645 1640The instruction being printed 93 1501 1647 1642 1506 1648 1643 1645 1640The instruction being printed 347 1501 1647 1642 1506 1648 1643 1645 1640The instruction being printed 4483 1501 1647 1642 1506 1648 1643 1645 1640The instruction being printed 2001 1501 1647 1642 1506 1648 1643 1645 1640The instruction being printed 2234 1501 1647 1642 1506 1648 1643 1645 1640DotDebugLoc Pair:
+	DBG_VALUE %RDI, 0, !"argc"; line no:87
+	%RDI<def> = MOV64ri32 -99
+
+DotDebugLoc Pair:
+	DBG_VALUE %RSI, 0, !"argv"; line no:87
+	RET %RAX<imp-use>; dbg:prog3.c:97
+
+DotDebugLoc Pair:
+	DBG_VALUE %RAX, 0, !"sum"; line no:89
+	CALL64pcrel32 <ga:@putchar>, <regmask>, %RSP<imp-use>, %RDI<imp-use>, %RSP<imp-def>, %RAX<imp-def,dead>; dbg:prog3.c:96
+

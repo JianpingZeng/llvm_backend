@@ -1,0 +1,15 @@
+0000000000400200 <puts>:
+  400200:	53                   	push   %rbx
+  400201:	48 89 fb             	mov    %rdi,%rbx
+  400204:	e8 17 ff ff ff       	callq  400120 <llstrlen>
+  400209:	48 89 c1             	mov    %rax,%rcx
+  40020c:	48 b8 01 00 00 00 00 	movabs $0x1,%rax
+  400213:	00 00 00 
+  400216:	48 bf 01 00 00 00 00 	movabs $0x1,%rdi
+  40021d:	00 00 00 
+  400220:	48 89 de             	mov    %rbx,%rsi
+  400223:	48 89 ca             	mov    %rcx,%rdx
+  400226:	0f 05                	syscall 
+  400228:	5b                   	pop    %rbx
+  400229:	c3                   	retq   
+  40022a:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)

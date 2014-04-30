@@ -1,0 +1,58 @@
+0000000000400690 <Print>:
+  400690:	41 57                	push   %r15
+  400692:	41 56                	push   %r14
+  400694:	41 54                	push   %r12
+  400696:	53                   	push   %rbx
+  400697:	50                   	push   %rax
+  400698:	49 89 fe             	mov    %rdi,%r14
+  40069b:	48 bf 33 00 00 00 00 	movabs $0x33,%rdi
+  4006a2:	00 00 00 
+  4006a5:	e8 86 fb ff ff       	callq  400230 <putchar>
+  4006aa:	48 bf 2e 00 00 00 00 	movabs $0x2e,%rdi
+  4006b1:	00 00 00 
+  4006b4:	e8 77 fb ff ff       	callq  400230 <putchar>
+  4006b9:	49 bc 01 00 00 00 00 	movabs $0x1,%r12
+  4006c0:	00 00 00 
+  4006c3:	48 83 3d ed 08 20 00 	cmpq   $0x2,0x2008ed(%rip)        # 600fb8 <size>
+  4006ca:	02 
+  4006cb:	7c 72                	jl     40073f <Print+0xaf>
+  4006cd:	0f 1f 00             	nopl   (%rax)
+  4006d0:	4f 8b 3c e6          	mov    (%r14,%r12,8),%r15
+  4006d4:	48 b9 67 66 66 66 66 	movabs $0x6666666666666667,%rcx
+  4006db:	66 66 66 
+  4006de:	4c 89 f8             	mov    %r15,%rax
+  4006e1:	48 f7 e9             	imul   %rcx
+  4006e4:	48 89 d3             	mov    %rdx,%rbx
+  4006e7:	48 89 d8             	mov    %rbx,%rax
+  4006ea:	48 c1 e8 3f          	shr    $0x3f,%rax
+  4006ee:	48 c1 fb 02          	sar    $0x2,%rbx
+  4006f2:	48 01 c3             	add    %rax,%rbx
+  4006f5:	48 89 d8             	mov    %rbx,%rax
+  4006f8:	48 f7 e9             	imul   %rcx
+  4006fb:	48 89 d0             	mov    %rdx,%rax
+  4006fe:	48 c1 e8 3f          	shr    $0x3f,%rax
+  400702:	48 c1 fa 02          	sar    $0x2,%rdx
+  400706:	48 01 c2             	add    %rax,%rdx
+  400709:	48 d1 e2             	shl    %rdx
+  40070c:	48 8d 04 92          	lea    (%rdx,%rdx,4),%rax
+  400710:	48 89 d9             	mov    %rbx,%rcx
+  400713:	48 29 c1             	sub    %rax,%rcx
+  400716:	48 8d 79 30          	lea    0x30(%rcx),%rdi
+  40071a:	e8 11 fb ff ff       	callq  400230 <putchar>
+  40071f:	48 d1 e3             	shl    %rbx
+  400722:	48 8d 04 9b          	lea    (%rbx,%rbx,4),%rax
+  400726:	48 f7 d8             	neg    %rax
+  400729:	49 8d 7c 07 30       	lea    0x30(%r15,%rax,1),%rdi
+  40072e:	e8 fd fa ff ff       	callq  400230 <putchar>
+  400733:	49 ff c4             	inc    %r12
+  400736:	4c 3b 25 7b 08 20 00 	cmp    0x20087b(%rip),%r12        # 600fb8 <size>
+  40073d:	7c 91                	jl     4006d0 <Print+0x40>
+  40073f:	48 bf 0a 00 00 00 00 	movabs $0xa,%rdi
+  400746:	00 00 00 
+  400749:	48 83 c4 08          	add    $0x8,%rsp
+  40074d:	5b                   	pop    %rbx
+  40074e:	41 5c                	pop    %r12
+  400750:	41 5e                	pop    %r14
+  400752:	41 5f                	pop    %r15
+  400754:	e9 d7 fa ff ff       	jmpq   400230 <putchar>
+  400759:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)

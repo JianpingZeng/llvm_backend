@@ -1,0 +1,24 @@
+0000000000400560 <__libc_start_main>:
+  400560:	50                   	push   %rax
+  400561:	49 89 f8             	mov    %rdi,%r8
+  400564:	48 b8 0c 00 00 00 00 	movabs $0xc,%rax
+  40056b:	00 00 00 
+  40056e:	48 31 ff             	xor    %rdi,%rdi
+  400571:	0f 05                	syscall 
+  400573:	48 89 05 26 0a 20 00 	mov    %rax,0x200a26(%rip)        # 600fa0 <__bss_start>
+  40057a:	48 8d 44 f2 08       	lea    0x8(%rdx,%rsi,8),%rax
+  40057f:	48 89 f7             	mov    %rsi,%rdi
+  400582:	48 89 d6             	mov    %rdx,%rsi
+  400585:	48 89 c2             	mov    %rax,%rdx
+  400588:	41 ff d0             	callq  *%r8
+  40058b:	48 89 c1             	mov    %rax,%rcx
+  40058e:	48 b8 3c 00 00 00 00 	movabs $0x3c,%rax
+  400595:	00 00 00 
+  400598:	48 89 cf             	mov    %rcx,%rdi
+  40059b:	0f 05                	syscall 
+  40059d:	48 31 c0             	xor    %rax,%rax
+  4005a0:	5a                   	pop    %rdx
+  4005a1:	c3                   	retq   
+  4005a2:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+  4005a9:	00 00 00 
+  4005ac:	0f 1f 40 00          	nopl   0x0(%rax)

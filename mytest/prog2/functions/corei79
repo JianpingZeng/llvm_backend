@@ -1,0 +1,26 @@
+0000000000400290 <LLreadchar>:
+  400290:	48 89 f8             	mov    %rdi,%rax
+  400293:	48 83 e0 f8          	and    $0xfffffffffffffff8,%rax
+  400297:	48 8b 00             	mov    (%rax),%rax
+  40029a:	48 83 e7 07          	and    $0x7,%rdi
+  40029e:	48 ff cf             	dec    %rdi
+  4002a1:	48 83 ff 06          	cmp    $0x6,%rdi
+  4002a5:	77 24                	ja     4002cb <LLreadchar+0x3b>
+  4002a7:	ff 24 fd a8 0a 40 00 	jmpq   *0x400aa8(,%rdi,8)
+  4002ae:	b1 08                	mov    $0x8,%cl
+  4002b0:	eb 16                	jmp    4002c8 <LLreadchar+0x38>
+  4002b2:	b1 10                	mov    $0x10,%cl
+  4002b4:	eb 12                	jmp    4002c8 <LLreadchar+0x38>
+  4002b6:	b1 18                	mov    $0x18,%cl
+  4002b8:	eb 0e                	jmp    4002c8 <LLreadchar+0x38>
+  4002ba:	b1 20                	mov    $0x20,%cl
+  4002bc:	eb 0a                	jmp    4002c8 <LLreadchar+0x38>
+  4002be:	b1 28                	mov    $0x28,%cl
+  4002c0:	eb 06                	jmp    4002c8 <LLreadchar+0x38>
+  4002c2:	b1 30                	mov    $0x30,%cl
+  4002c4:	eb 02                	jmp    4002c8 <LLreadchar+0x38>
+  4002c6:	b1 38                	mov    $0x38,%cl
+  4002c8:	48 d3 e8             	shr    %cl,%rax
+  4002cb:	0f b6 c0             	movzbl %al,%eax
+  4002ce:	c3                   	retq   
+  4002cf:	90                   	nop

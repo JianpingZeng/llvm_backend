@@ -1,0 +1,30 @@
+00000000004005c0 <PrintVal>:
+  4005c0:	53                   	push   %rbx
+  4005c1:	48 85 ff             	test   %rdi,%rdi
+  4005c4:	74 45                	je     40060b <PrintVal+0x4b>
+  4005c6:	7f 08                	jg     4005d0 <PrintVal+0x10>
+  4005c8:	eb 3f                	jmp    400609 <PrintVal+0x49>
+  4005ca:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+  4005d0:	48 b9 67 66 66 66 66 	movabs $0x6666666666666667,%rcx
+  4005d7:	66 66 66 
+  4005da:	48 89 f8             	mov    %rdi,%rax
+  4005dd:	48 f7 e9             	imul   %rcx
+  4005e0:	48 89 d0             	mov    %rdx,%rax
+  4005e3:	48 c1 e8 3f          	shr    $0x3f,%rax
+  4005e7:	48 c1 fa 02          	sar    $0x2,%rdx
+  4005eb:	48 01 c2             	add    %rax,%rdx
+  4005ee:	48 d1 e2             	shl    %rdx
+  4005f1:	48 8d 1c 92          	lea    (%rdx,%rdx,4),%rbx
+  4005f5:	48 29 df             	sub    %rbx,%rdi
+  4005f8:	48 83 c7 30          	add    $0x30,%rdi
+  4005fc:	e8 2f fc ff ff       	callq  400230 <putchar>
+  400601:	48 85 db             	test   %rbx,%rbx
+  400604:	48 89 df             	mov    %rbx,%rdi
+  400607:	7f c7                	jg     4005d0 <PrintVal+0x10>
+  400609:	5b                   	pop    %rbx
+  40060a:	c3                   	retq   
+  40060b:	48 bf 30 00 00 00 00 	movabs $0x30,%rdi
+  400612:	00 00 00 
+  400615:	5b                   	pop    %rbx
+  400616:	e9 15 fc ff ff       	jmpq   400230 <putchar>
+  40061b:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)

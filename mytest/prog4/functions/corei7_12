@@ -1,0 +1,6 @@
+0000000000400280 <isdigit>:
+  400280:	48 83 c7 d0          	add    $0xffffffffffffffd0,%rdi
+  400284:	48 83 ff 0a          	cmp    $0xa,%rdi
+  400288:	48 19 c0             	sbb    %rax,%rax
+  40028b:	48 83 e0 01          	and    $0x1,%rax
+  40028f:	c3                   	retq   

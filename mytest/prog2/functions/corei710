@@ -1,0 +1,126 @@
+00000000004002d0 <atol>:
+  4002d0:	48 89 f8             	mov    %rdi,%rax
+  4002d3:	48 83 e0 f8          	and    $0xfffffffffffffff8,%rax
+  4002d7:	48 8b 00             	mov    (%rax),%rax
+  4002da:	48 89 fa             	mov    %rdi,%rdx
+  4002dd:	48 83 e2 07          	and    $0x7,%rdx
+  4002e1:	48 ff ca             	dec    %rdx
+  4002e4:	48 83 fa 06          	cmp    $0x6,%rdx
+  4002e8:	48 89 c6             	mov    %rax,%rsi
+  4002eb:	77 29                	ja     400316 <atol+0x46>
+  4002ed:	ff 24 d5 e0 0a 40 00 	jmpq   *0x400ae0(,%rdx,8)
+  4002f4:	b1 08                	mov    $0x8,%cl
+  4002f6:	eb 18                	jmp    400310 <atol+0x40>
+  4002f8:	b1 10                	mov    $0x10,%cl
+  4002fa:	eb 14                	jmp    400310 <atol+0x40>
+  4002fc:	b1 18                	mov    $0x18,%cl
+  4002fe:	eb 10                	jmp    400310 <atol+0x40>
+  400300:	b1 20                	mov    $0x20,%cl
+  400302:	eb 0c                	jmp    400310 <atol+0x40>
+  400304:	b1 28                	mov    $0x28,%cl
+  400306:	eb 08                	jmp    400310 <atol+0x40>
+  400308:	b1 30                	mov    $0x30,%cl
+  40030a:	eb 04                	jmp    400310 <atol+0x40>
+  40030c:	b1 38                	mov    $0x38,%cl
+  40030e:	66 90                	xchg   %ax,%ax
+  400310:	48 89 c6             	mov    %rax,%rsi
+  400313:	48 d3 ee             	shr    %cl,%rsi
+  400316:	48 ff c7             	inc    %rdi
+  400319:	40 0f b6 ce          	movzbl %sil,%ecx
+  40031d:	48 83 f9 20          	cmp    $0x20,%rcx
+  400321:	48 8d 49 f7          	lea    -0x9(%rcx),%rcx
+  400325:	74 a9                	je     4002d0 <atol>
+  400327:	48 83 f9 05          	cmp    $0x5,%rcx
+  40032b:	72 a3                	jb     4002d0 <atol>
+  40032d:	48 83 fa 06          	cmp    $0x6,%rdx
+  400331:	77 24                	ja     400357 <atol+0x87>
+  400333:	ff 24 d5 18 0b 40 00 	jmpq   *0x400b18(,%rdx,8)
+  40033a:	b1 08                	mov    $0x8,%cl
+  40033c:	eb 16                	jmp    400354 <atol+0x84>
+  40033e:	b1 10                	mov    $0x10,%cl
+  400340:	eb 12                	jmp    400354 <atol+0x84>
+  400342:	b1 18                	mov    $0x18,%cl
+  400344:	eb 0e                	jmp    400354 <atol+0x84>
+  400346:	b1 20                	mov    $0x20,%cl
+  400348:	eb 0a                	jmp    400354 <atol+0x84>
+  40034a:	b1 28                	mov    $0x28,%cl
+  40034c:	eb 06                	jmp    400354 <atol+0x84>
+  40034e:	b1 30                	mov    $0x30,%cl
+  400350:	eb 02                	jmp    400354 <atol+0x84>
+  400352:	b1 38                	mov    $0x38,%cl
+  400354:	48 d3 e8             	shr    %cl,%rax
+  400357:	0f b6 c0             	movzbl %al,%eax
+  40035a:	45 31 c0             	xor    %r8d,%r8d
+  40035d:	48 83 f8 2b          	cmp    $0x2b,%rax
+  400361:	74 11                	je     400374 <atol+0xa4>
+  400363:	48 83 f8 2d          	cmp    $0x2d,%rax
+  400367:	75 08                	jne    400371 <atol+0xa1>
+  400369:	41 b8 01 00 00 00    	mov    $0x1,%r8d
+  40036f:	eb 03                	jmp    400374 <atol+0xa4>
+  400371:	48 ff cf             	dec    %rdi
+  400374:	45 31 c9             	xor    %r9d,%r9d
+  400377:	eb 1c                	jmp    400395 <atol+0xc5>
+  400379:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+  400380:	48 ff c7             	inc    %rdi
+  400383:	4d 01 c9             	add    %r9,%r9
+  400386:	4f 8d 0c 89          	lea    (%r9,%r9,4),%r9
+  40038a:	49 83 c1 30          	add    $0x30,%r9
+  40038e:	40 0f b6 c6          	movzbl %sil,%eax
+  400392:	49 29 c1             	sub    %rax,%r9
+  400395:	48 89 f8             	mov    %rdi,%rax
+  400398:	48 83 e0 f8          	and    $0xfffffffffffffff8,%rax
+  40039c:	48 8b 30             	mov    (%rax),%rsi
+  40039f:	48 89 fa             	mov    %rdi,%rdx
+  4003a2:	48 83 e2 07          	and    $0x7,%rdx
+  4003a6:	48 ff ca             	dec    %rdx
+  4003a9:	48 83 fa 06          	cmp    $0x6,%rdx
+  4003ad:	48 89 f0             	mov    %rsi,%rax
+  4003b0:	77 34                	ja     4003e6 <atol+0x116>
+  4003b2:	ff 24 d5 50 0b 40 00 	jmpq   *0x400b50(,%rdx,8)
+  4003b9:	b1 08                	mov    $0x8,%cl
+  4003bb:	eb 23                	jmp    4003e0 <atol+0x110>
+  4003bd:	b1 10                	mov    $0x10,%cl
+  4003bf:	eb 1f                	jmp    4003e0 <atol+0x110>
+  4003c1:	b1 18                	mov    $0x18,%cl
+  4003c3:	eb 1b                	jmp    4003e0 <atol+0x110>
+  4003c5:	b1 20                	mov    $0x20,%cl
+  4003c7:	eb 17                	jmp    4003e0 <atol+0x110>
+  4003c9:	b1 28                	mov    $0x28,%cl
+  4003cb:	eb 13                	jmp    4003e0 <atol+0x110>
+  4003cd:	b1 30                	mov    $0x30,%cl
+  4003cf:	eb 0f                	jmp    4003e0 <atol+0x110>
+  4003d1:	b1 38                	mov    $0x38,%cl
+  4003d3:	66 66 66 66 2e 0f 1f 	data32 data32 data32 nopw %cs:0x0(%rax,%rax,1)
+  4003da:	84 00 00 00 00 00 
+  4003e0:	48 89 f0             	mov    %rsi,%rax
+  4003e3:	48 d3 e8             	shr    %cl,%rax
+  4003e6:	0f b6 c0             	movzbl %al,%eax
+  4003e9:	48 83 c0 d0          	add    $0xffffffffffffffd0,%rax
+  4003ed:	48 83 f8 09          	cmp    $0x9,%rax
+  4003f1:	77 35                	ja     400428 <atol+0x158>
+  4003f3:	48 83 fa 06          	cmp    $0x6,%rdx
+  4003f7:	77 87                	ja     400380 <atol+0xb0>
+  4003f9:	ff 24 d5 88 0b 40 00 	jmpq   *0x400b88(,%rdx,8)
+  400400:	b1 08                	mov    $0x8,%cl
+  400402:	eb 1c                	jmp    400420 <atol+0x150>
+  400404:	b1 10                	mov    $0x10,%cl
+  400406:	eb 18                	jmp    400420 <atol+0x150>
+  400408:	b1 18                	mov    $0x18,%cl
+  40040a:	eb 14                	jmp    400420 <atol+0x150>
+  40040c:	b1 20                	mov    $0x20,%cl
+  40040e:	eb 10                	jmp    400420 <atol+0x150>
+  400410:	b1 28                	mov    $0x28,%cl
+  400412:	eb 0c                	jmp    400420 <atol+0x150>
+  400414:	b1 30                	mov    $0x30,%cl
+  400416:	eb 08                	jmp    400420 <atol+0x150>
+  400418:	b1 38                	mov    $0x38,%cl
+  40041a:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+  400420:	48 d3 ee             	shr    %cl,%rsi
+  400423:	e9 58 ff ff ff       	jmpq   400380 <atol+0xb0>
+  400428:	4c 89 c8             	mov    %r9,%rax
+  40042b:	48 f7 d8             	neg    %rax
+  40042e:	4d 85 c0             	test   %r8,%r8
+  400431:	49 0f 45 c1          	cmovne %r9,%rax
+  400435:	c3                   	retq   
+  400436:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+  40043d:	00 00 00 

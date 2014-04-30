@@ -1,0 +1,116 @@
+0000000000400660 <arctan>:
+  400660:	41 56                	push   %r14
+  400662:	53                   	push   %rbx
+  400663:	49 89 d0             	mov    %rdx,%r8
+  400666:	48 89 f9             	mov    %rdi,%rcx
+  400669:	4c 8b 0d d8 07 20 00 	mov    0x2007d8(%rip),%r9        # 600e48 <powers>
+  400670:	48 8b 05 e1 07 20 00 	mov    0x2007e1(%rip),%rax        # 600e58 <size>
+  400677:	48 85 c0             	test   %rax,%rax
+  40067a:	7e 1b                	jle    400697 <arctan+0x37>
+  40067c:	31 d2                	xor    %edx,%edx
+  40067e:	66 90                	xchg   %ax,%ax
+  400680:	49 c7 04 d1 00 00 00 	movq   $0x0,(%r9,%rdx,8)
+  400687:	00 
+  400688:	48 ff c2             	inc    %rdx
+  40068b:	48 8b 05 c6 07 20 00 	mov    0x2007c6(%rip),%rax        # 600e58 <size>
+  400692:	48 39 c2             	cmp    %rax,%rdx
+  400695:	7c e9                	jl     400680 <arctan+0x20>
+  400697:	48 0f af ce          	imul   %rsi,%rcx
+  40069b:	31 db                	xor    %ebx,%ebx
+  40069d:	48 0f af f6          	imul   %rsi,%rsi
+  4006a1:	41 ba 01 00 00 00    	mov    $0x1,%r10d
+  4006a7:	4c 8b 1d a2 07 20 00 	mov    0x2007a2(%rip),%r11        # 600e50 <term>
+  4006ae:	4c 8b 35 ab 07 20 00 	mov    0x2007ab(%rip),%r14        # 600e60 <pi>
+  4006b5:	48 39 c3             	cmp    %rax,%rbx
+  4006b8:	48 89 df             	mov    %rbx,%rdi
+  4006bb:	7d 2d                	jge    4006ea <arctan+0x8a>
+  4006bd:	0f 1f 00             	nopl   (%rax)
+  4006c0:	49 03 0c f9          	add    (%r9,%rdi,8),%rcx
+  4006c4:	48 89 c8             	mov    %rcx,%rax
+  4006c7:	48 99                	cqto   
+  4006c9:	48 f7 fe             	idiv   %rsi
+  4006cc:	49 89 04 f9          	mov    %rax,(%r9,%rdi,8)
+  4006d0:	48 0f af c6          	imul   %rsi,%rax
+  4006d4:	48 29 c1             	sub    %rax,%rcx
+  4006d7:	48 6b c9 64          	imul   $0x64,%rcx,%rcx
+  4006db:	48 ff c7             	inc    %rdi
+  4006de:	48 8b 05 73 07 20 00 	mov    0x200773(%rip),%rax        # 600e58 <size>
+  4006e5:	48 39 c7             	cmp    %rax,%rdi
+  4006e8:	7c d6                	jl     4006c0 <arctan+0x60>
+  4006ea:	31 c9                	xor    %ecx,%ecx
+  4006ec:	48 39 c3             	cmp    %rax,%rbx
+  4006ef:	48 89 df             	mov    %rbx,%rdi
+  4006f2:	7d 36                	jge    40072a <arctan+0xca>
+  4006f4:	66 66 66 2e 0f 1f 84 	data32 data32 nopw %cs:0x0(%rax,%rax,1)
+  4006fb:	00 00 00 00 00 
+  400700:	49 03 0c f9          	add    (%r9,%rdi,8),%rcx
+  400704:	48 89 c8             	mov    %rcx,%rax
+  400707:	48 99                	cqto   
+  400709:	49 f7 fa             	idiv   %r10
+  40070c:	49 89 04 fb          	mov    %rax,(%r11,%rdi,8)
+  400710:	49 0f af c2          	imul   %r10,%rax
+  400714:	48 29 c1             	sub    %rax,%rcx
+  400717:	48 6b c9 64          	imul   $0x64,%rcx,%rcx
+  40071b:	48 ff c7             	inc    %rdi
+  40071e:	48 8b 05 33 07 20 00 	mov    0x200733(%rip),%rax        # 600e58 <size>
+  400725:	48 39 c7             	cmp    %rax,%rdi
+  400728:	7c d6                	jl     400700 <arctan+0xa0>
+  40072a:	31 c9                	xor    %ecx,%ecx
+  40072c:	4d 85 c0             	test   %r8,%r8
+  40072f:	7f 77                	jg     4007a8 <arctan+0x148>
+  400731:	48 85 c0             	test   %rax,%rax
+  400734:	7e 77                	jle    4007ad <arctan+0x14d>
+  400736:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+  40073d:	00 00 00 
+  400740:	49 8b 54 c6 f8       	mov    -0x8(%r14,%rax,8),%rdx
+  400745:	49 2b 54 c3 f8       	sub    -0x8(%r11,%rax,8),%rdx
+  40074a:	48 89 d7             	mov    %rdx,%rdi
+  40074d:	48 29 cf             	sub    %rcx,%rdi
+  400750:	48 83 c7 64          	add    $0x64,%rdi
+  400754:	48 29 ca             	sub    %rcx,%rdx
+  400757:	48 0f 49 fa          	cmovns %rdx,%rdi
+  40075b:	49 89 7c c6 f8       	mov    %rdi,-0x8(%r14,%rax,8)
+  400760:	b1 3f                	mov    $0x3f,%cl
+  400762:	48 d3 ea             	shr    %cl,%rdx
+  400765:	48 ff c8             	dec    %rax
+  400768:	48 85 c0             	test   %rax,%rax
+  40076b:	48 89 d1             	mov    %rdx,%rcx
+  40076e:	7f d0                	jg     400740 <arctan+0xe0>
+  400770:	eb 3b                	jmp    4007ad <arctan+0x14d>
+  400772:	66 66 66 66 66 2e 0f 	data32 data32 data32 data32 nopw %cs:0x0(%rax,%rax,1)
+  400779:	1f 84 00 00 00 00 00 
+  400780:	49 03 4c c6 f8       	add    -0x8(%r14,%rax,8),%rcx
+  400785:	49 8b 7c c3 f8       	mov    -0x8(%r11,%rax,8),%rdi
+  40078a:	48 8d 54 0f 9c       	lea    -0x64(%rdi,%rcx,1),%rdx
+  40078f:	48 01 f9             	add    %rdi,%rcx
+  400792:	48 83 f9 63          	cmp    $0x63,%rcx
+  400796:	48 0f 4f ca          	cmovg  %rdx,%rcx
+  40079a:	49 89 4c c6 f8       	mov    %rcx,-0x8(%r14,%rax,8)
+  40079f:	0f 9f c1             	setg   %cl
+  4007a2:	0f b6 c9             	movzbl %cl,%ecx
+  4007a5:	48 ff c8             	dec    %rax
+  4007a8:	48 85 c0             	test   %rax,%rax
+  4007ab:	7f d3                	jg     400780 <arctan+0x120>
+  4007ad:	49 83 c2 02          	add    $0x2,%r10
+  4007b1:	49 f7 d8             	neg    %r8
+  4007b4:	48 8b 05 9d 06 20 00 	mov    0x20069d(%rip),%rax        # 600e58 <size>
+  4007bb:	48 89 d9             	mov    %rbx,%rcx
+  4007be:	66 90                	xchg   %ax,%ax
+  4007c0:	48 39 c1             	cmp    %rax,%rcx
+  4007c3:	7d 2e                	jge    4007f3 <arctan+0x193>
+  4007c5:	49 83 3c c9 00       	cmpq   $0x0,(%r9,%rcx,8)
+  4007ca:	48 8d 49 01          	lea    0x1(%rcx),%rcx
+  4007ce:	74 f0                	je     4007c0 <arctan+0x160>
+  4007d0:	48 ff cb             	dec    %rbx
+  4007d3:	66 66 66 66 2e 0f 1f 	data32 data32 data32 nopw %cs:0x0(%rax,%rax,1)
+  4007da:	84 00 00 00 00 00 
+  4007e0:	31 c9                	xor    %ecx,%ecx
+  4007e2:	49 83 7c d9 08 00    	cmpq   $0x0,0x8(%r9,%rbx,8)
+  4007e8:	48 8d 5b 01          	lea    0x1(%rbx),%rbx
+  4007ec:	74 f2                	je     4007e0 <arctan+0x180>
+  4007ee:	e9 c2 fe ff ff       	jmpq   4006b5 <arctan+0x55>
+  4007f3:	5b                   	pop    %rbx
+  4007f4:	41 5e                	pop    %r14
+  4007f6:	c3                   	retq   
+  4007f7:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+  4007fe:	00 00 

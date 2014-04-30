@@ -1,0 +1,4 @@
+00000000004004a0 <OutDig>:
+  4004a0:	48 83 c7 30          	add    $0x30,%rdi
+  4004a4:	e9 67 fd ff ff       	jmpq   400210 <putchar>
+  4004a9:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)

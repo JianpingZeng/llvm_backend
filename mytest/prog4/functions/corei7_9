@@ -1,0 +1,9 @@
+0000000000400210 <putchar>:
+  400210:	48 89 7c 24 f8       	mov    %rdi,-0x8(%rsp)
+  400215:	48 8d 74 24 f8       	lea    -0x8(%rsp),%rsi
+  40021a:	b8 01 00 00 00       	mov    $0x1,%eax
+  40021f:	bf 01 00 00 00       	mov    $0x1,%edi
+  400224:	ba 01 00 00 00       	mov    $0x1,%edx
+  400229:	0f 05                	syscall 
+  40022b:	c3                   	retq   
+  40022c:	0f 1f 40 00          	nopl   0x0(%rax)

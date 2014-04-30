@@ -19,7 +19,7 @@ long __libc_start_main(
 
 	/* Pass control to to application */
 	__syscall1(__NR_exit,
-                main(argc, argv, envp)
+		main(argc, argv, envp)
 	);
 	return 0;
 }
