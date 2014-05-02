@@ -161,27 +161,27 @@ let Defs = [EFLAGS], isReMaterializable = 1, isAsCheapAsAMove = 1,
 //// encoding and avoid partial register updates.
 //def : Pat<(i8 0), (EXTRACT_SUBREG (MOV32r0), sub_8bit)>;
 //def : Pat<(i16 0), (EXTRACT_SUBREG (MOV32r0), sub_16bit)>;
-//def : Pat<(i64 0), (SUBREG_TO_REG (i64 0), (MOV64r0), sub_32bit)> {
+//def : Pat<(i64 0), (SUBREG_TO_REG (i64 0), (MOV64r0), sub_64bit)> {
 //    let AddedComplexity = 20;
 //}
 
-//// Materialize i64 constant where top 32-bits are zero. This could theoretically
-//// use MOV32ri with a SUBREG_TO_REG to represent the zero-extension, however
-//// that would make it more difficult to rematerialize.
-//let AddedComplexity = 1, isReMaterializable = 1, isAsCheapAsAMove = 1,
-//    isCodeGenOnly = 1, neverHasSideEffects = 1 in
-//    def MOV32ri64 : Ii32<0xb8, AddRegFrm, (outs GR32:$dst), (ins i64i32imm:$src),
-//    "", [], IIC_ALU_NONMEM>, Sched<[WriteALU]>;
-//
-//// This 64-bit pseudo-move can be used for both a 64-bit constant that is
-//// actually the zero-extension of a 32-bit constant, and for labels in the
-//// cse523-64 small code model.
+// Materialize i64 constant where top 32-bits are zero. This could theoretically
+// use MOV32ri with a SUBREG_TO_REG to represent the zero-extension, however
+// that would make it more difficult to rematerialize.
+let AddedComplexity = 1, isReMaterializable = 1, isAsCheapAsAMove = 1,
+    isCodeGenOnly = 1, neverHasSideEffects = 1 in
+    def MOV64ri64 : Ii64<0xb8, AddRegFrm, (outs GR64:$dst), (ins i64imm:$src),
+    "", [], IIC_ALU_NONMEM>, Sched<[WriteALU]>;
+
+// This 64-bit pseudo-move can be used for both a 64-bit constant that is
+// actually the zero-extension of a 32-bit constant, and for labels in the
+// cse523-64 small code model.
 //def mov64imm32 : ComplexPattern<i64, 1, "SelectMOV64Imm32", [imm, Cse523Wrapper]>;
-//
+
 //let AddedComplexity = 1 in
 //def : Pat<(i64 mov64imm32:$src),
-//    (SUBREG_TO_REG (i64 0), (MOV32ri64 mov64imm32:$src), sub_32bit)>;
-//
+//    (SUBREG_TO_REG (i64 0), (MOV64ri64 mov64imm32:$src), sub_64bit)>;
+
 // Use sbb to materialize carry bit.
 let Uses = [EFLAGS], Defs = [EFLAGS], isPseudo = 1, SchedRW = [WriteALU] in {
     // FIXME: These are pseudo ops that should be replaced with Pat<> patterns.
@@ -747,33 +747,33 @@ def RELEASE_MOV64mr : I<0, Pseudo, (outs), (ins i64mem:$dst, GR64:$src),
 ////===----------------------------------------------------------------------===//
 //// DAG Pattern Matching Rules
 ////===----------------------------------------------------------------------===//
-//
-//// ConstantPool GlobalAddress, ExternalSymbol, and JumpTable
-//def : Pat<(i32 (Cse523Wrapper tconstpool  :$dst)), (MOV32ri tconstpool  :$dst)>;
-//def : Pat<(i32 (Cse523Wrapper tjumptable  :$dst)), (MOV32ri tjumptable  :$dst)>;
-//def : Pat<(i32 (Cse523Wrapper tglobaltlsaddr:$dst)),(MOV32ri tglobaltlsaddr:$dst)>;
-//def : Pat<(i32 (Cse523Wrapper tglobaladdr :$dst)), (MOV32ri tglobaladdr :$dst)>;
-//def : Pat<(i32 (Cse523Wrapper texternalsym:$dst)), (MOV32ri texternalsym:$dst)>;
-//def : Pat<(i32 (Cse523Wrapper tblockaddress:$dst)), (MOV32ri tblockaddress:$dst)>;
-//
-//def : Pat<(add GR32:$src1, (Cse523Wrapper tconstpool:$src2)),
-//    (ADD32ri GR32:$src1, tconstpool:$src2)>;
-//def : Pat<(add GR32:$src1, (Cse523Wrapper tjumptable:$src2)),
-//    (ADD32ri GR32:$src1, tjumptable:$src2)>;
-//def : Pat<(add GR32:$src1, (Cse523Wrapper tglobaladdr :$src2)),
-//    (ADD32ri GR32:$src1, tglobaladdr:$src2)>;
-//def : Pat<(add GR32:$src1, (Cse523Wrapper texternalsym:$src2)),
-//    (ADD32ri GR32:$src1, texternalsym:$src2)>;
-//def : Pat<(add GR32:$src1, (Cse523Wrapper tblockaddress:$src2)),
-//    (ADD32ri GR32:$src1, tblockaddress:$src2)>;
-//
-//def : Pat<(store (i32 (Cse523Wrapper tglobaladdr:$src)), addr:$dst),
-//    (MOV32mi addr:$dst, tglobaladdr:$src)>;
-//def : Pat<(store (i32 (Cse523Wrapper texternalsym:$src)), addr:$dst),
-//    (MOV32mi addr:$dst, texternalsym:$src)>;
-//def : Pat<(store (i32 (Cse523Wrapper tblockaddress:$src)), addr:$dst),
-//    (MOV32mi addr:$dst, tblockaddress:$src)>;
-//
+
+// ConstantPool GlobalAddress, ExternalSymbol, and JumpTable
+def : Pat<(i64 (Cse523Wrapper tconstpool  :$dst)), (MOV64ri tconstpool  :$dst)>;
+def : Pat<(i64 (Cse523Wrapper tjumptable  :$dst)), (MOV64ri tjumptable  :$dst)>;
+def : Pat<(i64 (Cse523Wrapper tglobaltlsaddr:$dst)),(MOV64ri tglobaltlsaddr:$dst)>;
+def : Pat<(i64 (Cse523Wrapper tglobaladdr :$dst)), (MOV64ri tglobaladdr :$dst)>;
+def : Pat<(i64 (Cse523Wrapper texternalsym:$dst)), (MOV64ri texternalsym:$dst)>;
+def : Pat<(i64 (Cse523Wrapper tblockaddress:$dst)), (MOV64ri tblockaddress:$dst)>;
+
+def : Pat<(add GR64:$src1, (Cse523Wrapper tconstpool:$src2)),
+    (ADD64ri32 GR64:$src1, tconstpool:$src2)>;
+def : Pat<(add GR64:$src1, (Cse523Wrapper tjumptable:$src2)),
+    (ADD64ri32 GR64:$src1, tjumptable:$src2)>;
+def : Pat<(add GR64:$src1, (Cse523Wrapper tglobaladdr :$src2)),
+    (ADD64ri32 GR64:$src1, tglobaladdr:$src2)>;
+def : Pat<(add GR64:$src1, (Cse523Wrapper texternalsym:$src2)),
+    (ADD64ri32 GR64:$src1, texternalsym:$src2)>;
+def : Pat<(add GR64:$src1, (Cse523Wrapper tblockaddress:$src2)),
+    (ADD64ri32 GR64:$src1, tblockaddress:$src2)>;
+
+def : Pat<(store (i64 (Cse523Wrapper tglobaladdr:$src)), addr:$dst),
+    (MOV64mi32 addr:$dst, tglobaladdr:$src)>;
+def : Pat<(store (i64 (Cse523Wrapper texternalsym:$src)), addr:$dst),
+    (MOV64mi32 addr:$dst, texternalsym:$src)>;
+def : Pat<(store (i64 (Cse523Wrapper tblockaddress:$src)), addr:$dst),
+    (MOV64mi32 addr:$dst, tblockaddress:$src)>;
+
 // ConstantPool GlobalAddress, ExternalSymbol, and JumpTable when not in small
 // code model mode, should use 'movabs'.  FIXME: This is really a hack, the
 //  'movabs' predicate should handle this sort of thing.

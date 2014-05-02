@@ -1398,7 +1398,7 @@ bool Cse523DAGToDAGISel::SelectMOV64Imm32(SDValue N, SDValue &Imm) {
     // into a register with 'movl'. TableGen has already made sure we're looking
     // at a label of some kind.
     assert(N->getOpcode() == Cse523ISD::Wrapper &&
-            "Unexpected node type for MOV32ri64");
+            "Unexpected node type for MOV64ri64");
     N = N.getOperand(0);
 
     if (N->getOpcode() != ISD::TargetConstantPool &&
@@ -2084,7 +2084,6 @@ SDNode *Cse523DAGToDAGISel::Select(SDNode *Node) {
         case Cse523ISD::ATOMUMIN64_DAG:
         case Cse523ISD::ATOMSWAP64_DAG: {
                                             unsigned Opc;
-                                            assert(0);
                                             switch (Opcode) {
                                                 default: llvm_unreachable("Impossible opcode");
                                                 //case Cse523ISD::ATOMOR64_DAG:   Opc = Cse523::ATOMOR6432;   break;
@@ -2358,17 +2357,11 @@ SDNode *Cse523DAGToDAGISel::Select(SDNode *Node) {
                              //  if (!isSigned) {
                              //      switch (NVT.SimpleTy) {
                              //          default: llvm_unreachable("Unsupported VT!");
-                             //          case MVT::i8:  Opc = Cse523::DIV8r;  MOpc = Cse523::DIV8m;  break;
-                             //          case MVT::i16: Opc = Cse523::DIV16r; MOpc = Cse523::DIV16m; break;
-                             //          case MVT::i32: Opc = Cse523::DIV32r; MOpc = Cse523::DIV32m; break;
                              //          case MVT::i64: Opc = Cse523::DIV64r; MOpc = Cse523::DIV64m; break;
                              //      }
                              //  } else {
                              //      switch (NVT.SimpleTy) {
                              //          default: llvm_unreachable("Unsupported VT!");
-                             //          case MVT::i8:  Opc = Cse523::IDIV8r;  MOpc = Cse523::IDIV8m;  break;
-                             //          case MVT::i16: Opc = Cse523::IDIV16r; MOpc = Cse523::IDIV16m; break;
-                             //          case MVT::i32: Opc = Cse523::IDIV32r; MOpc = Cse523::IDIV32m; break;
                              //          case MVT::i64: Opc = Cse523::IDIV64r; MOpc = Cse523::IDIV64m; break;
                              //      }
                              //  }
@@ -2377,19 +2370,6 @@ SDNode *Cse523DAGToDAGISel::Select(SDNode *Node) {
                              //  unsigned SExtOpcode;
                              //  switch (NVT.SimpleTy) {
                              //      default: llvm_unreachable("Unsupported VT!");
-                             //      case MVT::i8:
-                             //               LoReg = Cse523::AL;  ClrReg = HiReg = Cse523::AH;
-                             //               SExtOpcode = Cse523::CBW;
-                             //               break;
-                             //      case MVT::i16:
-                             //               LoReg = Cse523::AX;  HiReg = Cse523::DX;
-                             //               ClrReg = Cse523::DX;
-                             //               SExtOpcode = Cse523::CWD;
-                             //               break;
-                             //      case MVT::i32:
-                             //               LoReg = Cse523::EAX; ClrReg = HiReg = Cse523::EDX;
-                             //               SExtOpcode = Cse523::CDQ;
-                             //               break;
                              //      case MVT::i64:
                              //               LoReg = Cse523::RAX; ClrReg = HiReg = Cse523::RDX;
                              //               SExtOpcode = Cse523::CQO;
@@ -2519,28 +2499,28 @@ SDNode *Cse523DAGToDAGISel::Select(SDNode *Node) {
 
         case Cse523ISD::CMP:
         case Cse523ISD::SUB: {
-                                assert(0);
                                  // Sometimes a SUB is used to perform comparison.
-                             //    if (Opcode == Cse523ISD::SUB && Node->hasAnyUseOfValue(0))
-                             //        // This node is not a CMP.
-                             //        break;
-                             //    SDValue N0 = Node->getOperand(0);
-                             //    SDValue N1 = Node->getOperand(1);
+                                 if (Opcode == Cse523ISD::SUB && Node->hasAnyUseOfValue(0))
+                                     // This node is not a CMP.
+                                     break;
+                                 SDValue N0 = Node->getOperand(0);
+                                 SDValue N1 = Node->getOperand(1);
 
-                             //    // Look for (Cse523cmp (and $op, $imm), 0) and see if we can convert it to
-                             //    // use a smaller encoding.
-                             //    if (N0.getOpcode() == ISD::TRUNCATE && N0.hasOneUse() &&
-                             //            HasNoSignedComparisonUses(Node))
-                             //        // Look past the truncate if CMP is the only use of it.
-                             //        N0 = N0.getOperand(0);
-                             //    if ((N0.getNode()->getOpcode() == ISD::AND ||
-                             //                (N0.getResNo() == 0 && N0.getNode()->getOpcode() == Cse523ISD::AND)) &&
-                             //            N0.getNode()->hasOneUse() &&
-                             //            N0.getValueType() != MVT::i8 &&
-                             //            Cse523::isZeroNode(N1)) {
-                             //        ConstantSDNode *C = dyn_cast<ConstantSDNode>(N0.getNode()->getOperand(1));
-                             //        if (!C) break;
+                                 // Look for (Cse523cmp (and $op, $imm), 0) and see if we can convert it to
+                                 // use a smaller encoding.
+                                 if (N0.getOpcode() == ISD::TRUNCATE && N0.hasOneUse() &&
+                                         HasNoSignedComparisonUses(Node))
+                                     // Look past the truncate if CMP is the only use of it.
+                                     N0 = N0.getOperand(0);
+                                 if ((N0.getNode()->getOpcode() == ISD::AND ||
+                                             (N0.getResNo() == 0 && N0.getNode()->getOpcode() == Cse523ISD::AND)) &&
+                                         N0.getNode()->hasOneUse() &&
+                                         N0.getValueType() != MVT::i8 &&
+                                         Cse523::isZeroNode(N1)) {
+                                     ConstantSDNode *C = dyn_cast<ConstantSDNode>(N0.getNode()->getOperand(1));
+                                     if (!C) break;
 
+                                     assert(0);
                              //        // For example, convert "testl %eax, $8" to "testb %al, $8"
                              //        if ((C->getZExtValue() & ~UINT64_C(0xff)) == 0 &&
                              //                (!(C->getZExtValue() & 0x80) ||
@@ -2548,25 +2528,12 @@ SDNode *Cse523DAGToDAGISel::Select(SDNode *Node) {
                              //            SDValue Imm = CurDAG->getTargetConstant(C->getZExtValue(), MVT::i8);
                              //            SDValue Reg = N0.getNode()->getOperand(0);
 
-                             //            // On cse523-32, only the ABCD registers have 8-bit subregisters.
-                             //            if (!Subtarget->is64Bit()) {
-                             //                const TargetRegisterClass *TRC;
-                             //                switch (N0.getSimpleValueType().SimpleTy) {
-                             //                    case MVT::i32: TRC = &Cse523::GR32_ABCDRegClass; break;
-                             //                    case MVT::i16: TRC = &Cse523::GR16_ABCDRegClass; break;
-                             //                    default: llvm_unreachable("Unsupported TEST operand type!");
-                             //                }
-                             //                SDValue RC = CurDAG->getTargetConstant(TRC->getID(), MVT::i32);
-                             //                Reg = SDValue(CurDAG->getMachineNode(Cse523::COPY_TO_REGCLASS, dl,
-                             //                            Reg.getValueType(), Reg, RC), 0);
-                             //            }
-
                              //            // Extract the l-register.
                              //            SDValue Subreg = CurDAG->getTargetExtractSubreg(Cse523::sub_8bit, dl,
                              //                    MVT::i8, Reg);
 
                              //            // Emit a testb.
-                             //            SDNode *NewNode = CurDAG->getMachineNode(Cse523::TEST8ri, dl, MVT::i32,
+                             //            SDNode *NewNode = CurDAG->getMachineNode(Cse523::TEST64ri32, dl, MVT::i64,
                              //                    Subreg, Imm);
                              //            // Replace SUB|CMP with TEST, since SUB has two outputs while TEST has
                              //            // one, do not call ReplaceAllUsesWith.
@@ -2588,8 +2555,6 @@ SDNode *Cse523DAGToDAGISel::Select(SDNode *Node) {
                              //            const TargetRegisterClass *TRC;
                              //            switch (N0.getSimpleValueType().SimpleTy) {
                              //                case MVT::i64: TRC = &Cse523::GR64_ABCDRegClass; break;
-                             //                case MVT::i32: TRC = &Cse523::GR32_ABCDRegClass; break;
-                             //                case MVT::i16: TRC = &Cse523::GR16_ABCDRegClass; break;
                              //                default: llvm_unreachable("Unsupported TEST operand type!");
                              //            }
                              //            SDValue RC = CurDAG->getTargetConstant(TRC->getID(), MVT::i32);
@@ -2655,7 +2620,7 @@ SDNode *Cse523DAGToDAGISel::Select(SDNode *Node) {
                              //                    SDValue(NewNode, 0));
                              //            return NULL;
                              //        }
-                             //    }
+                                 }
                                  break;
                              }
         case ISD::STORE: {

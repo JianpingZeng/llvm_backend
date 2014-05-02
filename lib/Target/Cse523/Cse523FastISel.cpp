@@ -782,12 +782,6 @@ bool Cse523FastISel::Cse523SelectRet(const Instruction *I) {
         if (!VA.isRegLoc())
             return false;
 
-        assert(0);
-        // The calling-convention tables for x87 returns don't tell
-        // the whole story.
-        //if (VA.getLocReg() == Cse523::ST0 || VA.getLocReg() == Cse523::ST1)
-        //    return false;
-
         unsigned SrcReg = Reg + VA.getValNo();
         EVT SrcVT = TLI.getValueType(RV->getType());
         EVT DstVT = VA.getValVT();
@@ -1098,61 +1092,60 @@ bool Cse523FastISel::Cse523SelectBranch(const Instruction *I) {
             bool SwapArgs;  // false -> compare Op0, Op1.  true -> compare Op1, Op0.
             unsigned BranchOpc; // Opcode to jump on, e.g. "Cse523::JA"
 
-            assert(0);
-            //switch (Predicate) {
-            //    case CmpInst::FCMP_OEQ:
-            //        std::swap(TrueMBB, FalseMBB);
-            //        Predicate = CmpInst::FCMP_UNE;
-            //        // FALL THROUGH
-            //    case CmpInst::FCMP_UNE: SwapArgs = false; BranchOpc = Cse523::JNE_4; break;
-            //    case CmpInst::FCMP_OGT: SwapArgs = false; BranchOpc = Cse523::JA_4;  break;
-            //    case CmpInst::FCMP_OGE: SwapArgs = false; BranchOpc = Cse523::JAE_4; break;
-            //    case CmpInst::FCMP_OLT: SwapArgs = true;  BranchOpc = Cse523::JA_4;  break;
-            //    case CmpInst::FCMP_OLE: SwapArgs = true;  BranchOpc = Cse523::JAE_4; break;
-            //    case CmpInst::FCMP_ONE: SwapArgs = false; BranchOpc = Cse523::JNE_4; break;
-            //    case CmpInst::FCMP_ORD: SwapArgs = false; BranchOpc = Cse523::JNP_4; break;
-            //    case CmpInst::FCMP_UNO: SwapArgs = false; BranchOpc = Cse523::JP_4;  break;
-            //    case CmpInst::FCMP_UEQ: SwapArgs = false; BranchOpc = Cse523::JE_4;  break;
-            //    case CmpInst::FCMP_UGT: SwapArgs = true;  BranchOpc = Cse523::JB_4;  break;
-            //    case CmpInst::FCMP_UGE: SwapArgs = true;  BranchOpc = Cse523::JBE_4; break;
-            //    case CmpInst::FCMP_ULT: SwapArgs = false; BranchOpc = Cse523::JB_4;  break;
-            //    case CmpInst::FCMP_ULE: SwapArgs = false; BranchOpc = Cse523::JBE_4; break;
+            switch (Predicate) {
+                case CmpInst::FCMP_OEQ:
+                    std::swap(TrueMBB, FalseMBB);
+                    Predicate = CmpInst::FCMP_UNE;
+                    // FALL THROUGH
+                case CmpInst::FCMP_UNE: SwapArgs = false; BranchOpc = Cse523::JNE_4; break;
+                case CmpInst::FCMP_OGT: SwapArgs = false; BranchOpc = Cse523::JA_4;  break;
+                case CmpInst::FCMP_OGE: SwapArgs = false; BranchOpc = Cse523::JAE_4; break;
+                case CmpInst::FCMP_OLT: SwapArgs = true;  BranchOpc = Cse523::JA_4;  break;
+                case CmpInst::FCMP_OLE: SwapArgs = true;  BranchOpc = Cse523::JAE_4; break;
+                case CmpInst::FCMP_ONE: SwapArgs = false; BranchOpc = Cse523::JNE_4; break;
+                case CmpInst::FCMP_ORD: SwapArgs = false; BranchOpc = Cse523::JNP_4; break;
+                case CmpInst::FCMP_UNO: SwapArgs = false; BranchOpc = Cse523::JP_4;  break;
+                case CmpInst::FCMP_UEQ: SwapArgs = false; BranchOpc = Cse523::JE_4;  break;
+                case CmpInst::FCMP_UGT: SwapArgs = true;  BranchOpc = Cse523::JB_4;  break;
+                case CmpInst::FCMP_UGE: SwapArgs = true;  BranchOpc = Cse523::JBE_4; break;
+                case CmpInst::FCMP_ULT: SwapArgs = false; BranchOpc = Cse523::JB_4;  break;
+                case CmpInst::FCMP_ULE: SwapArgs = false; BranchOpc = Cse523::JBE_4; break;
 
-            //    case CmpInst::ICMP_EQ:  SwapArgs = false; BranchOpc = Cse523::JE_4;  break;
-            //    case CmpInst::ICMP_NE:  SwapArgs = false; BranchOpc = Cse523::JNE_4; break;
-            //    case CmpInst::ICMP_UGT: SwapArgs = false; BranchOpc = Cse523::JA_4;  break;
-            //    case CmpInst::ICMP_UGE: SwapArgs = false; BranchOpc = Cse523::JAE_4; break;
-            //    case CmpInst::ICMP_ULT: SwapArgs = false; BranchOpc = Cse523::JB_4;  break;
-            //    case CmpInst::ICMP_ULE: SwapArgs = false; BranchOpc = Cse523::JBE_4; break;
-            //    case CmpInst::ICMP_SGT: SwapArgs = false; BranchOpc = Cse523::JG_4;  break;
-            //    case CmpInst::ICMP_SGE: SwapArgs = false; BranchOpc = Cse523::JGE_4; break;
-            //    case CmpInst::ICMP_SLT: SwapArgs = false; BranchOpc = Cse523::JL_4;  break;
-            //    case CmpInst::ICMP_SLE: SwapArgs = false; BranchOpc = Cse523::JLE_4; break;
-            //    default:
-            //                            return false;
-            //}
+                case CmpInst::ICMP_EQ:  SwapArgs = false; BranchOpc = Cse523::JE_4;  break;
+                case CmpInst::ICMP_NE:  SwapArgs = false; BranchOpc = Cse523::JNE_4; break;
+                case CmpInst::ICMP_UGT: SwapArgs = false; BranchOpc = Cse523::JA_4;  break;
+                case CmpInst::ICMP_UGE: SwapArgs = false; BranchOpc = Cse523::JAE_4; break;
+                case CmpInst::ICMP_ULT: SwapArgs = false; BranchOpc = Cse523::JB_4;  break;
+                case CmpInst::ICMP_ULE: SwapArgs = false; BranchOpc = Cse523::JBE_4; break;
+                case CmpInst::ICMP_SGT: SwapArgs = false; BranchOpc = Cse523::JG_4;  break;
+                case CmpInst::ICMP_SGE: SwapArgs = false; BranchOpc = Cse523::JGE_4; break;
+                case CmpInst::ICMP_SLT: SwapArgs = false; BranchOpc = Cse523::JL_4;  break;
+                case CmpInst::ICMP_SLE: SwapArgs = false; BranchOpc = Cse523::JLE_4; break;
+                default:
+                                        return false;
+            }
 
-            //const Value *Op0 = CI->getOperand(0), *Op1 = CI->getOperand(1);
-            //if (SwapArgs)
-            //    std::swap(Op0, Op1);
+            const Value *Op0 = CI->getOperand(0), *Op1 = CI->getOperand(1);
+            if (SwapArgs)
+                std::swap(Op0, Op1);
 
-            //// Emit a compare of the LHS and RHS, setting the flags.
-            //if (!Cse523FastEmitCompare(Op0, Op1, VT))
-            //    return false;
+            // Emit a compare of the LHS and RHS, setting the flags.
+            if (!Cse523FastEmitCompare(Op0, Op1, VT))
+                return false;
 
-            //BuildMI(*FuncInfo.MBB, FuncInfo.InsertPt, DbgLoc, TII.get(BranchOpc))
-            //    .addMBB(TrueMBB);
+            BuildMI(*FuncInfo.MBB, FuncInfo.InsertPt, DbgLoc, TII.get(BranchOpc))
+                .addMBB(TrueMBB);
 
-            //if (Predicate == CmpInst::FCMP_UNE) {
-            //    // Cse523 requires a second branch to handle UNE (and OEQ,
-            //    // which is mapped to UNE above).
-            //    BuildMI(*FuncInfo.MBB, FuncInfo.InsertPt, DbgLoc, TII.get(Cse523::JP_4))
-            //        .addMBB(TrueMBB);
-            //}
+            if (Predicate == CmpInst::FCMP_UNE) {
+                // Cse523 requires a second branch to handle UNE (and OEQ,
+                // which is mapped to UNE above).
+                BuildMI(*FuncInfo.MBB, FuncInfo.InsertPt, DbgLoc, TII.get(Cse523::JP_4))
+                    .addMBB(TrueMBB);
+            }
 
-            //FastEmitBranch(FalseMBB, DbgLoc);
-            //FuncInfo.MBB->addSuccessor(TrueMBB);
-            //return true;
+            FastEmitBranch(FalseMBB, DbgLoc);
+            FuncInfo.MBB->addSuccessor(TrueMBB);
+            return true;
         }
     } else if (TruncInst *TI = dyn_cast<TruncInst>(BI->getCondition())) {
         // Handle things like "%cond = trunc i32 %X to i1 / br i1 %cond", which
@@ -1175,18 +1168,17 @@ bool Cse523FastISel::Cse523SelectBranch(const Instruction *I) {
                 BuildMI(*FuncInfo.MBB, FuncInfo.InsertPt, DbgLoc, TII.get(TestOpc))
                     .addReg(OpReg).addImm(1);
 
-                assert(0);
-                //unsigned JmpOpc = Cse523::JNE_4;
-                //if (FuncInfo.MBB->isLayoutSuccessor(TrueMBB)) {
-                //    std::swap(TrueMBB, FalseMBB);
-                //    JmpOpc = Cse523::JE_4;
-                //}
+                unsigned JmpOpc = Cse523::JNE_4;
+                if (FuncInfo.MBB->isLayoutSuccessor(TrueMBB)) {
+                    std::swap(TrueMBB, FalseMBB);
+                    JmpOpc = Cse523::JE_4;
+                }
 
-                //BuildMI(*FuncInfo.MBB, FuncInfo.InsertPt, DbgLoc, TII.get(JmpOpc))
-                //    .addMBB(TrueMBB);
-                //FastEmitBranch(FalseMBB, DbgLoc);
-                //FuncInfo.MBB->addSuccessor(TrueMBB);
-                //return true;
+                BuildMI(*FuncInfo.MBB, FuncInfo.InsertPt, DbgLoc, TII.get(JmpOpc))
+                    .addMBB(TrueMBB);
+                FastEmitBranch(FalseMBB, DbgLoc);
+                FuncInfo.MBB->addSuccessor(TrueMBB);
+                return true;
             }
         }
     }
@@ -1197,13 +1189,12 @@ bool Cse523FastISel::Cse523SelectBranch(const Instruction *I) {
     unsigned OpReg = getRegForValue(BI->getCondition());
     if (OpReg == 0) return false;
 
-    assert(0);
-    //BuildMI(*FuncInfo.MBB, FuncInfo.InsertPt, DbgLoc, TII.get(Cse523::TEST8ri))
-    //    .addReg(OpReg).addImm(1);
-    //BuildMI(*FuncInfo.MBB, FuncInfo.InsertPt, DbgLoc, TII.get(Cse523::JNE_4))
-    //    .addMBB(TrueMBB);
-    //FastEmitBranch(FalseMBB, DbgLoc);
-    //FuncInfo.MBB->addSuccessor(TrueMBB);
+    BuildMI(*FuncInfo.MBB, FuncInfo.InsertPt, DbgLoc, TII.get(Cse523::TEST64ri32))
+        .addReg(OpReg).addImm(1);
+    BuildMI(*FuncInfo.MBB, FuncInfo.InsertPt, DbgLoc, TII.get(Cse523::JNE_4))
+        .addMBB(TrueMBB);
+    FastEmitBranch(FalseMBB, DbgLoc);
+    FuncInfo.MBB->addSuccessor(TrueMBB);
     return true;
 }
 
@@ -1219,11 +1210,10 @@ bool Cse523FastISel::Cse523SelectShift(const Instruction *I) {
     } else if (I->getType()->isIntegerTy(64)) {
         CReg = Cse523::RCX;
         RC = &Cse523::GR64RegClass;
-        assert(0);
         switch (I->getOpcode()) {
-            //case Instruction::LShr: OpReg = Cse523::SHR64rCL; break;
-            //case Instruction::AShr: OpReg = Cse523::SAR64rCL; break;
-            //case Instruction::Shl:  OpReg = Cse523::SHL64rCL; break;
+            case Instruction::LShr: OpReg = Cse523::SHR64rCL; break;
+            case Instruction::AShr: OpReg = Cse523::SAR64rCL; break;
+            case Instruction::Shl:  OpReg = Cse523::SHL64rCL; break;
             default: return false;
         }
     } else {
@@ -1242,14 +1232,12 @@ bool Cse523FastISel::Cse523SelectShift(const Instruction *I) {
     BuildMI(*FuncInfo.MBB, FuncInfo.InsertPt, DbgLoc, TII.get(TargetOpcode::COPY),
             CReg).addReg(Op1Reg);
 
-    assert(0);
-
-    // The shift instruction uses Cse523::CL. If we defined a super-register
-    // of Cse523::CL, emit a subreg KILL to precisely describe what we're doing here.
-    //if (CReg != Cse523::CL)
-    //    BuildMI(*FuncInfo.MBB, FuncInfo.InsertPt, DbgLoc,
-    //            TII.get(TargetOpcode::KILL), Cse523::CL)
-    //        .addReg(CReg, RegState::Kill);
+    // The shift instruction uses Cse523::RCX. If we defined a super-register
+    // of Cse523::RCX, emit a subreg KILL to precisely describe what we're doing here.
+    if (CReg != Cse523::RCX)
+        BuildMI(*FuncInfo.MBB, FuncInfo.InsertPt, DbgLoc,
+                TII.get(TargetOpcode::KILL), Cse523::RCX)
+            .addReg(CReg, RegState::Kill);
 
     unsigned ResultReg = createResultReg(RC);
     BuildMI(*FuncInfo.MBB, FuncInfo.InsertPt, DbgLoc, TII.get(OpReg), ResultReg)
@@ -1437,9 +1425,8 @@ bool Cse523FastISel::Cse523SelectSelect(const Instruction *I) {
     // If we read more than the lsb, we may see non-zero values whereas lsb
     // is zero. Therefore, we have to truncate Op0Reg to i1 for the select.
     // This is achieved by performing TEST against 1.
-    assert(0);
-    //BuildMI(*FuncInfo.MBB, FuncInfo.InsertPt, DbgLoc, TII.get(Cse523::TEST8ri))
-    //    .addReg(Op0Reg).addImm(1);
+    BuildMI(*FuncInfo.MBB, FuncInfo.InsertPt, DbgLoc, TII.get(Cse523::TEST64ri32))
+        .addReg(Op0Reg).addImm(1);
     unsigned ResultReg = createResultReg(RC);
     BuildMI(*FuncInfo.MBB, FuncInfo.InsertPt, DbgLoc, TII.get(Opc), ResultReg)
         .addReg(Op1Reg).addReg(Op2Reg);

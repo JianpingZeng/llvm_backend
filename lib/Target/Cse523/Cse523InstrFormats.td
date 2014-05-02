@@ -333,6 +333,12 @@ class Ii32S<bits<8> o, Format f, dag outs, dag ins, string asm,
   let Pattern = pattern;
   let CodeSize = 3;
 }
+class Ii64<bits<8> o, Format f, dag outs, dag ins, string asm, 
+           list<dag> pattern, InstrItinClass itin = NoItinerary>
+  : Cse523Inst<o, f, Imm64, outs, ins, asm, itin> {
+  let Pattern = pattern;
+  let CodeSize = 3;
+}
 
 class Ii16PCRel<bits<8> o, Format f, dag outs, dag ins, string asm, 
            list<dag> pattern, InstrItinClass itin = NoItinerary>

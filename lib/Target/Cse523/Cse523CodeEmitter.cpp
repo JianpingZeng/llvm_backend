@@ -1204,7 +1204,7 @@ void Emitter<CodeEmitter>::emitInstruction(MachineInstr &MI,
 //
 //                                      unsigned rt = Is64BitMode ? Cse523::reloc_pcrel_word
 //                                          : (IsPIC ? Cse523::reloc_picrel_word : Cse523::reloc_absolute_word);
-//                                      if (Opcode == Cse523::MOV32ri64)
+//                                      if (Opcode == Cse523::MOV64ri64)
 //                                          rt = Cse523::reloc_absolute_word;  // FIXME: add Cse523II flag?
 //                                      // This should not occur on Darwin for relocatable objects.
 //                                      if (Opcode == Cse523::MOV64ri)

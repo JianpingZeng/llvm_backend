@@ -1125,7 +1125,7 @@ let Predicates = [HasMOVBE] in {
 
 include "Cse523InstrArithmetic.td"
 //include "Cse523InstrCMovSetCC.td"
-//include "Cse523InstrExtension.td"
+include "Cse523InstrExtension.td"
 include "Cse523InstrControl.td"
 include "Cse523InstrShiftRotate.td"
 //

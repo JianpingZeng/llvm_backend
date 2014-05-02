@@ -398,9 +398,9 @@ ReSimplify:
     //                "LEA has segment specified!");
     //        break;
 
-    //    case Cse523::MOV32ri64:
-    //        OutMI.setOpcode(Cse523::MOV32ri);
-    //        break;
+        case Cse523::MOV64ri64:
+            OutMI.setOpcode(Cse523::MOV64ri);
+            break;
 
     //        // Commute operands to get a smaller encoding by using VEX.R instead of VEX.B
     //        // if one of the registers is extended, but other isn't.

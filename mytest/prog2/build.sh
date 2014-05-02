@@ -2,27 +2,20 @@
 
 NAME=prog2
 
-CPU=CSE502
-#CPU=corei7
+#CPU=i486
 
-# LIBC_PATH=./musl-0.9.8
+LIBC_PATH=./musl-0.9.8
 #LIBS=`echo $LIBC_PATH/lib/{crt1.o,libc.a}`
-as -o crt1.o crt1.s
 for c in *.c; do
-	clang -Wno-main-return-type -emit-llvm -nobuiltininc -msoft-float -O3 -S -c -o $c.bc $c
-	llc -march=x86-64 -mcpu=$CPU -O3 $c.bc -o $c.S
+        echo "[Running] clang $c"
+	clang -Wno-main-return-type -emit-llvm -DENABLE_SCORE -DENABLE_PREVIEW -DENABLE_HIGH_SCORE -O3 -S -c -o $c.bc -nobuiltininc -isystem $LIBC_PATH/include $c
+        echo "[Running] llc $c.bc"
+	llc -march=cse523 -O3 $c.bc -o $c.S
+        echo "[Running] as $c.S"
 	as -o $c.o $c.S
 done
+echo "[Running] as crt1.s"
+as -o crt1.o crt1.s
+echo "[Running] ld $NAME"
 ld -static -o $NAME *.o
 
-
-
-#NAME=prog2
-#PATH=/scratch/mferdman/llvm-build/Debug+Asserts/bin:$PATH
-
-#for i in *.c; do
-#	clang -O3 -Wno-main-return-type -msoft-float -nobuiltininc -c -o ${i%.c}.o $i
-#done
-#as -o crt1.o crt1.s
-#ld -static -o $NAME *.o
-#objdump -D $NAME

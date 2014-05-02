@@ -14738,7 +14738,7 @@ unsigned Cse523TargetLowering::ComputeNumSignBitsForTargetNode(SDValue Op,
 bool Cse523TargetLowering::isGAPlusOffset(SDNode *N,
         const GlobalValue* &GA,
         int64_t &Offset) const {
-    if (N->getOpcode() == Cse523ISD::Wrapper) {
+    if (N->getOpcode() == Cse523ISD::Wrapper) { 
         if (isa<GlobalAddressSDNode>(N->getOperand(0))) {
             GA = cast<GlobalAddressSDNode>(N->getOperand(0))->getGlobal();
             Offset = cast<GlobalAddressSDNode>(N->getOperand(0))->getOffset();
