@@ -2300,27 +2300,6 @@ SDNode *Cse523DAGToDAGISel::Select(SDNode *Node) {
                                      }
                                  }
 
-                                 assert(0);
-                                 // Prevent use of AH in a REX instruction by referencing AX instead.
-                                 //if (HiReg == Cse523::AH && Subtarget->is64Bit() &&
-                                 //        !SDValue(Node, 1).use_empty()) {
-                                 //    SDValue Result = CurDAG->getCopyFromReg(CurDAG->getEntryNode(), dl,
-                                 //            Cse523::AX, MVT::i16, InFlag);
-                                 //    InFlag = Result.getValue(2);
-                                 //    // Get the low part if needed. Don't use getCopyFromReg for aliasing
-                                 //    // registers.
-                                 //    if (!SDValue(Node, 0).use_empty())
-                                 //        ReplaceUses(SDValue(Node, 1),
-                                 //                CurDAG->getTargetExtractSubreg(Cse523::sub_8bit, dl, MVT::i8, Result));
-
-                                 //    // Shift AX down 8 bits.
-                                 //    Result = SDValue(CurDAG->getMachineNode(Cse523::SHR16ri, dl, MVT::i16,
-                                 //                Result,
-                                 //                CurDAG->getTargetConstant(8, MVT::i8)), 0);
-                                 //    // Then truncate it down to i8.
-                                 //    ReplaceUses(SDValue(Node, 1),
-                                 //            CurDAG->getTargetExtractSubreg(Cse523::sub_8bit, dl, MVT::i8, Result));
-                                 //}
                                  // Copy the low half of the result, if it is needed.
                                  if (!SDValue(Node, 0).use_empty()) {
                                      if (ResLo.getNode() == 0) {
@@ -2349,151 +2328,95 @@ SDNode *Cse523DAGToDAGISel::Select(SDNode *Node) {
 
         case ISD::SDIVREM:
         case ISD::UDIVREM: {
-                                assert(0);
-                             //  SDValue N0 = Node->getOperand(0);
-                             //  SDValue N1 = Node->getOperand(1);
+                               SDValue N0 = Node->getOperand(0);
+                               SDValue N1 = Node->getOperand(1);
 
-                             //  bool isSigned = Opcode == ISD::SDIVREM;
-                             //  if (!isSigned) {
-                             //      switch (NVT.SimpleTy) {
-                             //          default: llvm_unreachable("Unsupported VT!");
-                             //          case MVT::i64: Opc = Cse523::DIV64r; MOpc = Cse523::DIV64m; break;
-                             //      }
-                             //  } else {
-                             //      switch (NVT.SimpleTy) {
-                             //          default: llvm_unreachable("Unsupported VT!");
-                             //          case MVT::i64: Opc = Cse523::IDIV64r; MOpc = Cse523::IDIV64m; break;
-                             //      }
-                             //  }
+                               bool isSigned = Opcode == ISD::SDIVREM;
+                               if (!isSigned) {
+                                   switch (NVT.SimpleTy) {
+                                       default: llvm_unreachable("Unsupported VT!");
+                                       case MVT::i64: Opc = Cse523::DIV64r; MOpc = Cse523::DIV64m; break;
+                                   }
+                               } else {
+                                   switch (NVT.SimpleTy) {
+                                       default: llvm_unreachable("Unsupported VT!");
+                                       case MVT::i64: Opc = Cse523::IDIV64r; MOpc = Cse523::IDIV64m; break;
+                                   }
+                               }
 
-                             //  unsigned LoReg, HiReg, ClrReg;
-                             //  unsigned SExtOpcode;
-                             //  switch (NVT.SimpleTy) {
-                             //      default: llvm_unreachable("Unsupported VT!");
-                             //      case MVT::i64:
-                             //               LoReg = Cse523::RAX; ClrReg = HiReg = Cse523::RDX;
-                             //               SExtOpcode = Cse523::CQO;
-                             //               break;
-                             //  }
+                               unsigned LoReg, HiReg, ClrReg;
+                               unsigned SExtOpcode;
+                               switch (NVT.SimpleTy) {
+                                   default: llvm_unreachable("Unsupported VT!");
+                                   case MVT::i64:
+                                            LoReg = Cse523::RAX; ClrReg = HiReg = Cse523::RDX;
+                                            SExtOpcode = Cse523::CQO;
+                                            break;
+                               }
 
-                             //  SDValue Tmp0, Tmp1, Tmp2, Tmp3, Tmp4;
-                             //  bool foldedLoad = TryFoldLoad(Node, N1, Tmp0, Tmp1, Tmp2, Tmp3, Tmp4);
-                             //  bool signBitIsZero = CurDAG->SignBitIsZero(N0);
+                               SDValue Tmp0, Tmp1, Tmp2, Tmp3, Tmp4;
+                               bool foldedLoad = TryFoldLoad(Node, N1, Tmp0, Tmp1, Tmp2, Tmp3, Tmp4);
+                               bool signBitIsZero = CurDAG->SignBitIsZero(N0);
 
-                             //  SDValue InFlag;
-                             //  if (NVT == MVT::i8 && (!isSigned || signBitIsZero)) {
-                             //      // Special case for div8, just use a move with zero extension to AX to
-                             //      // clear the upper 8 bits (AH).
-                             //      SDValue Tmp0, Tmp1, Tmp2, Tmp3, Tmp4, Move, Chain;
-                             //      if (TryFoldLoad(Node, N0, Tmp0, Tmp1, Tmp2, Tmp3, Tmp4)) {
-                             //          SDValue Ops[] = { Tmp0, Tmp1, Tmp2, Tmp3, Tmp4, N0.getOperand(0) };
-                             //          Move =
-                             //              SDValue(CurDAG->getMachineNode(Cse523::MOVZX32rm8, dl, MVT::i32,
-                             //                          MVT::Other, Ops), 0);
-                             //          Chain = Move.getValue(1);
-                             //          ReplaceUses(N0.getValue(1), Chain);
-                             //      } else {
-                             //          Move =
-                             //              SDValue(CurDAG->getMachineNode(Cse523::MOVZX32rr8, dl, MVT::i32, N0),0);
-                             //          Chain = CurDAG->getEntryNode();
-                             //      }
-                             //      Chain  = CurDAG->getCopyToReg(Chain, dl, Cse523::EAX, Move, SDValue());
-                             //      InFlag = Chain.getValue(1);
-                             //  } else {
-                             //      InFlag =
-                             //          CurDAG->getCopyToReg(CurDAG->getEntryNode(), dl,
-                             //                  LoReg, N0, SDValue()).getValue(1);
-                             //      if (isSigned && !signBitIsZero) {
-                             //          // Sign extend the low part into the high part.
-                             //          InFlag =
-                             //              SDValue(CurDAG->getMachineNode(SExtOpcode, dl, MVT::Glue, InFlag),0);
-                             //      } else {
-                             //          // Zero out the high part, effectively zero extending the input.
-                             //          SDValue ClrNode = SDValue(CurDAG->getMachineNode(Cse523::MOV32r0, dl, NVT), 0);       
-                             //          switch (NVT.SimpleTy) {
-                             //              case MVT::i16:
-                             //                  ClrNode =
-                             //                      SDValue(CurDAG->getMachineNode(
-                             //                                  TargetOpcode::EXTRACT_SUBREG, dl, MVT::i16, ClrNode,
-                             //                                  CurDAG->getTargetConstant(Cse523::sub_16bit, MVT::i32)),
-                             //                              0);
-                             //                  break;
-                             //              case MVT::i32:
-                             //                  break;
-                             //              case MVT::i64:
-                             //                  ClrNode =
-                             //                      SDValue(CurDAG->getMachineNode(
-                             //                                  TargetOpcode::SUBREG_TO_REG, dl, MVT::i64,
-                             //                                  CurDAG->getTargetConstant(0, MVT::i64), ClrNode,
-                             //                                  CurDAG->getTargetConstant(Cse523::sub_32bit, MVT::i32)),
-                             //                              0);
-                             //                  break;
-                             //              default:
-                             //                  llvm_unreachable("Unexpected division source");
-                             //          }
+                               SDValue InFlag;
+                               InFlag =
+                                   CurDAG->getCopyToReg(CurDAG->getEntryNode(), dl,
+                                           LoReg, N0, SDValue()).getValue(1);
+                               if (isSigned && !signBitIsZero) {
+                                   // Sign extend the low part into the high part.
+                                   InFlag = SDValue(CurDAG->getMachineNode(SExtOpcode, dl, MVT::Glue, InFlag),0);
+                               } else {
+                                   // Zero out the high part, effectively zero extending the input.
+                                   assert(0);
+                                   //SDValue ClrNode = SDValue(CurDAG->getMachineNode(Cse523::MOV32r0, dl, NVT), 0);       
+                                   //switch (NVT.SimpleTy) {
+                                   //    case MVT::i32:
+                                   //        break;
+                                   //    case MVT::i64:
+                                   //        ClrNode =
+                                   //            SDValue(CurDAG->getMachineNode(
+                                   //                        TargetOpcode::SUBREG_TO_REG, dl, MVT::i64,
+                                   //                        CurDAG->getTargetConstant(0, MVT::i64), ClrNode,
+                                   //                        CurDAG->getTargetConstant(Cse523::sub_32bit, MVT::i32)),
+                                   //                    0);
+                                   //        break;
+                                   //    default:
+                                   //        llvm_unreachable("Unexpected division source");
+                                   //}
 
-                             //          InFlag = CurDAG->getCopyToReg(CurDAG->getEntryNode(), dl, ClrReg,
-                             //                  ClrNode, InFlag).getValue(1);
-                             //      }
-                             //  }
+                                   //InFlag = CurDAG->getCopyToReg(CurDAG->getEntryNode(), dl, ClrReg,
+                                   //        ClrNode, InFlag).getValue(1);
+                               }
 
-                             //  if (foldedLoad) {
-                             //      SDValue Ops[] = { Tmp0, Tmp1, Tmp2, Tmp3, Tmp4, N1.getOperand(0),
-                             //          InFlag };
-                             //      SDNode *CNode =
-                             //          CurDAG->getMachineNode(MOpc, dl, MVT::Other, MVT::Glue, Ops);
-                             //      InFlag = SDValue(CNode, 1);
-                             //      // Update the chain.
-                             //      ReplaceUses(N1.getValue(1), SDValue(CNode, 0));
-                             //  } else {
-                             //      InFlag =
-                             //          SDValue(CurDAG->getMachineNode(Opc, dl, MVT::Glue, N1, InFlag), 0);
-                             //  }
+                               if (foldedLoad) {
+                                   SDValue Ops[] = { Tmp0, Tmp1, Tmp2, Tmp3, Tmp4, N1.getOperand(0),
+                                       InFlag };
+                                   SDNode *CNode =
+                                       CurDAG->getMachineNode(MOpc, dl, MVT::Other, MVT::Glue, Ops);
+                                   InFlag = SDValue(CNode, 1);
+                                   // Update the chain.
+                                   ReplaceUses(N1.getValue(1), SDValue(CNode, 0));
+                               } else {
+                                   InFlag =
+                                       SDValue(CurDAG->getMachineNode(Opc, dl, MVT::Glue, N1, InFlag), 0);
+                               }
 
-                             //  // Prevent use of AH in a REX instruction by referencing AX instead.
-                             //  // Shift it down 8 bits.
-                             //  //
-                             //  // The current assumption of the register allocator is that isel
-                             //  // won't generate explicit references to the GPR8_NOREX registers. If
-                             //  // the allocator and/or the backend get enhanced to be more robust in
-                             //  // that regard, this can be, and should be, removed.
-                             //  if (HiReg == Cse523::AH && Subtarget->is64Bit() &&
-                             //          !SDValue(Node, 1).use_empty()) {
-                             //      SDValue Result = CurDAG->getCopyFromReg(CurDAG->getEntryNode(), dl,
-                             //              Cse523::AX, MVT::i16, InFlag);
-                             //      InFlag = Result.getValue(2);
-
-                             //      // If we also need AL (the quotient), get it by extracting a subreg from
-                             //      // Result. The fast register allocator does not like multiple CopyFromReg
-                             //      // nodes using aliasing registers.
-                             //      if (!SDValue(Node, 0).use_empty())
-                             //          ReplaceUses(SDValue(Node, 0),
-                             //                  CurDAG->getTargetExtractSubreg(Cse523::sub_8bit, dl, MVT::i8, Result));
-
-                             //      // Shift AX right by 8 bits instead of using AH.
-                             //      Result = SDValue(CurDAG->getMachineNode(Cse523::SHR16ri, dl, MVT::i16,
-                             //                  Result,
-                             //                  CurDAG->getTargetConstant(8, MVT::i8)),
-                             //              0);
-                             //      ReplaceUses(SDValue(Node, 1),
-                             //              CurDAG->getTargetExtractSubreg(Cse523::sub_8bit, dl, MVT::i8, Result));
-                             //  }
-                             //  // Copy the division (low) result, if it is needed.
-                             //  if (!SDValue(Node, 0).use_empty()) {
-                             //      SDValue Result = CurDAG->getCopyFromReg(CurDAG->getEntryNode(), dl,
-                             //              LoReg, NVT, InFlag);
-                             //      InFlag = Result.getValue(2);
-                             //      ReplaceUses(SDValue(Node, 0), Result);
-                             //      DEBUG(dbgs() << "=> "; Result.getNode()->dump(CurDAG); dbgs() << '\n');
-                             //  }
-                             //  // Copy the remainder (high) result, if it is needed.
-                             //  if (!SDValue(Node, 1).use_empty()) {
-                             //      SDValue Result = CurDAG->getCopyFromReg(CurDAG->getEntryNode(), dl,
-                             //              HiReg, NVT, InFlag);
-                             //      InFlag = Result.getValue(2);
-                             //      ReplaceUses(SDValue(Node, 1), Result);
-                             //      DEBUG(dbgs() << "=> "; Result.getNode()->dump(CurDAG); dbgs() << '\n');
-                             //  }
+                               // Copy the division (low) result, if it is needed.
+                               if (!SDValue(Node, 0).use_empty()) {
+                                   SDValue Result = CurDAG->getCopyFromReg(CurDAG->getEntryNode(), dl,
+                                           LoReg, NVT, InFlag);
+                                   InFlag = Result.getValue(2);
+                                   ReplaceUses(SDValue(Node, 0), Result);
+                                   DEBUG(dbgs() << "=> "; Result.getNode()->dump(CurDAG); dbgs() << '\n');
+                               }
+                               // Copy the remainder (high) result, if it is needed.
+                               if (!SDValue(Node, 1).use_empty()) {
+                                   SDValue Result = CurDAG->getCopyFromReg(CurDAG->getEntryNode(), dl,
+                                           HiReg, NVT, InFlag);
+                                   InFlag = Result.getValue(2);
+                                   ReplaceUses(SDValue(Node, 1), Result);
+                                   DEBUG(dbgs() << "=> "; Result.getNode()->dump(CurDAG); dbgs() << '\n');
+                               }
                                return NULL;
                            }
 

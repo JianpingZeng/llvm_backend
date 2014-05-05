@@ -1,4 +1,4 @@
-//===-- X86InstrExtension.td - Sign and Zero Extensions ----*- tablegen -*-===//
+//===-- Cse523InstrExtension.td - Sign and Zero Extensions ----*- tablegen -*-===//
 //
 //                     The LLVM Compiler Infrastructure
 //

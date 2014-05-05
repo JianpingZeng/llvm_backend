@@ -1104,7 +1104,7 @@ Cse523InstrInfo::convertToThreeAddress(MachineFunction::iterator &MFI,
 MachineInstr *
 Cse523InstrInfo::commuteInstruction(MachineInstr *MI, bool NewMI) const {
 
-    assert(0);
+    // TODO:
     switch (MI->getOpcode()) {
 //        case Cse523::SHRD16rri8: // A = SHRD16rri8 B, C, I -> A = SHLD16rri8 C, B, (16-I)
 //        case Cse523::SHLD16rri8: // A = SHLD16rri8 B, C, I -> A = SHRD16rri8 C, B, (16-I)
