@@ -1878,15 +1878,13 @@ static bool HasNoSignedComparisonUses(SDNode *N) {
             if (!FlagUI->isMachineOpcode()) return false;
             // Examine the opcode of the user.
 
-            assert(0);
             switch (FlagUI->getMachineOpcode()) {
+                //TODO:
                 // These comparisons don't treat the most significant bit specially.
                 //case Cse523::SETAr: case Cse523::SETAEr: case Cse523::SETBr: case Cse523::SETBEr:
                 //case Cse523::SETEr: case Cse523::SETNEr: case Cse523::SETPr: case Cse523::SETNPr:
                 //case Cse523::SETAm: case Cse523::SETAEm: case Cse523::SETBm: case Cse523::SETBEm:
                 //case Cse523::SETEm: case Cse523::SETNEm: case Cse523::SETPm: case Cse523::SETNPm:
-                //case Cse523::JA_4: case Cse523::JAE_4: case Cse523::JB_4: case Cse523::JBE_4:
-                //case Cse523::JE_4: case Cse523::JNE_4: case Cse523::JP_4: case Cse523::JNP_4:
                 //case Cse523::CMOVA16rr: case Cse523::CMOVA16rm:
                 //case Cse523::CMOVA32rr: case Cse523::CMOVA32rm:
                 //case Cse523::CMOVA64rr: case Cse523::CMOVA64rm:
@@ -1911,7 +1909,9 @@ static bool HasNoSignedComparisonUses(SDNode *N) {
                 //case Cse523::CMOVP16rr: case Cse523::CMOVP16rm:
                 //case Cse523::CMOVP32rr: case Cse523::CMOVP32rm:
                 //case Cse523::CMOVP64rr: case Cse523::CMOVP64rm:
-                //    continue;
+                case Cse523::JA_4: case Cse523::JAE_4: case Cse523::JB_4: case Cse523::JBE_4:
+                case Cse523::JE_4: case Cse523::JNE_4: case Cse523::JP_4: case Cse523::JNP_4:
+                    continue;
                     // Anything else: assume conservatively.
                 default: return false;
             }
@@ -2443,106 +2443,107 @@ SDNode *Cse523DAGToDAGISel::Select(SDNode *Node) {
                                      ConstantSDNode *C = dyn_cast<ConstantSDNode>(N0.getNode()->getOperand(1));
                                      if (!C) break;
 
-                                     assert(0);
-                             //        // For example, convert "testl %eax, $8" to "testb %al, $8"
-                             //        if ((C->getZExtValue() & ~UINT64_C(0xff)) == 0 &&
-                             //                (!(C->getZExtValue() & 0x80) ||
-                             //                 HasNoSignedComparisonUses(Node))) {
-                             //            SDValue Imm = CurDAG->getTargetConstant(C->getZExtValue(), MVT::i8);
-                             //            SDValue Reg = N0.getNode()->getOperand(0);
+                                     // For example, convert "testl %eax, $8" to "testb %al, $8"
+                                     if ((C->getZExtValue() & ~UINT64_C(0xff)) == 0 &&
+                                             (!(C->getZExtValue() & 0x80) ||
+                                              HasNoSignedComparisonUses(Node))) {
+                                         SDValue Imm = CurDAG->getTargetConstant(C->getZExtValue(), MVT::i64);
+                                         SDValue Reg = N0.getNode()->getOperand(0);
 
-                             //            // Extract the l-register.
-                             //            SDValue Subreg = CurDAG->getTargetExtractSubreg(Cse523::sub_8bit, dl,
-                             //                    MVT::i8, Reg);
+                                         // Emit a testb.
+                                         SDNode *NewNode = CurDAG->getMachineNode(Cse523::TEST64ri32, dl, MVT::i64,
+                                                 Reg, Imm);
+                                         // Replace SUB|CMP with TEST, since SUB has two outputs while TEST has
+                                         // one, do not call ReplaceAllUsesWith.
+                                         ReplaceUses(SDValue(Node, (Opcode == Cse523ISD::SUB ? 1 : 0)),
+                                                 SDValue(NewNode, 0));
+                                         return NULL;
+                                     }
+                                     
+                                     //TODO: Need to enable below code to convert into TEST instructions
+                                     break;
 
-                             //            // Emit a testb.
-                             //            SDNode *NewNode = CurDAG->getMachineNode(Cse523::TEST64ri32, dl, MVT::i64,
-                             //                    Subreg, Imm);
-                             //            // Replace SUB|CMP with TEST, since SUB has two outputs while TEST has
-                             //            // one, do not call ReplaceAllUsesWith.
-                             //            ReplaceUses(SDValue(Node, (Opcode == Cse523ISD::SUB ? 1 : 0)),
-                             //                    SDValue(NewNode, 0));
-                             //            return NULL;
-                             //        }
+                                     // For example, "testl %eax, $2048" to "testb %ah, $8".
+                                     if ((C->getZExtValue() & ~UINT64_C(0xff00)) == 0 &&
+                                             (!(C->getZExtValue() & 0x8000) ||
+                                              HasNoSignedComparisonUses(Node))) {
+                                         assert(0);
+                                         // Shift the immediate right by 8 bits.
+                                         //SDValue ShiftedImm = CurDAG->getTargetConstant(C->getZExtValue() >> 8,
+                                         //        MVT::i8);
+                                         //SDValue Reg = N0.getNode()->getOperand(0);
 
-                             //        // For example, "testl %eax, $2048" to "testb %ah, $8".
-                             //        if ((C->getZExtValue() & ~UINT64_C(0xff00)) == 0 &&
-                             //                (!(C->getZExtValue() & 0x8000) ||
-                             //                 HasNoSignedComparisonUses(Node))) {
-                             //            // Shift the immediate right by 8 bits.
-                             //            SDValue ShiftedImm = CurDAG->getTargetConstant(C->getZExtValue() >> 8,
-                             //                    MVT::i8);
-                             //            SDValue Reg = N0.getNode()->getOperand(0);
+                                         //// Put the value in an ABCD register.
+                                         //const TargetRegisterClass *TRC;
+                                         //switch (N0.getSimpleValueType().SimpleTy) {
+                                         //    case MVT::i64: TRC = &Cse523::GR64_ABCDRegClass; break;
+                                         //    default: llvm_unreachable("Unsupported TEST operand type!");
+                                         //}
+                                         //SDValue RC = CurDAG->getTargetConstant(TRC->getID(), MVT::i32);
+                                         //Reg = SDValue(CurDAG->getMachineNode(Cse523::COPY_TO_REGCLASS, dl,
+                                         //            Reg.getValueType(), Reg, RC), 0);
 
-                             //            // Put the value in an ABCD register.
-                             //            const TargetRegisterClass *TRC;
-                             //            switch (N0.getSimpleValueType().SimpleTy) {
-                             //                case MVT::i64: TRC = &Cse523::GR64_ABCDRegClass; break;
-                             //                default: llvm_unreachable("Unsupported TEST operand type!");
-                             //            }
-                             //            SDValue RC = CurDAG->getTargetConstant(TRC->getID(), MVT::i32);
-                             //            Reg = SDValue(CurDAG->getMachineNode(Cse523::COPY_TO_REGCLASS, dl,
-                             //                        Reg.getValueType(), Reg, RC), 0);
+                                         //// Extract the h-register.
+                                         //SDValue Subreg = CurDAG->getTargetExtractSubreg(Cse523::sub_8bit_hi, dl,
+                                         //        MVT::i8, Reg);
 
-                             //            // Extract the h-register.
-                             //            SDValue Subreg = CurDAG->getTargetExtractSubreg(Cse523::sub_8bit_hi, dl,
-                             //                    MVT::i8, Reg);
+                                         //// Emit a testb.  The EXTRACT_SUBREG becomes a COPY that can only
+                                         //// target GR8_NOREX registers, so make sure the register class is
+                                         //// forced.
+                                         //SDNode *NewNode = CurDAG->getMachineNode(Cse523::TEST8ri_NOREX, dl,
+                                         //        MVT::i32, Subreg, ShiftedImm);
+                                         //// Replace SUB|CMP with TEST, since SUB has two outputs while TEST has
+                                         //// one, do not call ReplaceAllUsesWith.
+                                         //ReplaceUses(SDValue(Node, (Opcode == Cse523ISD::SUB ? 1 : 0)),
+                                         //        SDValue(NewNode, 0));
+                                         //return NULL;
+                                     }
 
-                             //            // Emit a testb.  The EXTRACT_SUBREG becomes a COPY that can only
-                             //            // target GR8_NOREX registers, so make sure the register class is
-                             //            // forced.
-                             //            SDNode *NewNode = CurDAG->getMachineNode(Cse523::TEST8ri_NOREX, dl,
-                             //                    MVT::i32, Subreg, ShiftedImm);
-                             //            // Replace SUB|CMP with TEST, since SUB has two outputs while TEST has
-                             //            // one, do not call ReplaceAllUsesWith.
-                             //            ReplaceUses(SDValue(Node, (Opcode == Cse523ISD::SUB ? 1 : 0)),
-                             //                    SDValue(NewNode, 0));
-                             //            return NULL;
-                             //        }
+                                     // For example, "testl %eax, $32776" to "testw %ax, $32776".
+                                     if ((C->getZExtValue() & ~UINT64_C(0xffff)) == 0 &&
+                                             N0.getValueType() != MVT::i16 &&
+                                             (!(C->getZExtValue() & 0x8000) ||
+                                              HasNoSignedComparisonUses(Node))) {
+                                         assert(0);
+                                         //SDValue Imm = CurDAG->getTargetConstant(C->getZExtValue(), MVT::i16);
+                                         //SDValue Reg = N0.getNode()->getOperand(0);
 
-                             //        // For example, "testl %eax, $32776" to "testw %ax, $32776".
-                             //        if ((C->getZExtValue() & ~UINT64_C(0xffff)) == 0 &&
-                             //                N0.getValueType() != MVT::i16 &&
-                             //                (!(C->getZExtValue() & 0x8000) ||
-                             //                 HasNoSignedComparisonUses(Node))) {
-                             //            SDValue Imm = CurDAG->getTargetConstant(C->getZExtValue(), MVT::i16);
-                             //            SDValue Reg = N0.getNode()->getOperand(0);
+                                         //// Extract the 16-bit subregister.
+                                         //SDValue Subreg = CurDAG->getTargetExtractSubreg(Cse523::sub_16bit, dl,
+                                         //        MVT::i16, Reg);
 
-                             //            // Extract the 16-bit subregister.
-                             //            SDValue Subreg = CurDAG->getTargetExtractSubreg(Cse523::sub_16bit, dl,
-                             //                    MVT::i16, Reg);
+                                         //// Emit a testw.
+                                         //SDNode *NewNode = CurDAG->getMachineNode(Cse523::TEST16ri, dl, MVT::i32,
+                                         //        Subreg, Imm);
+                                         //// Replace SUB|CMP with TEST, since SUB has two outputs while TEST has
+                                         //// one, do not call ReplaceAllUsesWith.
+                                         //ReplaceUses(SDValue(Node, (Opcode == Cse523ISD::SUB ? 1 : 0)),
+                                         //        SDValue(NewNode, 0));
+                                         //return NULL;
+                                     }
 
-                             //            // Emit a testw.
-                             //            SDNode *NewNode = CurDAG->getMachineNode(Cse523::TEST16ri, dl, MVT::i32,
-                             //                    Subreg, Imm);
-                             //            // Replace SUB|CMP with TEST, since SUB has two outputs while TEST has
-                             //            // one, do not call ReplaceAllUsesWith.
-                             //            ReplaceUses(SDValue(Node, (Opcode == Cse523ISD::SUB ? 1 : 0)),
-                             //                    SDValue(NewNode, 0));
-                             //            return NULL;
-                             //        }
+                                     // For example, "testq %rax, $268468232" to "testl %eax, $268468232".
+                                     if ((C->getZExtValue() & ~UINT64_C(0xffffffff)) == 0 &&
+                                             N0.getValueType() == MVT::i64 &&
+                                             (!(C->getZExtValue() & 0x80000000) ||
+                                              HasNoSignedComparisonUses(Node))) {
+                                         assert(0);
+                                         //SDValue Imm = CurDAG->getTargetConstant(C->getZExtValue(), MVT::i32);
+                                         //SDValue Reg = N0.getNode()->getOperand(0);
 
-                             //        // For example, "testq %rax, $268468232" to "testl %eax, $268468232".
-                             //        if ((C->getZExtValue() & ~UINT64_C(0xffffffff)) == 0 &&
-                             //                N0.getValueType() == MVT::i64 &&
-                             //                (!(C->getZExtValue() & 0x80000000) ||
-                             //                 HasNoSignedComparisonUses(Node))) {
-                             //            SDValue Imm = CurDAG->getTargetConstant(C->getZExtValue(), MVT::i32);
-                             //            SDValue Reg = N0.getNode()->getOperand(0);
+                                         //// Extract the 32-bit subregister.
+                                         //SDValue Subreg = CurDAG->getTargetExtractSubreg(Cse523::sub_32bit, dl,
+                                         //        MVT::i32, Reg);
 
-                             //            // Extract the 32-bit subregister.
-                             //            SDValue Subreg = CurDAG->getTargetExtractSubreg(Cse523::sub_32bit, dl,
-                             //                    MVT::i32, Reg);
-
-                             //            // Emit a testl.
-                             //            SDNode *NewNode = CurDAG->getMachineNode(Cse523::TEST32ri, dl, MVT::i32,
-                             //                    Subreg, Imm);
-                             //            // Replace SUB|CMP with TEST, since SUB has two outputs while TEST has
-                             //            // one, do not call ReplaceAllUsesWith.
-                             //            ReplaceUses(SDValue(Node, (Opcode == Cse523ISD::SUB ? 1 : 0)),
-                             //                    SDValue(NewNode, 0));
-                             //            return NULL;
-                             //        }
+                                         //// Emit a testl.
+                                         //SDNode *NewNode = CurDAG->getMachineNode(Cse523::TEST32ri, dl, MVT::i32,
+                                         //        Subreg, Imm);
+                                         //// Replace SUB|CMP with TEST, since SUB has two outputs while TEST has
+                                         //// one, do not call ReplaceAllUsesWith.
+                                         //ReplaceUses(SDValue(Node, (Opcode == Cse523ISD::SUB ? 1 : 0)),
+                                         //        SDValue(NewNode, 0));
+                                         //return NULL;
+                                     }
                                  }
                                  break;
                              }

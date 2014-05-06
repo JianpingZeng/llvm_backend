@@ -125,7 +125,7 @@ Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
         { Cse523::SAR64rCL,    Cse523::SAR64mCL,   0 },
         { Cse523::SAR64ri,     Cse523::SAR64mi,    0 },
         //{ Cse523::SBB64ri32,   Cse523::SBB64mi32,  0 },
-        //{ Cse523::SBB64rr,     Cse523::SBB64mr,    0 },
+        { Cse523::SBB64rr,     Cse523::SBB64mr,    0 },
         { Cse523::SHL64rCL,    Cse523::SHL64mCL,   0 },
         { Cse523::SHL64ri,     Cse523::SHL64mi,    0 },
         //{ Cse523::SHLD64rrCL,  Cse523::SHLD64mrCL, 0 },
@@ -404,9 +404,9 @@ static bool regIsPICBase(unsigned BaseReg, const MachineRegisterInfo &MRI) {
     for (MachineRegisterInfo::def_iterator I = MRI.def_begin(BaseReg),
             E = MRI.def_end(); I != E; ++I) {
         MachineInstr *DefMI = I.getOperand().getParent();
-        assert(0);
-//        if (DefMI->getOpcode() != Cse523::MOVPC32r)
-//            return false;
+        // TODO: Check whether its appropriate to remove this condition
+//    if (DefMI->getOpcode() != Cse523::MOVPC32r)
+        return false;
         assert(!isPICBase && "More than one PIC base?");
         isPICBase = true;
     }
@@ -621,62 +621,16 @@ bool Cse523InstrInfo::classifyLEAReg(MachineInstr *MI, const MachineOperand &Src
     }
     unsigned SrcReg = Src.getReg();
 
-    assert(0);
-
     // For both LEA64 and LEA32 the register already has essentially the right
     // type (32-bit or 64-bit) we may just need to forbid SP.
-//    if (Opc != Cse523::LEA64_32r) {
-//        NewSrc = SrcReg;
-//        isKill = Src.isKill();
-//        isUndef = Src.isUndef();
-//
-//        if (TargetRegisterInfo::isVirtualRegister(NewSrc) &&
-//                !MF.getRegInfo().constrainRegClass(NewSrc, RC))
-//            return false;
-//
-//        return true;
-//    }
-//
-//    // This is for an LEA64_32r and incoming registers are 32-bit. One way or
-//    // another we need to add 64-bit registers to the final MI.
-//    if (TargetRegisterInfo::isPhysicalRegister(SrcReg)) {
-//        ImplicitOp = Src;
-//        ImplicitOp.setImplicit();
-//
-//        NewSrc = getCse523SubSuperRegister(Src.getReg(), MVT::i64);
-//        MachineBasicBlock::LivenessQueryResult LQR =
-//            MI->getParent()->computeRegisterLiveness(&getRegisterInfo(), NewSrc, MI);
-//
-//        switch (LQR) {
-//            case MachineBasicBlock::LQR_Unknown:
-//                // We can't give sane liveness flags to the instruction, abandon LEA
-//                // formation.
-//                return false;
-//            case MachineBasicBlock::LQR_Live:
-//                isKill = MI->killsRegister(SrcReg);
-//                isUndef = false;
-//                break;
-//            default:
-//                // The physreg itself is dead, so we have to use it as an <undef>.
-//                isKill = false;
-//                isUndef = true;
-//                break;
-//        }
-//    } else {
-//        // Virtual register of the wrong class, we have to create a temporary 64-bit
-//        // vreg to feed into the LEA.
-//        NewSrc = MF.getRegInfo().createVirtualRegister(RC);
-//        BuildMI(*MI->getParent(), MI, MI->getDebugLoc(),
-//                get(TargetOpcode::COPY))
-//            .addReg(NewSrc, RegState::Define | RegState::Undef, Cse523::sub_32bit)
-//            .addOperand(Src);
-//
-//        // Which is obviously going to be dead after we're done with it.
-//        isKill = true;
-//        isUndef = false;
-//    }
+    NewSrc = SrcReg;
+    isKill = Src.isKill();
+    isUndef = Src.isUndef();
 
-    // We've set all the parameters without issue.
+    if (TargetRegisterInfo::isVirtualRegister(NewSrc) &&
+            !MF.getRegInfo().constrainRegClass(NewSrc, RC))
+        return false;
+
     return true;
 }
 
@@ -690,103 +644,8 @@ Cse523InstrInfo::convertToThreeAddressWithLEA(unsigned MIOpc,
         MachineBasicBlock::iterator &MBBI,
         LiveVariables *LV) const {
 
-    assert(0);
-//    MachineInstr *MI = MBBI;
-//    unsigned Dest = MI->getOperand(0).getReg();
-//    unsigned Src = MI->getOperand(1).getReg();
-//    bool isDead = MI->getOperand(0).isDead();
-//    bool isKill = MI->getOperand(1).isKill();
-//
-//    MachineRegisterInfo &RegInfo = MFI->getParent()->getRegInfo();
-//    unsigned leaOutReg = 10;//RegInfo.createVirtualRegister(&Cse523::GR32RegClass); //TODO
-//    unsigned Opc, leaInReg;
-//
-//    Opc = Cse523::LEA64_32r;
-//    leaInReg = RegInfo.createVirtualRegister(&Cse523::GR64_NOSPRegClass);
-//
-//    // Build and insert into an implicit UNDEF value. This is OK because
-//    // well be shifting and then extracting the lower 16-bits.
-//    // This has the potential to cause partial register stall. e.g.
-//    //   movw    (%rbp,%rcx,2), %dx
-//    //   leal    -65(%rdx), %esi
-//    // But testing has shown this *does* help performance in 64-bit mode (at
-//    // least on modern cse523 machines).
-//    BuildMI(*MFI, MBBI, MI->getDebugLoc(), get(Cse523::IMPLICIT_DEF), leaInReg);
-//    MachineInstr *InsMI =
-//        BuildMI(*MFI, MBBI, MI->getDebugLoc(), get(TargetOpcode::COPY))
-//        .addReg(leaInReg, RegState::Define, Cse523::sub_16bit)
-//        .addReg(Src, getKillRegState(isKill));
-//
-//    MachineInstrBuilder MIB = BuildMI(*MFI, MBBI, MI->getDebugLoc(),
-//            get(Opc), leaOutReg);
-//    switch (MIOpc) {
-//        default: llvm_unreachable("Unreachable!");
-//        case Cse523::SHL16ri: {
-//                                  unsigned ShAmt = MI->getOperand(2).getImm();
-//                                  MIB.addReg(0).addImm(1 << ShAmt)
-//                                      .addReg(leaInReg, RegState::Kill).addImm(0).addReg(0);
-//                                  break;
-//                              }
-//        case Cse523::INC16r:
-//        case Cse523::INC64_16r:
-//                 addRegOffset(MIB, leaInReg, true, 1);
-//                 break;
-//        case Cse523::DEC16r:
-//        case Cse523::DEC64_16r:
-//                 addRegOffset(MIB, leaInReg, true, -1);
-//                 break;
-//        case Cse523::ADD16ri:
-//        case Cse523::ADD16ri8:
-//        case Cse523::ADD16ri_DB:
-//        case Cse523::ADD16ri8_DB:
-//                 addRegOffset(MIB, leaInReg, true, MI->getOperand(2).getImm());
-//                 break;
-//        case Cse523::ADD16rr:
-//        case Cse523::ADD16rr_DB: 
-//                 {
-//                     unsigned Src2 = MI->getOperand(2).getReg();
-//                     bool isKill2 = MI->getOperand(2).isKill();
-//                     unsigned leaInReg2 = 0;
-//                     MachineInstr *InsMI2 = 0;
-//                     if (Src == Src2) {
-//                         // ADD16rr %reg1028<kill>, %reg1028
-//                         // just a single insert_subreg.
-//                         addRegReg(MIB, leaInReg, true, leaInReg, false);
-//                     } else {
-//                         leaInReg2 = RegInfo.createVirtualRegister(&Cse523::GR64_NOSPRegClass);
-//
-//                         // Build and insert into an implicit UNDEF value. This is OK because
-//                         // well be shifting and then extracting the lower 16-bits.
-//                         BuildMI(*MFI, &*MIB, MI->getDebugLoc(), get(Cse523::IMPLICIT_DEF),leaInReg2);
-//                         InsMI2 =
-//                             BuildMI(*MFI, &*MIB, MI->getDebugLoc(), get(TargetOpcode::COPY))
-//                             .addReg(leaInReg2, RegState::Define, Cse523::sub_16bit)
-//                             .addReg(Src2, getKillRegState(isKill2));
-//                         addRegReg(MIB, leaInReg, true, leaInReg2, true);
-//                     }
-//                     if (LV && isKill2 && InsMI2)
-//                         LV->replaceKillInstruction(Src2, MI, InsMI2);
-//                     break;
-//                 }
-//    }
-//
-//    MachineInstr *NewMI = MIB;
-    MachineInstr *ExtMI = NULL;
-//  ExtMI = BuildMI(*MFI, MBBI, MI->getDebugLoc(), get(TargetOpcode::COPY))
-//        .addReg(Dest, RegState::Define | getDeadRegState(isDead))
-//        .addReg(leaOutReg, RegState::Kill, Cse523::sub_16bit);
-//
-//    if (LV) {
-//        // Update live variables
-//        LV->getVarInfo(leaInReg).Kills.push_back(NewMI);
-//        LV->getVarInfo(leaOutReg).Kills.push_back(ExtMI);
-//        if (isKill)
-//            LV->replaceKillInstruction(Src, MI, InsMI);
-//        if (isDead)
-//            LV->replaceKillInstruction(Dest, MI, ExtMI);
-//    }
-//
-    return ExtMI;
+    assert(0 && "Unsupported Cse523::LEA64_32r Opcode");
+    return NULL;
 }
 
 /// convertToThreeAddress - This method must be implemented by targets that
@@ -804,7 +663,6 @@ Cse523InstrInfo::convertToThreeAddress(MachineFunction::iterator &MFI,
         MachineBasicBlock::iterator &MBBI,
         LiveVariables *LV) const {
     MachineInstr *MI = MBBI;
-    assert(0);
 
     // The following opcodes also sets the condition code register(s). Only
     // convert them to equivalent lea if the condition code register def's
@@ -813,288 +671,130 @@ Cse523InstrInfo::convertToThreeAddress(MachineFunction::iterator &MFI,
         return 0;
 
     MachineInstr *NewMI = NULL;
-//    MachineFunction &MF = *MI->getParent()->getParent();
-//    // All instructions input are two-addr instructions.  Get the known operands.
-//    const MachineOperand &Dest = MI->getOperand(0);
-//    const MachineOperand &Src = MI->getOperand(1);
-//
-//    // FIXME: 16-bit LEA's are really slow on Athlons, but not bad on P4's.  When
-//    // we have better subtarget support, enable the 16-bit LEA generation here.
-//    // 16-bit LEA is also slow on Core2.
-//    bool DisableLEA16 = true;
-//    bool is64Bit = TM.getSubtarget<Cse523Subtarget>().is64Bit();
-//
-//    unsigned MIOpc = MI->getOpcode();
-//    switch (MIOpc) {
-//        case Cse523::SHUFPSrri: {
-//                                    assert(MI->getNumOperands() == 4 && "Unknown shufps instruction!");
-//                                    if (!TM.getSubtarget<Cse523Subtarget>().hasSSE2()) return 0;
-//
-//                                    unsigned B = MI->getOperand(1).getReg();
-//                                    unsigned C = MI->getOperand(2).getReg();
-//                                    if (B != C) return 0;
-//                                    unsigned M = MI->getOperand(3).getImm();
-//                                    NewMI = BuildMI(MF, MI->getDebugLoc(), get(Cse523::PSHUFDri))
-//                                        .addOperand(Dest).addOperand(Src).addImm(M);
-//                                    break;
-//                                }
-//        case Cse523::SHUFPDrri: {
-//                                    assert(MI->getNumOperands() == 4 && "Unknown shufpd instruction!");
-//                                    if (!TM.getSubtarget<Cse523Subtarget>().hasSSE2()) return 0;
-//
-//                                    unsigned B = MI->getOperand(1).getReg();
-//                                    unsigned C = MI->getOperand(2).getReg();
-//                                    if (B != C) return 0;
-//                                    unsigned M = MI->getOperand(3).getImm();
-//
-//                                    // Convert to PSHUFD mask.
-//                                    M = ((M & 1) << 1) | ((M & 1) << 3) | ((M & 2) << 4) | ((M & 2) << 6)| 0x44;
-//
-//                                    NewMI = BuildMI(MF, MI->getDebugLoc(), get(Cse523::PSHUFDri))
-//                                        .addOperand(Dest).addOperand(Src).addImm(M);
-//                                    break;
-//                                }
-//        case Cse523::SHL64ri: {
-//                                  assert(MI->getNumOperands() >= 3 && "Unknown shift instruction!");
-//                                  unsigned ShAmt = getTruncatedShiftCount(MI, 2);
-//                                  if (!isTruncatedShiftCountForLEA(ShAmt)) return 0;
-//
-//                                  // LEA can't handle RSP.
-//                                  if (TargetRegisterInfo::isVirtualRegister(Src.getReg()) &&
-//                                          !MF.getRegInfo().constrainRegClass(Src.getReg(),
-//                                              &Cse523::GR64_NOSPRegClass))
-//                                      return 0;
-//
-//                                  NewMI = BuildMI(MF, MI->getDebugLoc(), get(Cse523::LEA64r))
-//                                      .addOperand(Dest)
-//                                      .addReg(0).addImm(1 << ShAmt).addOperand(Src).addImm(0).addReg(0);
-//                                  break;
-//                              }
-//        case Cse523::SHL32ri: {
-//                                  assert(MI->getNumOperands() >= 3 && "Unknown shift instruction!");
-//                                  unsigned ShAmt = getTruncatedShiftCount(MI, 2);
-//                                  if (!isTruncatedShiftCountForLEA(ShAmt)) return 0;
-//
-//                                  unsigned Opc = Cse523::LEA64_32r;
-//
-//                                  // LEA can't handle ESP.
-//                                  bool isKill, isUndef;
-//                                  unsigned SrcReg;
-//                                  MachineOperand ImplicitOp = MachineOperand::CreateReg(0, false);
-//                                  if (!classifyLEAReg(MI, Src, Opc, /*AllowSP=*/ false,
-//                                              SrcReg, isKill, isUndef, ImplicitOp))
-//                                      return 0;
-//
-//                                  MachineInstrBuilder MIB = BuildMI(MF, MI->getDebugLoc(), get(Opc))
-//                                      .addOperand(Dest)
-//                                      .addReg(0).addImm(1 << ShAmt)
-//                                      .addReg(SrcReg, getKillRegState(isKill) | getUndefRegState(isUndef))
-//                                      .addImm(0).addReg(0);
-//                                  if (ImplicitOp.getReg() != 0)
-//                                      MIB.addOperand(ImplicitOp);
-//                                  NewMI = MIB;
-//
-//                                  break;
-//                              }
-//        case Cse523::SHL16ri: {
-//                                  assert(MI->getNumOperands() >= 3 && "Unknown shift instruction!");
-//                                  unsigned ShAmt = getTruncatedShiftCount(MI, 2);
-//                                  if (!isTruncatedShiftCountForLEA(ShAmt)) return 0;
-//
-//                                  if (DisableLEA16)
-//                                      return convertToThreeAddressWithLEA(MIOpc, MFI, MBBI, LV);
-//                                  NewMI = BuildMI(MF, MI->getDebugLoc(), get(Cse523::LEA16r))
-//                                      .addOperand(Dest)
-//                                      .addReg(0).addImm(1 << ShAmt).addOperand(Src).addImm(0).addReg(0);
-//                                  break;
-//                              }
-//        default: {
-//
-//                     switch (MIOpc) {
-//                         default: return 0;
-//                         case Cse523::INC64r:
-//                         case Cse523::INC32r:
-//                         case Cse523::INC64_32r: {
-//                                                     assert(MI->getNumOperands() >= 2 && "Unknown inc instruction!");
-//                                                     unsigned Opc = MIOpc == Cse523::INC64r ? Cse523::LEA64r
-//                                                         : Cse523::LEA64_32r;
-//                                                     bool isKill, isUndef;
-//                                                     unsigned SrcReg;
-//                                                     MachineOperand ImplicitOp = MachineOperand::CreateReg(0, false);
-//                                                     if (!classifyLEAReg(MI, Src, Opc, /*AllowSP=*/ false,
-//                                                                 SrcReg, isKill, isUndef, ImplicitOp))
-//                                                         return 0;
-//
-//                                                     MachineInstrBuilder MIB = BuildMI(MF, MI->getDebugLoc(), get(Opc))
-//                                                         .addOperand(Dest)
-//                                                         .addReg(SrcReg, getKillRegState(isKill) | getUndefRegState(isUndef));
-//                                                     if (ImplicitOp.getReg() != 0)
-//                                                         MIB.addOperand(ImplicitOp);
-//
-//                                                     NewMI = addOffset(MIB, 1);
-//                                                     break;
-//                                                 }
-//                         case Cse523::INC16r:
-//                         case Cse523::INC64_16r:
-//                                                 if (DisableLEA16)
-//                                                     return convertToThreeAddressWithLEA(MIOpc, MFI, MBBI, LV);
-//                                                 assert(MI->getNumOperands() >= 2 && "Unknown inc instruction!");
-//                                                 NewMI = addOffset(BuildMI(MF, MI->getDebugLoc(), get(Cse523::LEA16r))
-//                                                         .addOperand(Dest).addOperand(Src), 1);
-//                                                 break;
-//                         case Cse523::DEC64r:
-//                         case Cse523::DEC32r:
-//                         case Cse523::DEC64_32r: {
-//                                                     assert(MI->getNumOperands() >= 2 && "Unknown dec instruction!");
-//                                                     unsigned Opc = MIOpc == Cse523::DEC64r ? Cse523::LEA64r
-//                                                         : Cse523::LEA64_32r;
-//
-//                                                     bool isKill, isUndef;
-//                                                     unsigned SrcReg;
-//                                                     MachineOperand ImplicitOp = MachineOperand::CreateReg(0, false);
-//                                                     if (!classifyLEAReg(MI, Src, Opc, /*AllowSP=*/ false,
-//                                                                 SrcReg, isKill, isUndef, ImplicitOp))
-//                                                         return 0;
-//
-//                                                     MachineInstrBuilder MIB = BuildMI(MF, MI->getDebugLoc(), get(Opc))
-//                                                         .addOperand(Dest)
-//                                                         .addReg(SrcReg, getUndefRegState(isUndef) | getKillRegState(isKill));
-//                                                     if (ImplicitOp.getReg() != 0)
-//                                                         MIB.addOperand(ImplicitOp);
-//
-//                                                     NewMI = addOffset(MIB, -1);
-//
-//                                                     break;
-//                                                 }
-//                         case Cse523::DEC16r:
-//                         case Cse523::DEC64_16r:
-//                                                 if (DisableLEA16)
-//                                                     return convertToThreeAddressWithLEA(MIOpc, MFI, MBBI, LV);
-//                                                 assert(MI->getNumOperands() >= 2 && "Unknown dec instruction!");
-//                                                 NewMI = addOffset(BuildMI(MF, MI->getDebugLoc(), get(Cse523::LEA16r))
-//                                                         .addOperand(Dest).addOperand(Src), -1);
-//                                                 break;
-//                         case Cse523::ADD64rr:
-//                         case Cse523::ADD64rr_DB:
-//                         case Cse523::ADD32rr:
-//                         case Cse523::ADD32rr_DB: {
-//                                                      assert(MI->getNumOperands() >= 3 && "Unknown add instruction!");
-//                                                      unsigned Opc;
-//                                                      if (MIOpc == Cse523::ADD64rr || MIOpc == Cse523::ADD64rr_DB)
-//                                                          Opc = Cse523::LEA64r;
-//                                                      else
-//                                                          Opc = Cse523::LEA64_32r;
-//
-//                                                      bool isKill, isUndef;
-//                                                      unsigned SrcReg;
-//                                                      MachineOperand ImplicitOp = MachineOperand::CreateReg(0, false);
-//                                                      if (!classifyLEAReg(MI, Src, Opc, /*AllowSP=*/ true,
-//                                                                  SrcReg, isKill, isUndef, ImplicitOp))
-//                                                          return 0;
-//
-//                                                      const MachineOperand &Src2 = MI->getOperand(2);
-//                                                      bool isKill2, isUndef2;
-//                                                      unsigned SrcReg2;
-//                                                      MachineOperand ImplicitOp2 = MachineOperand::CreateReg(0, false);
-//                                                      if (!classifyLEAReg(MI, Src2, Opc, /*AllowSP=*/ false,
-//                                                                  SrcReg2, isKill2, isUndef2, ImplicitOp2))
-//                                                          return 0;
-//
-//                                                      MachineInstrBuilder MIB = BuildMI(MF, MI->getDebugLoc(), get(Opc))
-//                                                          .addOperand(Dest);
-//                                                      if (ImplicitOp.getReg() != 0)
-//                                                          MIB.addOperand(ImplicitOp);
-//                                                      if (ImplicitOp2.getReg() != 0)
-//                                                          MIB.addOperand(ImplicitOp2);
-//
-//                                                      NewMI = addRegReg(MIB, SrcReg, isKill, SrcReg2, isKill2);
-//
-//                                                      // Preserve undefness of the operands.
-//                                                      NewMI->getOperand(1).setIsUndef(isUndef);
-//                                                      NewMI->getOperand(3).setIsUndef(isUndef2);
-//
-//                                                      if (LV && Src2.isKill())
-//                                                          LV->replaceKillInstruction(SrcReg2, MI, NewMI);
-//                                                      break;
-//                                                  }
-//                         case Cse523::ADD16rr:
-//                         case Cse523::ADD16rr_DB: {
-//                                                      if (DisableLEA16)
-//                                                          return convertToThreeAddressWithLEA(MIOpc, MFI, MBBI, LV);
-//                                                      assert(MI->getNumOperands() >= 3 && "Unknown add instruction!");
-//                                                      unsigned Src2 = MI->getOperand(2).getReg();
-//                                                      bool isKill2 = MI->getOperand(2).isKill();
-//                                                      NewMI = addRegReg(BuildMI(MF, MI->getDebugLoc(), get(Cse523::LEA16r))
-//                                                              .addOperand(Dest),
-//                                                              Src.getReg(), Src.isKill(), Src2, isKill2);
-//
-//                                                      // Preserve undefness of the operands.
-//                                                      bool isUndef = MI->getOperand(1).isUndef();
-//                                                      bool isUndef2 = MI->getOperand(2).isUndef();
-//                                                      NewMI->getOperand(1).setIsUndef(isUndef);
-//                                                      NewMI->getOperand(3).setIsUndef(isUndef2);
-//
-//                                                      if (LV && isKill2)
-//                                                          LV->replaceKillInstruction(Src2, MI, NewMI);
-//                                                      break;
-//                                                  }
-//                         case Cse523::ADD64ri32:
-//                         case Cse523::ADD64ri8:
-//                         case Cse523::ADD64ri32_DB:
-//                         case Cse523::ADD64ri8_DB:
-//                                                  assert(MI->getNumOperands() >= 3 && "Unknown add instruction!");
-//                                                  NewMI = addOffset(BuildMI(MF, MI->getDebugLoc(), get(Cse523::LEA64r))
-//                                                          .addOperand(Dest).addOperand(Src),
-//                                                          MI->getOperand(2).getImm());
-//                                                  break;
-//                         case Cse523::ADD32ri:
-//                         case Cse523::ADD32ri8:
-//                         case Cse523::ADD32ri_DB:
-//                         case Cse523::ADD32ri8_DB: {
-//                                                       assert(MI->getNumOperands() >= 3 && "Unknown add instruction!");
-//                                                       unsigned Opc = Cse523::LEA64_32r;
-//
-//                                                       bool isKill, isUndef;
-//                                                       unsigned SrcReg;
-//                                                       MachineOperand ImplicitOp = MachineOperand::CreateReg(0, false);
-//                                                       if (!classifyLEAReg(MI, Src, Opc, /*AllowSP=*/ true,
-//                                                                   SrcReg, isKill, isUndef, ImplicitOp))
-//                                                           return 0;
-//
-//                                                       MachineInstrBuilder MIB = BuildMI(MF, MI->getDebugLoc(), get(Opc))
-//                                                           .addOperand(Dest)
-//                                                           .addReg(SrcReg, getUndefRegState(isUndef) | getKillRegState(isKill));
-//                                                       if (ImplicitOp.getReg() != 0)
-//                                                           MIB.addOperand(ImplicitOp);
-//
-//                                                       NewMI = addOffset(MIB, MI->getOperand(2).getImm());
-//                                                       break;
-//                                                   }
-//                         case Cse523::ADD16ri:
-//                         case Cse523::ADD16ri8:
-//                         case Cse523::ADD16ri_DB:
-//                         case Cse523::ADD16ri8_DB:
-//                                                   if (DisableLEA16)
-//                                                       return convertToThreeAddressWithLEA(MIOpc, MFI, MBBI, LV);
-//                                                   assert(MI->getNumOperands() >= 3 && "Unknown add instruction!");
-//                                                   NewMI = addOffset(BuildMI(MF, MI->getDebugLoc(), get(Cse523::LEA16r))
-//                                                           .addOperand(Dest).addOperand(Src),
-//                                                           MI->getOperand(2).getImm());
-//                                                   break;
-//                     }
-//                 }
-//    }
-//
-//    if (!NewMI) return 0;
-//
-//    if (LV) {  // Update live variables
-//        if (Src.isKill())
-//            LV->replaceKillInstruction(Src.getReg(), MI, NewMI);
-//        if (Dest.isDead())
-//            LV->replaceKillInstruction(Dest.getReg(), MI, NewMI);
-//    }
-//
-//    MFI->insert(MBBI, NewMI);          // Insert the new inst
+    MachineFunction &MF = *MI->getParent()->getParent();
+    // All instructions input are two-addr instructions.  Get the known operands.
+    const MachineOperand &Dest = MI->getOperand(0);
+    const MachineOperand &Src = MI->getOperand(1);
+
+    unsigned MIOpc = MI->getOpcode();
+    switch (MIOpc) {
+        case Cse523::SHL64ri: {
+                                  assert(MI->getNumOperands() >= 3 && "Unknown shift instruction!");
+                                  unsigned ShAmt = getTruncatedShiftCount(MI, 2);
+                                  if (!isTruncatedShiftCountForLEA(ShAmt)) return 0;
+
+                                  // LEA can't handle RSP.
+                                  if (TargetRegisterInfo::isVirtualRegister(Src.getReg()) &&
+                                          !MF.getRegInfo().constrainRegClass(Src.getReg(),
+                                              &Cse523::GR64_NOSPRegClass))
+                                      return 0;
+
+                                  NewMI = BuildMI(MF, MI->getDebugLoc(), get(Cse523::LEA64r))
+                                      .addOperand(Dest)
+                                      .addReg(0).addImm(1 << ShAmt).addOperand(Src).addImm(0).addReg(0);
+                                  break;
+                              }
+        default: {
+
+            switch (MIOpc) {
+                default: return 0;
+                case Cse523::INC64r:   {
+                                            assert(MI->getNumOperands() >= 2 && "Unknown inc instruction!");
+                                            unsigned Opc = Cse523::LEA64r;
+                                            bool isKill, isUndef;
+                                            unsigned SrcReg;
+                                            MachineOperand ImplicitOp = MachineOperand::CreateReg(0, false);
+                                            if (!classifyLEAReg(MI, Src, Opc, /*AllowSP=*/ false,
+                                                        SrcReg, isKill, isUndef, ImplicitOp))
+                                                return 0;
+
+                                            MachineInstrBuilder MIB = BuildMI(MF, MI->getDebugLoc(), get(Opc))
+                                                .addOperand(Dest)
+                                                .addReg(SrcReg, getKillRegState(isKill) | getUndefRegState(isUndef));
+                                            if (ImplicitOp.getReg() != 0)
+                                                MIB.addOperand(ImplicitOp);
+
+                                            NewMI = addOffset(MIB, 1);
+                                            break;
+                                       }
+                case Cse523::DEC64r:   {
+                                           assert(MI->getNumOperands() >= 2 && "Unknown dec instruction!");
+                                           unsigned Opc =  Cse523::LEA64r;
+
+                                           bool isKill, isUndef;
+                                           unsigned SrcReg;
+                                           MachineOperand ImplicitOp = MachineOperand::CreateReg(0, false);
+                                           if (!classifyLEAReg(MI, Src, Opc, /*AllowSP=*/ false,
+                                                       SrcReg, isKill, isUndef, ImplicitOp))
+                                               return 0;
+
+                                           MachineInstrBuilder MIB = BuildMI(MF, MI->getDebugLoc(), get(Opc))
+                                               .addOperand(Dest)
+                                               .addReg(SrcReg, getUndefRegState(isUndef) | getKillRegState(isKill));
+                                           if (ImplicitOp.getReg() != 0)
+                                               MIB.addOperand(ImplicitOp);
+
+                                           NewMI = addOffset(MIB, -1);
+
+                                           break;
+                                       }
+                case Cse523::ADD64rr:
+                                       {
+                                           assert(MI->getNumOperands() >= 3 && "Unknown add instruction!");
+                                           unsigned Opc = Cse523::LEA64r;
+
+                                           bool isKill, isUndef;
+                                           unsigned SrcReg;
+                                           MachineOperand ImplicitOp = MachineOperand::CreateReg(0, false);
+                                           if (!classifyLEAReg(MI, Src, Opc, /*AllowSP=*/ true,
+                                                       SrcReg, isKill, isUndef, ImplicitOp))
+                                               return 0;
+
+                                           const MachineOperand &Src2 = MI->getOperand(2);
+                                           bool isKill2, isUndef2;
+                                           unsigned SrcReg2;
+                                           MachineOperand ImplicitOp2 = MachineOperand::CreateReg(0, false);
+                                           if (!classifyLEAReg(MI, Src2, Opc, /*AllowSP=*/ false,
+                                                       SrcReg2, isKill2, isUndef2, ImplicitOp2))
+                                               return 0;
+
+                                           MachineInstrBuilder MIB = BuildMI(MF, MI->getDebugLoc(), get(Opc))
+                                               .addOperand(Dest);
+                                           if (ImplicitOp.getReg() != 0)
+                                               MIB.addOperand(ImplicitOp);
+                                           if (ImplicitOp2.getReg() != 0)
+                                               MIB.addOperand(ImplicitOp2);
+
+                                           NewMI = addRegReg(MIB, SrcReg, isKill, SrcReg2, isKill2);
+
+                                           // Preserve undefness of the operands.
+                                           NewMI->getOperand(1).setIsUndef(isUndef);
+                                           NewMI->getOperand(3).setIsUndef(isUndef2);
+
+                                           if (LV && Src2.isKill())
+                                               LV->replaceKillInstruction(SrcReg2, MI, NewMI);
+                                           break;
+                                       }
+                case Cse523::ADD64ri32:
+                                       assert(MI->getNumOperands() >= 3 && "Unknown add instruction!");
+                                       NewMI = addOffset(BuildMI(MF, MI->getDebugLoc(), get(Cse523::LEA64r))
+                                               .addOperand(Dest).addOperand(Src),
+                                               MI->getOperand(2).getImm());
+                                       break;
+            }
+        }
+    }
+
+    if (!NewMI) return 0;
+
+    if (LV) {  // Update live variables
+        if (Src.isKill())
+            LV->replaceKillInstruction(Src.getReg(), MI, NewMI);
+        if (Dest.isDead())
+            LV->replaceKillInstruction(Dest.getReg(), MI, NewMI);
+    }
+
+    MFI->insert(MBBI, NewMI);          // Insert the new inst
     return NewMI;
 }
 
@@ -2007,7 +1707,7 @@ inline static bool isDefConvertible(MachineInstr *MI) {
         case Cse523::ADC64rr:
         //case Cse523::ADC64ri32:
         //case Cse523::SBB64ri32:
-        //case Cse523::SBB64rr:
+        case Cse523::SBB64rr:
         //case Cse523::ANDN64rr:
         //case Cse523::ANDN64rm:
         //case Cse523::BEXTR64rr:
@@ -2366,8 +2066,8 @@ bool Cse523InstrInfo::expandPostRAPseudo(MachineBasicBlock::iterator MI) const {
 //            return Expand2AddrUndef(MIB, get(Cse523::SBB16rr));
 //        case Cse523::SETB_C32r:
 //            return Expand2AddrUndef(MIB, get(Cse523::SBB32rr));
-//        case Cse523::SETB_C64r:
-//            return Expand2AddrUndef(MIB, get(Cse523::SBB64rr));
+        case Cse523::SETB_C64r:
+            return Expand2AddrUndef(MIB, get(Cse523::SBB64rr));
 //        case Cse523::TEST8ri_NOREX:
 //            MI->setDesc(get(Cse523::TEST8ri));
 //            return true;
@@ -3022,7 +2722,6 @@ unsigned Cse523InstrInfo::getOpcodeAfterMemoryUnfold(unsigned Opc,
         unsigned *LoadRegIndex) const {
     DenseMap<unsigned, std::pair<unsigned,unsigned> >::const_iterator I =
         MemOp2RegOpTable.find(Opc);
-    assert(0);
     if (I == MemOp2RegOpTable.end())
         return 0;
     bool FoldedLoad = I->second.second & TB_FOLDED_LOAD;
@@ -3147,10 +2846,7 @@ bool Cse523InstrInfo::
 isSafeToMoveRegClassDefs(const TargetRegisterClass *RC) const {
     // FIXME: Return false for x87 stack register classes for now. We can't
     // allow any loads of these registers before FpGet_ST0_80.
-    assert(0);
-    return false;
-//    return !(RC == &Cse523::CCRRegClass || RC == &Cse523::RFP32RegClass ||
-//            RC == &Cse523::RFP64RegClass || RC == &Cse523::RFP80RegClass);
+    return !(RC == &Cse523::CCRRegClass);
 }
 
 /// getGlobalBaseReg - Return a virtual register initialized with the

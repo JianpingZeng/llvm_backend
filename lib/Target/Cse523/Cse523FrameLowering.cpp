@@ -744,66 +744,59 @@ void Cse523FrameLowering::emitEpilogue(MachineFunction &MF,
         BuildMI(MBB, MBBI, DL,
                 TII.get(Cse523::MOV64rr),
                 StackPtr).addReg(DestAddr.getReg());
-    //} else if (RetOpcode == Cse523::TCRETURNri || RetOpcode == Cse523::TCRETURNdi ||
-    //        RetOpcode == Cse523::TCRETURNmi ||
-    //        RetOpcode == Cse523::TCRETURNri64 || RetOpcode == Cse523::TCRETURNdi64 ||
-    //        RetOpcode == Cse523::TCRETURNmi64) {
-    //    bool isMem = RetOpcode == Cse523::TCRETURNmi || RetOpcode == Cse523::TCRETURNmi64;
-    //    // Tail call return: adjust the stack pointer and jump to callee.
-    //    MBBI = MBB.getLastNonDebugInstr();
-    //    MachineOperand &JumpTarget = MBBI->getOperand(0);
-    //    MachineOperand &StackAdjust = MBBI->getOperand(isMem ? 5 : 1);
-    //    assert(StackAdjust.isImm() && "Expecting immediate value.");
+    } else if (RetOpcode == Cse523::TCRETURNri64 || RetOpcode == Cse523::TCRETURNdi64 ||
+            RetOpcode == Cse523::TCRETURNmi64) {
+        bool isMem = RetOpcode == Cse523::TCRETURNmi64;
+        // Tail call return: adjust the stack pointer and jump to callee.
+        MBBI = MBB.getLastNonDebugInstr();
+        MachineOperand &JumpTarget = MBBI->getOperand(0);
+        MachineOperand &StackAdjust = MBBI->getOperand(isMem ? 5 : 1);
+        assert(StackAdjust.isImm() && "Expecting immediate value.");
 
-    //    // Adjust stack pointer.
-    //    int StackAdj = StackAdjust.getImm();
-    //    int MaxTCDelta = Cse523FI->getTCReturnAddrDelta();
-    //    int Offset = 0;
-    //    assert(MaxTCDelta <= 0 && "MaxTCDelta should never be positive");
+        // Adjust stack pointer.
+        int StackAdj = StackAdjust.getImm();
+        int MaxTCDelta = Cse523FI->getTCReturnAddrDelta();
+        int Offset = 0;
+        assert(MaxTCDelta <= 0 && "MaxTCDelta should never be positive");
 
-    //    // Incoporate the retaddr area.
-    //    Offset = StackAdj-MaxTCDelta;
-    //    assert(Offset >= 0 && "Offset should never be negative");
+        // Incoporate the retaddr area.
+        Offset = StackAdj-MaxTCDelta;
+        assert(Offset >= 0 && "Offset should never be negative");
 
-    //    if (Offset) {
-    //        // Check for possible merge with preceding ADD instruction.
-    //        Offset += mergeSPUpdates(MBB, MBBI, StackPtr, true);
-    //        emitSPUpdate(MBB, MBBI, StackPtr, Offset, Is64Bit, IsLP64,
-    //                UseLEA, TII, *RegInfo);
-    //    }
+        if (Offset) {
+            // Check for possible merge with preceding ADD instruction.
+            Offset += mergeSPUpdates(MBB, MBBI, StackPtr, true);
+            emitSPUpdate(MBB, MBBI, StackPtr, Offset, Is64Bit, IsLP64,
+                    UseLEA, TII, *RegInfo);
+        }
 
-    //    // Jump to label or value in register.
-    //    if (RetOpcode == Cse523::TCRETURNdi || RetOpcode == Cse523::TCRETURNdi64) {
-    //        MachineInstrBuilder MIB =
-    //            BuildMI(MBB, MBBI, DL, TII.get((RetOpcode == Cse523::TCRETURNdi)
-    //                        ? Cse523::TAILJMPd : Cse523::TAILJMPd64));
-    //        if (JumpTarget.isGlobal())
-    //            MIB.addGlobalAddress(JumpTarget.getGlobal(), JumpTarget.getOffset(),
-    //                    JumpTarget.getTargetFlags());
-    //        else {
-    //            assert(JumpTarget.isSymbol());
-    //            MIB.addExternalSymbol(JumpTarget.getSymbolName(),
-    //                    JumpTarget.getTargetFlags());
-    //        }
-    //    } else if (RetOpcode == Cse523::TCRETURNmi || RetOpcode == Cse523::TCRETURNmi64) {
-    //        MachineInstrBuilder MIB =
-    //            BuildMI(MBB, MBBI, DL, TII.get((RetOpcode == Cse523::TCRETURNmi)
-    //                        ? Cse523::TAILJMPm : Cse523::TAILJMPm64));
-    //        for (unsigned i = 0; i != 5; ++i)
-    //            MIB.addOperand(MBBI->getOperand(i));
-    //    } else if (RetOpcode == Cse523::TCRETURNri64) {
-    //        BuildMI(MBB, MBBI, DL, TII.get(Cse523::TAILJMPr64)).
-    //            addReg(JumpTarget.getReg(), RegState::Kill);
-    //    } else {
-    //        BuildMI(MBB, MBBI, DL, TII.get(Cse523::TAILJMPr)).
-    //            addReg(JumpTarget.getReg(), RegState::Kill);
-    //    }
+        // Jump to label or value in register.
+        if (RetOpcode == Cse523::TCRETURNdi64) {
+            MachineInstrBuilder MIB =
+                BuildMI(MBB, MBBI, DL, TII.get(Cse523::TAILJMPd64));
+            if (JumpTarget.isGlobal())
+                MIB.addGlobalAddress(JumpTarget.getGlobal(), JumpTarget.getOffset(),
+                        JumpTarget.getTargetFlags());
+            else {
+                assert(JumpTarget.isSymbol());
+                MIB.addExternalSymbol(JumpTarget.getSymbolName(),
+                        JumpTarget.getTargetFlags());
+            }
+        } else if (RetOpcode == Cse523::TCRETURNmi64) {
+            MachineInstrBuilder MIB =
+                BuildMI(MBB, MBBI, DL, TII.get(Cse523::TAILJMPm64));
+            for (unsigned i = 0; i != 5; ++i)
+                MIB.addOperand(MBBI->getOperand(i));
+        } else if (RetOpcode == Cse523::TCRETURNri64) {
+            BuildMI(MBB, MBBI, DL, TII.get(Cse523::TAILJMPr64)).
+                addReg(JumpTarget.getReg(), RegState::Kill);
+        }
 
-    //    MachineInstr *NewMI = prior(MBBI);
-    //    NewMI->copyImplicitOps(MF, MBBI);
+        MachineInstr *NewMI = prior(MBBI);
+        NewMI->copyImplicitOps(MF, MBBI);
 
-    //    // Delete the pseudo instruction TCRETURN.
-    //    MBB.erase(MBBI);
+        // Delete the pseudo instruction TCRETURN.
+        MBB.erase(MBBI);
     } else if ((RetOpcode == Cse523::RETQ || RetOpcode == Cse523::RETIQ) &&
             (Cse523FI->getTCReturnAddrDelta() < 0)) {
         // Add the return addr area delta back since we are not tail calling.
