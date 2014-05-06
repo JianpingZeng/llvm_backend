@@ -56,7 +56,7 @@ def SDTCse523BrCond  : SDTypeProfile<0, 3,
                                    SDTCisVT<1, i8>, SDTCisVT<2, i64>]>;
 
 def SDTCse523SetCC   : SDTypeProfile<1, 2,
-                                  [SDTCisVT<0, i8>,
+                                  [SDTCisVT<0, i64>,
                                    SDTCisVT<1, i8>, SDTCisVT<2, i64>]>;
 def SDTCse523SetCC_C : SDTypeProfile<1, 2,
                                   [SDTCisInt<0>,

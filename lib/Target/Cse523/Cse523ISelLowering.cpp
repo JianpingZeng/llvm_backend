@@ -2661,86 +2661,36 @@ static bool isCse523CCUnsigned(unsigned Cse523CC) {
 /// comparison to make.
 static unsigned TranslateCse523CC(ISD::CondCode SetCCOpcode, bool isFP,
         SDValue &LHS, SDValue &RHS, SelectionDAG &DAG) {
-    if (!isFP) {
-        if (ConstantSDNode *RHSC = dyn_cast<ConstantSDNode>(RHS)) {
-            if (SetCCOpcode == ISD::SETGT && RHSC->isAllOnesValue()) {
-                // X > -1   -> X == 0, jump !sign.
-                RHS = DAG.getConstant(0, RHS.getValueType());
-                return Cse523::COND_NS;
-            }
-            if (SetCCOpcode == ISD::SETLT && RHSC->isNullValue()) {
-                // X < 0   -> X == 0, jump on sign.
-                return Cse523::COND_S;
-            }
-            if (SetCCOpcode == ISD::SETLT && RHSC->getZExtValue() == 1) {
-                // X < 1   -> X <= 0
-                RHS = DAG.getConstant(0, RHS.getValueType());
-                return Cse523::COND_LE;
-            }
+    assert(!isFP && "Unsupported Floating Point Conditions");
+    if (ConstantSDNode *RHSC = dyn_cast<ConstantSDNode>(RHS)) {
+        if (SetCCOpcode == ISD::SETGT && RHSC->isAllOnesValue()) {
+            // X > -1   -> X == 0, jump !sign.
+            RHS = DAG.getConstant(0, RHS.getValueType());
+            return Cse523::COND_NS;
         }
-
-        switch (SetCCOpcode) {
-            default: llvm_unreachable("Invalid integer condition!");
-            case ISD::SETEQ:  return Cse523::COND_E;
-            case ISD::SETGT:  return Cse523::COND_G;
-            case ISD::SETGE:  return Cse523::COND_GE;
-            case ISD::SETLT:  return Cse523::COND_L;
-            case ISD::SETLE:  return Cse523::COND_LE;
-            case ISD::SETNE:  return Cse523::COND_NE;
-            case ISD::SETULT: return Cse523::COND_B;
-            case ISD::SETUGT: return Cse523::COND_A;
-            case ISD::SETULE: return Cse523::COND_BE;
-            case ISD::SETUGE: return Cse523::COND_AE;
+        if (SetCCOpcode == ISD::SETLT && RHSC->isNullValue()) {
+            // X < 0   -> X == 0, jump on sign.
+            return Cse523::COND_S;
+        }
+        if (SetCCOpcode == ISD::SETLT && RHSC->getZExtValue() == 1) {
+            // X < 1   -> X <= 0
+            RHS = DAG.getConstant(0, RHS.getValueType());
+            return Cse523::COND_LE;
         }
     }
 
-    // First determine if it is required or is profitable to flip the operands.
-
-    // If LHS is a foldable load, but RHS is not, flip the condition.
-    if (ISD::isNON_EXTLoad(LHS.getNode()) &&
-            !ISD::isNON_EXTLoad(RHS.getNode())) {
-        SetCCOpcode = getSetCCSwappedOperands(SetCCOpcode);
-        std::swap(LHS, RHS);
-    }
-
     switch (SetCCOpcode) {
-        default: break;
-        case ISD::SETOLT:
-        case ISD::SETOLE:
-        case ISD::SETUGT:
-        case ISD::SETUGE:
-                 std::swap(LHS, RHS);
-                 break;
-    }
-
-    // On a floating point condition, the flags are set as follows:
-    // ZF  PF  CF   op
-    //  0 | 0 | 0 | X > Y
-    //  0 | 0 | 1 | X < Y
-    //  1 | 0 | 0 | X == Y
-    //  1 | 1 | 1 | unordered
-    switch (SetCCOpcode) {
-        default: llvm_unreachable("Condcode should be pre-legalized away");
-        case ISD::SETUEQ:
-        case ISD::SETEQ:   return Cse523::COND_E;
-        case ISD::SETOLT:              // flipped
-        case ISD::SETOGT:
-        case ISD::SETGT:   return Cse523::COND_A;
-        case ISD::SETOLE:              // flipped
-        case ISD::SETOGE:
-        case ISD::SETGE:   return Cse523::COND_AE;
-        case ISD::SETUGT:              // flipped
-        case ISD::SETULT:
-        case ISD::SETLT:   return Cse523::COND_B;
-        case ISD::SETUGE:              // flipped
-        case ISD::SETULE:
-        case ISD::SETLE:   return Cse523::COND_BE;
-        case ISD::SETONE:
-        case ISD::SETNE:   return Cse523::COND_NE;
-        case ISD::SETUO:   return Cse523::COND_P;
-        case ISD::SETO:    return Cse523::COND_NP;
-        case ISD::SETOEQ:
-        case ISD::SETUNE:  return Cse523::COND_INVALID;
+        default: llvm_unreachable("Invalid integer condition!");
+        case ISD::SETEQ:  return Cse523::COND_E;
+        case ISD::SETGT:  return Cse523::COND_G;
+        case ISD::SETGE:  return Cse523::COND_GE;
+        case ISD::SETLT:  return Cse523::COND_L;
+        case ISD::SETLE:  return Cse523::COND_LE;
+        case ISD::SETNE:  return Cse523::COND_NE;
+        case ISD::SETULT: return Cse523::COND_B;
+        case ISD::SETUGT: return Cse523::COND_A;
+        case ISD::SETULE: return Cse523::COND_BE;
+        case ISD::SETUGE: return Cse523::COND_AE;
     }
 }
 
@@ -6308,78 +6258,13 @@ SDValue Cse523TargetLowering::LowerSETCC(SDValue Op, SelectionDAG &DAG) const {
     MVT VT = Op.getSimpleValueType();
 
     if (VT.isVector()) llvm_unreachable("Unsupported Vector Instructions");
-#if 0
-    SDValue LHS = Op.getOperand(0);
-    SDValue RHS = Op.getOperand(1);
-    SDLoc dl(Op);
 
-    if (LHS.getValueType() != MVT::i64) {
-        if(LHS.getOpcode() == ISD::TRUNCATE){
-            DEBUG(dbgs()<<"LHS "<<LHS.getOpcode()<<" "<< LHS.getValueType().getSimpleVT().SimpleTy);
-            SDValue tempLHS;
-            if(LHS.getOperand(0).getValueType() != MVT::i64)
-                assert(0); //tempLHS = DAG.GetPromotedInteger(LHS.getOperand(0));
-            else
-                tempLHS = LHS.getOperand(0); 
-            DAG.ReplaceAllUsesOfValueWith(LHS, tempLHS);
-            DAG.DeleteNode(LHS.getNode());
-            LHS = tempLHS;
-        } else {
-            DEBUG(dbgs()<<"LHS "<<LHS.getOpcode()<<" "<< LHS.getValueType().getSimpleVT().SimpleTy<<" 2\n");
-            assert(0); //LHS = DAG.GetPromotedInteger(LHS);
-        }
-    }
-    if (RHS.getValueType() != MVT::i64) {
-        if(RHS.getOpcode() == ISD::TRUNCATE) {
-            DEBUG(dbgs()<<"RHS "<<RHS.getOpcode()<<" "<< RHS.getValueType().getSimpleVT().SimpleTy);
-            SDValue tempRHS;
-            if(RHS.getOperand(0).getValueType() != MVT::i64)
-                assert(0); //tempRHS = DAG.GetPromotedInteger(RHS.getOperand(0));
-            else
-                tempRHS = RHS.getOperand(0);
-            DAG.ReplaceAllUsesOfValueWith(RHS, tempRHS);
-            DAG.DeleteNode(RHS.getNode());
-            RHS = tempRHS;
-        } else {
-            DEBUG(dbgs()<<"RHS "<<RHS.getOpcode()<<" "
-                    << RHS.getValueType().getSimpleVT().SimpleTy);
-            //assert(0); RHS = DAG.GetPromotedInteger(Op.getOperand(1));
-        }
-    }
-    ISD::CondCode CC = cast<CondCodeSDNode>(Op.getOperand(2))->get();
-    bool isFP = Op.getValueType().isFloatingPoint();
-    unsigned Cse523CC = TranslateCse523CC(CC, isFP, LHS, RHS, DAG);
-    DEBUG(dbgs()<<"Lowering SETCC to CMP. Here are the operands' types "
-            << LHS.getOpcode() <<" "<<LHS.getValueType().getSimpleVT().SimpleTy 
-            <<" "<<RHS.getOpcode()<<" " <<RHS.getValueType().getSimpleVT().SimpleTy 
-            <<"\n");
-    SDValue CMP = DAG.getNode(Cse523ISD::CMP, dl, MVT::i64, LHS, RHS,
-            DAG.getConstant(Cse523CC, MVT::i64) );
-    // SDValue One = DAG.getConstant(1,MVT::i64);
-    // SDValue Zero = DAG.getConstant(0,MVT::i64);
-    // SDValue Ops2[] = {Zero, One, DAG.getConstant(Cse523CC, MVT::i64), CMP};
-    // return DAG.getNode(Cse523ISD::CMOV, dl, MVT::i64, Ops2, 4);
-    return CMP;
-#else                                                
-    assert(((!Subtarget->hasAVX512() && VT == MVT::i8) || (VT == MVT::i64))
-            && "SetCC type must be 8-bit or 1-bit integer");
+    assert((VT == MVT::i64) && "SetCC type must be 64-bit integer");
+
     SDValue Op0 = Op.getOperand(0);
     SDValue Op1 = Op.getOperand(1);
     SDLoc dl(Op);
     ISD::CondCode CC = cast<CondCodeSDNode>(Op.getOperand(2))->get();
-
-    // Optimize to BT if possible.
-    // Lower (X & (1 << N)) == 0 to BT(X, N).
-    // Lower ((X >>u N) & 1) != 0 to BT(X, N).
-    // Lower ((X >>s N) & 1) != 0 to BT(X, N).
-    if (Op0.getOpcode() == ISD::AND && Op0.hasOneUse() &&
-            Op1.getOpcode() == ISD::Constant &&
-            cast<ConstantSDNode>(Op1)->isNullValue() &&
-            (CC == ISD::SETEQ || CC == ISD::SETNE)) {
-        SDValue NewSetCC = LowerToBT(Op0, CC, dl, DAG);
-        if (NewSetCC.getNode())
-            return NewSetCC;
-    }
 
     // Look for X == 0, X == 1, X != 0, or X != 1.  We can simplify some forms of
     // these.
@@ -6401,17 +6286,8 @@ SDValue Cse523TargetLowering::LowerSETCC(SDValue Op, SelectionDAG &DAG) const {
             SDValue SetCC = DAG.getNode(Cse523ISD::SETCC, dl, MVT::i64,
                     DAG.getConstant(CCode, MVT::i64),
                     Op0.getOperand(1));
-            if (VT == MVT::i1)
-                return DAG.getNode(ISD::TRUNCATE, dl, MVT::i1, SetCC);
             return SetCC;
         }
-    }
-    if ((Op0.getValueType() == MVT::i1) && (Op1.getOpcode() == ISD::Constant) &&
-            (cast<ConstantSDNode>(Op1)->getZExtValue() == 1) &&
-            (CC == ISD::SETEQ || CC == ISD::SETNE)) {
-
-        ISD::CondCode NewCC = ISD::getSetCCInverse(CC, true);
-        return DAG.getSetCC(dl, VT, Op0, DAG.getConstant(0, MVT::i1), NewCC);
     }
 
     bool isFP = Op1.getSimpleValueType().isFloatingPoint();
@@ -6423,10 +6299,7 @@ SDValue Cse523TargetLowering::LowerSETCC(SDValue Op, SelectionDAG &DAG) const {
     EFLAGS = ConvertCmpIfNecessary(EFLAGS, DAG);
     SDValue SetCC = DAG.getNode(Cse523ISD::SETCC, dl, MVT::i64,
             DAG.getConstant(Cse523CC, MVT::i64), EFLAGS);
-    if (VT == MVT::i1)
-        return DAG.getNode(ISD::TRUNCATE, dl, MVT::i1, SetCC);
     return SetCC;
-#endif
 }
 
 // isCse523LogicalCmp - Return true if opcode is a Cse523 logical comparison.
@@ -9733,14 +9606,10 @@ static unsigned getNonAtomic6432OpcodeWithExtraOpc(unsigned Opc,
 
 // Get pseudo CMOV opcode from the specified data type.
 static unsigned getPseudoCMOVOpc(EVT VT) {
-//    switch (VT.getSimpleVT().SimpleTy) {
-//        case MVT::i8:  return Cse523::CMOV_GR8;
-//        case MVT::i16: return Cse523::CMOV_GR16;
-//        case MVT::i32: return Cse523::CMOV_GR32;
-//        default:
-//                       break;
-//    }
-    llvm_unreachable("Unknown CMOV opcode!");
+    if (VT.getSimpleVT().SimpleTy != MVT::i64)
+        llvm_unreachable("Unknown CMOV opcode!");
+
+    return Cse523::CMOV_GR64;
 }
 
 // EmitAtomicLoadArith - emit the code sequence for pseudo atomic instructions.
@@ -10306,49 +10175,6 @@ Cse523TargetLowering::EmitAtomicLoadArith6432(MachineInstr *MI,
     return sinkMBB;
 }
 
-// FIXME: When we get size specific XMM0 registers, i.e. XMM0_V16I8
-// or XMM0_V32I8 in AVX all of this code can be replaced with that
-// in the .td file.
-static MachineBasicBlock *EmitPCMPSTRM(MachineInstr *MI, MachineBasicBlock *BB,
-        const TargetInstrInfo *TII) {
-    llvm_unreachable("illegal opcode!");
-    return NULL;
-}
-
-// FIXME: Custom handling because TableGen doesn't support multiple implicit
-// defs in an instruction pattern
-static MachineBasicBlock *EmitPCMPSTRI(MachineInstr *MI, MachineBasicBlock *BB,
-        const TargetInstrInfo *TII) {
-    llvm_unreachable("illegal opcode!");
-    return NULL;
-}
-
-static MachineBasicBlock * EmitMonitor(MachineInstr *MI, MachineBasicBlock *BB,
-        const TargetInstrInfo *TII,
-        const Cse523Subtarget* Subtarget) {
-    DebugLoc dl = MI->getDebugLoc();
-
-    // TODO: Address into RAX, other two args into ECX, EDX.
-    assert(0);
-    unsigned MemOpc = Cse523::LEA64r;
-    unsigned MemReg = Cse523::RAX;
-    MachineInstrBuilder MIB = BuildMI(*BB, MI, dl, TII->get(MemOpc), MemReg);
-    for (int i = 0; i < Cse523::AddrNumOperands; ++i)
-        MIB.addOperand(MI->getOperand(i));
-
-    unsigned ValOps = Cse523::AddrNumOperands;
-    BuildMI(*BB, MI, dl, TII->get(TargetOpcode::COPY), Cse523::RCX)
-        .addReg(MI->getOperand(ValOps).getReg());
-    BuildMI(*BB, MI, dl, TII->get(TargetOpcode::COPY), Cse523::RDX)
-        .addReg(MI->getOperand(ValOps+1).getReg());
-
-    // The instruction doesn't actually take any operands though.
-    //BuildMI(*BB, MI, dl, TII->get(Cse523::MONITORrrr));
-
-    MI->eraseFromParent(); // The pseudo is gone now.
-    return BB;
-}
-
 MachineBasicBlock *
 Cse523TargetLowering::EmitVAARG64WithCustomInserter(
         MachineInstr *MI,
@@ -10721,6 +10547,92 @@ static bool checkAndUpdateEFLAGSKill(MachineBasicBlock::iterator SelectItr,
     // out. SelectMI should have a kill flag on EFLAGS.
     SelectItr->addRegisterKilled(Cse523::EFLAGS, TRI);
     return true;
+}
+
+MachineBasicBlock *
+Cse523TargetLowering::EmitLoweredSetCC(MachineInstr *MI,
+        MachineBasicBlock *BB) const {
+    const TargetInstrInfo *TII = getTargetMachine().getInstrInfo();
+    DebugLoc DL = MI->getDebugLoc();
+
+    // To "insert" a SELECT_CC instruction, we actually have to insert the
+    // diamond control-flow pattern.  The incoming instruction knows the
+    // destination vreg to set, the condition code register to branch on, the
+    // true/false values to select between, and a branch opcode to use.
+    const BasicBlock *LLVM_BB = BB->getBasicBlock();
+    MachineFunction::iterator It = BB;
+    ++It;
+
+    /*
+     * Create below basic blocks to convert SETCC to JCC+MOVs
+     *
+     *               thisMBB
+     *                (JCC)
+     *  (On False)______|_____(On true)
+     *            |           |
+     *            |           |
+     *        Copy0MBB     Copy1MBB
+     *    (MOV64 V0, 0)  (MOV64 V1, 1)
+     *            |           |
+     *            |___________|
+     *                  |
+     *               SinkMBB
+     */
+    MachineBasicBlock *thisMBB = BB;
+    MachineFunction *F = BB->getParent();
+    MachineBasicBlock *copy0MBB = F->CreateMachineBasicBlock(LLVM_BB);
+    MachineBasicBlock *copy1MBB = F->CreateMachineBasicBlock(LLVM_BB);
+    MachineBasicBlock *sinkMBB = F->CreateMachineBasicBlock(LLVM_BB);
+
+    MachineRegisterInfo &MRI = thisMBB->getParent()->getRegInfo();
+    const TargetRegisterClass *RC = getRegClassFor(MVT::i64);
+    unsigned copy0DstReg = MRI.createVirtualRegister(RC);
+    unsigned copy1DstReg = MRI.createVirtualRegister(RC);
+
+    F->insert(It, copy0MBB);
+    F->insert(It, copy1MBB);
+    F->insert(It, sinkMBB);
+
+    // If the EFLAGS register isn't dead in the terminator, then claim that it's
+    // live into the sink and copy blocks.
+    const TargetRegisterInfo* TRI = getTargetMachine().getRegisterInfo();
+    if (!MI->killsRegister(Cse523::EFLAGS) &&
+            !checkAndUpdateEFLAGSKill(MI, BB, TRI)) {
+        copy0MBB->addLiveIn(Cse523::EFLAGS);
+        copy1MBB->addLiveIn(Cse523::EFLAGS);
+        sinkMBB->addLiveIn(Cse523::EFLAGS);
+    }
+
+    // Transfer the remainder of BB and its successor edges to sinkMBB.
+    sinkMBB->splice(sinkMBB->begin(), BB,
+            llvm::next(MachineBasicBlock::iterator(MI)),
+            BB->end());
+    sinkMBB->transferSuccessorsAndUpdatePHIs(BB);
+
+    // Add the true and fallthrough blocks as its successors.
+    BB->addSuccessor(copy0MBB);
+    BB->addSuccessor(copy1MBB);
+
+    // Create the conditional branch instruction.
+    unsigned Opc = Cse523::GetCondBranchFromCond((Cse523::CondCode)MI->getOperand(1).getImm());
+    BuildMI(BB, DL, TII->get(Opc)).addMBB(copy1MBB);
+
+    copy0MBB->addSuccessor(sinkMBB);
+    copy1MBB->addSuccessor(sinkMBB);
+
+    BuildMI(copy0MBB, DL, TII->get(Cse523::MOV64ri), copy0DstReg).addImm(0);
+    BuildMI(copy1MBB, DL, TII->get(Cse523::MOV64ri), copy1DstReg).addImm(1);
+
+    //  sinkMBB:
+    //   %Result = phi [ %FalseValue, copy0MBB ], [ %TrueValue, copy1MBB ]
+    //  ...
+    BuildMI(*sinkMBB, sinkMBB->begin(), DL,
+            TII->get(Cse523::PHI), MI->getOperand(0).getReg())
+        .addReg(copy0DstReg).addMBB(copy0MBB)
+        .addReg(copy1DstReg).addMBB(copy1MBB);
+
+    MI->eraseFromParent();   // The pseudo instruction is gone now.
+    return sinkMBB;
 }
 
 MachineBasicBlock *
@@ -11192,6 +11104,8 @@ Cse523TargetLowering::EmitInstrWithCustomInserter(MachineInstr *MI,
                  return EmitLoweredSegAlloca(MI, BB, true);
         case Cse523::TLSCall_64:
                  return EmitLoweredTLSCall(MI, BB);
+        case Cse523::SETCC_GR64:        
+                 return EmitLoweredSetCC(MI, BB);
         case Cse523::CMOV_GR64:        
                  return EmitLoweredSelect(MI, BB);
     }

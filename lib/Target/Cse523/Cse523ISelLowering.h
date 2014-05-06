@@ -956,6 +956,9 @@ namespace llvm {
                                                    MachineInstr *BInstr,
                                                    MachineBasicBlock *BB) const;
 
+    MachineBasicBlock *EmitLoweredSetCC(MachineInstr *I,
+                                         MachineBasicBlock *BB) const;
+
     MachineBasicBlock *EmitLoweredSelect(MachineInstr *I,
                                          MachineBasicBlock *BB) const;
 
