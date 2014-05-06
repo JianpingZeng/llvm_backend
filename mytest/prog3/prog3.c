@@ -91,8 +91,18 @@ long long _main(long long argc, char *argv[])
 	sum = powers[0] + 1;
 	if (sum > 100) 
       		sum = -99;
-	pi[1] = sum;
 
+	pi[1] += sum;
  	putchar(pi[1] + '0');
+	pi[1] += sum;
+ 	putchar(pi[1] + '0');
+	pi[1] += sum;
+ 	putchar(pi[1] + '0');
+	pi[1] += sum;
+ 	putchar(pi[1] + '0');
+	pi[1] += sum;
+ 	putchar(pi[1] + '0');
+
+ 	putchar('\n');
 	return EXIT_SUCCESS;
 }

@@ -1,6 +1,9 @@
 long c = 10;
 
-int main(int argc, char ** argv, char ** envp) {
+long main()
+{
+    if (c==9)
+        return c+10; 
     return c;
 }
 

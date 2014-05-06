@@ -1,3 +1,0 @@
-digraph finite_state_machine {
-    a -> b [ label = "c" ];
-}
