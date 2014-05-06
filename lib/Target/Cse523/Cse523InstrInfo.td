@@ -27,7 +27,7 @@ def SDTCse523Cmps : SDTypeProfile<1, 3, [SDTCisFP<0>, SDTCisSameAs<1, 2>, SDTCis
 
 def SDTCse523Cmov    : SDTypeProfile<1, 4,
                                   [SDTCisSameAs<0, 1>, SDTCisSameAs<1, 2>,
-                                   SDTCisVT<3, i8>, SDTCisVT<4, i32>]>;
+                                   SDTCisVT<3, i8>, SDTCisVT<4, i64>]>;
 
 // Unary and binary operator instructions that set EFLAGS as a side-effect.
 def SDTUnaryArithWithFlags : SDTypeProfile<2, 1,
@@ -128,7 +128,6 @@ def Cse523shld    : SDNode<"Cse523ISD::SHLD",     SDTIntShiftDOp>;
 def Cse523shrd    : SDNode<"Cse523ISD::SHRD",     SDTIntShiftDOp>;
 
 def Cse523cmp     : SDNode<"Cse523ISD::CMP" ,     SDTCse523CmpTest>;
-def Cse523bt      : SDNode<"Cse523ISD::BT",       SDTCse523CmpTest>;
 
 def Cse523cmov    : SDNode<"Cse523ISD::CMOV",     SDTCse523Cmov>;
 def Cse523brcond  : SDNode<"Cse523ISD::BRCOND",   SDTCse523BrCond,

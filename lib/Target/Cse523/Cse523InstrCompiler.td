@@ -286,6 +286,15 @@ let Defs = [RAX, EFLAGS],
 ////===----------------------------------------------------------------------===//
 //// Conditional Move Pseudo Instructions
 //
+let usesCustomInserter = 1, Uses = [EFLAGS] in {
+    def CMOV_GR64 : I<0, Pseudo,
+        (outs GR64:$dst), (ins GR64:$src1, GR64:$src2, i8imm:$cond),
+        "#CMOV_GR64 PSEUDO!",
+        [(set GR64:$dst, (Cse523cmov GR64:$src1, GR64:$src2,
+                    imm:$cond, EFLAGS))]>;
+
+} // UsesCustomInserter = 1, Uses = [EFLAGS]
+
 //// Cse523 doesn't have 8-bit conditional moves. Use a customInserter to
 //// emit control flow. An alternative to this is to mark i8 SELECT as Promote,
 //// however that requires promoting the operands, and can induce additional
