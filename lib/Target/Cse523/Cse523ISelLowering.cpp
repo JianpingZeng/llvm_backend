@@ -10567,16 +10567,18 @@ Cse523TargetLowering::EmitLoweredSetCC(MachineInstr *MI,
      * Create below basic blocks to convert SETCC to JCC+MOVs
      *
      *               thisMBB
+     *            (MOV64 V0, 0) 
+     *            (MOV64 V1, 1)
      *                (JCC)
      *  (On False)______|_____(On true)
      *            |           |
      *            |           |
-     *        Copy0MBB     Copy1MBB
-     *    (MOV64 V0, 0)  (MOV64 V1, 1)
+     *        copy0MBB     copy1MBB
      *            |           |
      *            |___________|
      *                  |
-     *               SinkMBB
+     *               sinkMBB
+     *  (Dst = PHI (V0:Copy0MBB, V1:Copy1MBB))
      */
     MachineBasicBlock *thisMBB = BB;
     MachineFunction *F = BB->getParent();
@@ -10613,6 +10615,10 @@ Cse523TargetLowering::EmitLoweredSetCC(MachineInstr *MI,
     BB->addSuccessor(copy0MBB);
     BB->addSuccessor(copy1MBB);
 
+    // Create MOVs analogous to SETCC
+    BuildMI(BB, DL, TII->get(Cse523::MOV64ri), copy0DstReg).addImm(0);
+    BuildMI(BB, DL, TII->get(Cse523::MOV64ri), copy1DstReg).addImm(1);
+
     // Create the conditional branch instruction.
     unsigned Opc = Cse523::GetCondBranchFromCond((Cse523::CondCode)MI->getOperand(1).getImm());
     BuildMI(BB, DL, TII->get(Opc)).addMBB(copy1MBB);
@@ -10620,11 +10626,8 @@ Cse523TargetLowering::EmitLoweredSetCC(MachineInstr *MI,
     copy0MBB->addSuccessor(sinkMBB);
     copy1MBB->addSuccessor(sinkMBB);
 
-    BuildMI(copy0MBB, DL, TII->get(Cse523::MOV64ri), copy0DstReg).addImm(0);
-    BuildMI(copy1MBB, DL, TII->get(Cse523::MOV64ri), copy1DstReg).addImm(1);
-
     //  sinkMBB:
-    //   %Result = phi [ %FalseValue, copy0MBB ], [ %TrueValue, copy1MBB ]
+    //   %Result = phi [copy0DstReg, copy0MBB], [copy1DstReg, copy1MBB]
     //  ...
     BuildMI(*sinkMBB, sinkMBB->begin(), DL,
             TII->get(Cse523::PHI), MI->getOperand(0).getReg())

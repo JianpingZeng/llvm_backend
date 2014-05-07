@@ -1,7 +1,7 @@
 #!/bin/bash -x
 
 NAME=prog4
-#PATH=../../build/Debug+Asserts/bin:$PATH
+#PATH=~/llvm/build/Debug+Asserts/bin:$PATH
 
 for c in *.c; do
         echo "[Running] clang $c"
