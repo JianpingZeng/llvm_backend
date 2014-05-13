@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ;===- ./projects/LLVMBuild.txt ---------------------------------*- Conf -*--===;
+=======
+;===- ./projects/LLVMBuild.txt ---------------------------------*- Conf -*--===;                                                                      
+>>>>>>> 596cd6b48af6077f36c8634007f4f792a4644609
 ;
 ;                     The LLVM Compiler Infrastructure
 ;
