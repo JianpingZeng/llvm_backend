@@ -1,18 +1,38 @@
-Low Level Virtual Machine (LLVM)
-================================
+LLVM Backend for a Reduced X86-64 Instruction Set (Cse523 Backend)
+==================================================================
 
-This directory and its subdirectories contain source code for the Low Level
-Virtual Machine, a toolkit for the construction of highly optimized compilers,
-optimizers, and runtime environments.
+Build Instructions:
 
-LLVM is open source software. You may freely distribute it under the terms of
-the license agreement found in LICENSE.txt.
+1. Clone the entire source code into your local directory:
+    git clone git@github.com:sahilpparmar/llvm_backend.git
+    
+2. Create a build folder inside the llvm_backend folder:
+    cd llvm_backend
+    mkdir build
+    cd build
 
-Please see the documentation provided in docs/ for further
-assistance with LLVM, and in particular docs/GettingStarted.rst for getting
-started with LLVM and docs/README.txt for an overview of LLVM's
-documentation setup.
+3. Configure the build for our Cse523 backend:
+    ../configure --enable-targets=cse523
+    (Make sure you dont have existing clang binaries in your PATH)
+    
+4. Build both frontend (clang) and backend (llc) compiler sources:
+    make [-j]
+    
+5. Add the generated compiler-tools bin folder to the PATH
+    export $PATH=<path_to_llvm_backend>/build/Debug+Asserts/bin
 
-If you're writing a package for LLVM, see docs/Packaging.rst for our
-suggestions.
+--------------------------------------------------------------------
+    
+Using CLANG and LLC:
+
+Refer to sample tests (prog1/2/3/4/5) at location:
+    <path_to_llvm_backend>/mytest
+    
+For runing the tests:
+    cd <testname>
+    sh build.sh
+    ./<testname>
+
+For more details, refer the example below:
+http://llvm.org/docs/GettingStarted.html#an-example-using-the-llvm-tool-chain
 
