@@ -10,7 +10,8 @@ for c in *.c; do
         echo "[Running] clang $c"
 	clang -Wno-main-return-type -emit-llvm -DENABLE_SCORE -DENABLE_PREVIEW -DENABLE_HIGH_SCORE -O3 -S -c -o $c.bc -nobuiltininc -isystem $LIBC_PATH/include $c
         echo "[Running] llc $c.bc"
-	llc -march=cse523 -O3 $c.bc -o $c.S
+	#~/llvm/build/Debug+Asserts/bin/llc -O3 $c.bc -o $c.S
+        llc -march=cse523 -O3 $c.bc -o $c.S
         echo "[Running] as $c.S"
 	as -o $c.o $c.S
 done

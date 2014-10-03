@@ -1423,8 +1423,8 @@ bool Cse523DAGToDAGISel::SelectLEA64_32Addr(SDValue N, SDValue &Base,
     if (RN && RN->getReg() == 0)
         Base = CurDAG->getRegister(0, MVT::i64);
     else if (Base.getValueType() == MVT::i32 && !dyn_cast<FrameIndexSDNode>(N)) {
+        llvm_unreachable("32 bit addresses not supported");
         // Base could already be %rip, particularly in the x32 ABI.
-        assert(0);
         //Base = SDValue(CurDAG->getMachineNode(
         //            TargetOpcode::SUBREG_TO_REG, DL, MVT::i64,
         //            CurDAG->getTargetConstant(0, MVT::i64),
@@ -1439,7 +1439,7 @@ bool Cse523DAGToDAGISel::SelectLEA64_32Addr(SDValue N, SDValue &Base,
     else {
         assert(Index.getValueType() == MVT::i32 &&
                 "Expect to be extending 32-bit registers for use in LEA");
-        assert(0);
+        llvm_unreachable("32 bit addresses not supported");
         //Index = SDValue(CurDAG->getMachineNode(
         //            TargetOpcode::SUBREG_TO_REG, DL, MVT::i64,
         //            CurDAG->getTargetConstant(0, MVT::i64),
@@ -1528,7 +1528,7 @@ bool Cse523DAGToDAGISel::SelectTLSADDRAddr(SDValue N, SDValue &Base,
     AM.SymbolFlags = GA->getTargetFlags();
 
     if (N.getValueType() == MVT::i32) {
-        assert(0);
+        llvm_unreachable("32 bit addresses not supported");
         //AM.Scale = 1;
         //AM.IndexReg = CurDAG->getRegister(Cse523::EBX, MVT::i32);
     } else {
@@ -1798,7 +1798,7 @@ SDNode *Cse523DAGToDAGISel::SelectAtomicLoadArith(SDNode *Node, MVT NVT) {
     bool isUnOp = !Val.getNode();
     bool isCN = Val.getNode() && (Val.getOpcode() == ISD::TargetConstant);
 
-    assert(0);
+    llvm_unreachable("Atomic instructions not supported");
     unsigned Opc = 0;
     switch (NVT.SimpleTy) {
         default: return 0;
