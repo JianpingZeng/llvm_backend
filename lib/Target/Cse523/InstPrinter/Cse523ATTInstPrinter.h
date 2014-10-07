@@ -46,6 +46,9 @@ public:
   void printDstIdx(const MCInst *MI, unsigned OpNo, raw_ostream &OS);
   void printMemOffset(const MCInst *MI, unsigned OpNo, raw_ostream &OS);
   void printRoundingControl(const MCInst *MI, unsigned Op, raw_ostream &OS);
+  void print8ByteReg(const MCInst *MI, unsigned OpNo, raw_ostream &O);
+  void print16ByteReg(const MCInst *MI, unsigned OpNo, raw_ostream &O);
+  void print32ByteReg(const MCInst *MI, unsigned OpNo, raw_ostream &O);
 
   void printopaquemem(const MCInst *MI, unsigned OpNo, raw_ostream &O) {
     printMemReference(MI, OpNo, O);

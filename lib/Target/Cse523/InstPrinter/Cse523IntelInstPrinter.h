@@ -43,6 +43,9 @@ public:
   void printSrcIdx(const MCInst *MI, unsigned OpNo, raw_ostream &O);
   void printDstIdx(const MCInst *MI, unsigned OpNo, raw_ostream &O);
   void printRoundingControl(const MCInst *MI, unsigned Op, raw_ostream &OS);
+  void print8ByteReg(const MCInst *MI, unsigned OpNo, raw_ostream &O);
+  void print16ByteReg(const MCInst *MI, unsigned OpNo, raw_ostream &O);
+  void print32ByteReg(const MCInst *MI, unsigned OpNo, raw_ostream &O);
 
   void printopaquemem(const MCInst *MI, unsigned OpNo, raw_ostream &O) {
     O << "opaque ptr ";

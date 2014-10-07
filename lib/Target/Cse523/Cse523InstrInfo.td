@@ -528,6 +528,21 @@ def Cse523GR32orGR64AsmOperand : AsmOperandClass {
 def GR32orGR64 : RegisterOperand<GR64> {
   let ParserMatchClass = Cse523GR32orGR64AsmOperand;
 }
+
+// Define 8/16/32 bit registers based on 64 bit registers
+def GR8 : RegisterOperand<GR64> {
+  let PrintMethod = "print8ByteReg";
+  let ParserMatchClass = Cse523GR32orGR64AsmOperand;
+}
+def GR16 : RegisterOperand<GR64> {
+  let PrintMethod = "print16ByteReg";
+  let ParserMatchClass = Cse523GR32orGR64AsmOperand;
+}
+def GR32 : RegisterOperand<GR64> {
+  let PrintMethod = "print32ByteReg";
+  let ParserMatchClass = Cse523GR32orGR64AsmOperand;
+}
+
 // Sign-extended immediate classes. We don't need to define the full lattice
 // here because there is no instruction with an ambiguity between ImmSExti64i32
 // and ImmSExti32i8.
@@ -1004,6 +1019,15 @@ def MOV64rm : RI<0x8B, MRMSrcMem, (outs GR64:$dst), (ins i64mem:$src),
 }
 
 let SchedRW = [WriteStore] in {
+def MOV8mr  : I<0x88, MRMDestMem, (outs), (ins i8mem:$dst, GR8:$src),
+                "mov{b}\t{$src, $dst|$dst, $src}",
+                [(truncstorei8 GR8:$src, addr:$dst)], IIC_MOV_MEM>;
+def MOV16mr : I<0x89, MRMDestMem, (outs), (ins i16mem:$dst, GR16:$src),
+                "mov{w}\t{$src, $dst|$dst, $src}",
+                [(truncstorei16 GR16:$src, addr:$dst)], IIC_MOV_MEM>, OpSize16;
+def MOV32mr : I<0x89, MRMDestMem, (outs), (ins i32mem:$dst, GR32:$src),
+                "mov{l}\t{$src, $dst|$dst, $src}",
+                [(truncstorei32 GR32:$src, addr:$dst)], IIC_MOV_MEM>, OpSize32;
 def MOV64mr : RI<0x89, MRMDestMem, (outs), (ins i64mem:$dst, GR64:$src),
                  "mov{q}\t{$src, $dst|$dst, $src}",
                  [(store GR64:$src, addr:$dst)], IIC_MOV_MEM>;

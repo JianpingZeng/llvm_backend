@@ -286,14 +286,6 @@ void Cse523TargetLowering::resetOperationActions() {
 
     setLoadExtAction(ISD::SEXTLOAD, MVT::i1, Promote);
 
-    // We don't accept any truncstore of integer registers.
-    setTruncStoreAction(MVT::i64, MVT::i32, Expand);
-    setTruncStoreAction(MVT::i64, MVT::i16, Expand);
-    setTruncStoreAction(MVT::i64, MVT::i8 , Expand);
-    setTruncStoreAction(MVT::i32, MVT::i16, Expand);
-    setTruncStoreAction(MVT::i32, MVT::i8 , Expand);
-    setTruncStoreAction(MVT::i16, MVT::i8,  Expand);
-
     // SETOEQ and SETUNE require checking two conditions.
     setCondCodeAction(ISD::SETOEQ, MVT::f32, Expand);
     setCondCodeAction(ISD::SETOEQ, MVT::f64, Expand);
