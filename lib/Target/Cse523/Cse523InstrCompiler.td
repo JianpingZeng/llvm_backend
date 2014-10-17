@@ -1360,6 +1360,9 @@ def : Pat<(shl GR64:$src1, (and RCX, immShift64)),
 //def : Pat<(store (sra (loadi64 addr:$dst), (and CL, 63)), addr:$dst),
 //    (SAR64mCL addr:$dst)>;
 
+def : Pat<(extloadi64i8 addr:$src), (MOVSX64rm8 addr:$src)>;
+def : Pat<(extloadi64i16 addr:$src), (MOVSX64rm16 addr:$src)>;
+def : Pat<(extloadi64i32 addr:$src), (MOVSX64rm32 addr:$src)>;
 //
 //// (anyext (setcc_carry)) -> (setcc_carry)
 //def : Pat<(i16 (anyext (i8 (Cse523setcc_c Cse523_COND_B, EFLAGS)))),

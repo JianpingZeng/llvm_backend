@@ -17,13 +17,15 @@ let neverHasSideEffects = 1 in {
                 "{cqto|cqo}", [], IIC_CBW>; // RDX:RAX = signext(RAX)
 }
 
-
-// MOVSX64rr8 always has a REX prefix and it has an 8-bit register
-// operand, which makes it a rare instruction with an 8-bit register
-// operand that can never access an h register. If support for h registers
-// were generalized, this would require a special register class.
+def MOVSX64rm8 : RI<0xBE, MRMSrcMem, (outs GR64:$dst), (ins i8mem :$src),
+                    "movs{bq|x}\t{$src, $dst|$dst, $src}",
+                    [(set GR64:$dst, (sextloadi64i8 addr:$src))], IIC_MOVSX>,
+                    TB, Sched<[WriteALULd]>;
+def MOVSX64rm16: RI<0xBF, MRMSrcMem, (outs GR64:$dst), (ins i16mem:$src),
+                    "movs{wq|x}\t{$src, $dst|$dst, $src}",
+                    [(set GR64:$dst, (sextloadi64i16 addr:$src))], IIC_MOVSX>,
+                    TB, Sched<[WriteALULd]>;
 def MOVSX64rm32: RI<0x63, MRMSrcMem, (outs GR64:$dst), (ins i32mem:$src),
                     "movs{lq|xd}\t{$src, $dst|$dst, $src}",
                     [(set GR64:$dst, (sextloadi64i32 addr:$src))], IIC_MOVSX>,
                     Sched<[WriteALULd]>;
-
