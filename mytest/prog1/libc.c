@@ -3,7 +3,7 @@
 // from musl
 
 long __libc_start_main(
-	long (*main)(long, char **, char **), long argc, char **argv,
+	int (*main)(long, char **, char **), long argc, char **argv,
 	long (*init)(long, char **, char **), void (*fini)(void),
 	void (*ldso_fini)(void))
 {
@@ -19,7 +19,7 @@ long __libc_start_main(
 
 	/* Pass control to to application */
 	__syscall1(__NR_exit,
-		main(argc, argv, envp)
+		(long)main(argc, argv, envp)
 	);
 	return 0;
 }
