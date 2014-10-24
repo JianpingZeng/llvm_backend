@@ -37,8 +37,8 @@ these four paragraphs for those parts of this code that are retained.
 | input or output the `floatx80' type will be defined.  The same applies to
 | the `FLOAT128' macro and the quadruple-precision format `float128'.
 *----------------------------------------------------------------------------*/
-#define FLOATX80
-#define FLOAT128
+//#define FLOATX80
+//#define FLOAT128
 
 /*----------------------------------------------------------------------------
 | Software IEC/IEEE floating-point types.

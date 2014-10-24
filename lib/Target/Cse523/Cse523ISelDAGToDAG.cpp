@@ -2367,25 +2367,25 @@ SDNode *Cse523DAGToDAGISel::Select(SDNode *Node) {
                                    InFlag = SDValue(CurDAG->getMachineNode(SExtOpcode, dl, MVT::Glue, InFlag),0);
                                } else {
                                    // Zero out the high part, effectively zero extending the input.
-                                   assert(0);
-                                   //SDValue ClrNode = SDValue(CurDAG->getMachineNode(Cse523::MOV32r0, dl, NVT), 0);       
-                                   //switch (NVT.SimpleTy) {
-                                   //    case MVT::i32:
-                                   //        break;
-                                   //    case MVT::i64:
-                                   //        ClrNode =
-                                   //            SDValue(CurDAG->getMachineNode(
-                                   //                        TargetOpcode::SUBREG_TO_REG, dl, MVT::i64,
-                                   //                        CurDAG->getTargetConstant(0, MVT::i64), ClrNode,
-                                   //                        CurDAG->getTargetConstant(Cse523::sub_32bit, MVT::i32)),
-                                   //                    0);
-                                   //        break;
-                                   //    default:
-                                   //        llvm_unreachable("Unexpected division source");
-                                   //}
+                                   SDValue ClrNode = SDValue(CurDAG->getMachineNode(Cse523::MOV64r0, dl, NVT), 0);
+                                   switch (NVT.SimpleTy) {
+                                       case MVT::i64:
+                                            // TODO: Needed?
+                                            //ClrNode =
+                                            //    SDValue(CurDAG->getMachineNode(
+                                            //                TargetOpcode::SUBREG_TO_REG, dl, MVT::i64,
+                                            //                CurDAG->getTargetConstant(0, MVT::i64), ClrNode,
+                                            //                CurDAG->getTargetConstant(Cse523::sub_32bit, MVT::i32)),
+                                            //            0);
+                                           break;
 
-                                   //InFlag = CurDAG->getCopyToReg(CurDAG->getEntryNode(), dl, ClrReg,
-                                   //        ClrNode, InFlag).getValue(1);
+                                       case MVT::i32:
+                                       default:
+                                           llvm_unreachable("Unexpected division source");
+                                   }
+
+                                   InFlag = CurDAG->getCopyToReg(CurDAG->getEntryNode(), dl, ClrReg,
+                                           ClrNode, InFlag).getValue(1);
                                }
 
                                if (foldedLoad) {
