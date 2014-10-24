@@ -267,11 +267,12 @@ void Cse523TargetLowering::resetOperationActions() {
         setLibcallName(RTLIB::FPTOUINT_F64_I32, 0);
         setLibcallName(RTLIB::FPTOUINT_F32_I32, 0);
     }
-    setLibcallName(RTLIB::MUL_F64, "float64_mul");
-    setLibcallName(RTLIB::FPTOSINT_F64_I64, "float64_to_int64");
-    setLibcallName(RTLIB::SINTTOFP_I64_F64, "int64_to_float64");
-    setLibcallName(RTLIB::DIV_F64, "float64_div");
     setLibcallName(RTLIB::ADD_F64, "float64_add");
+    setLibcallName(RTLIB::MUL_F64, "float64_mul");
+    setLibcallName(RTLIB::DIV_F64, "float64_div");
+    setLibcallName(RTLIB::SINTTOFP_I32_F64, "int32_to_float64");
+    setLibcallName(RTLIB::SINTTOFP_I64_F64, "int64_to_float64");
+    setLibcallName(RTLIB::FPTOSINT_F64_I64, "float64_to_int64");
 
 
     if (Subtarget->isTargetDarwin()) {
@@ -466,15 +467,15 @@ void Cse523TargetLowering::resetOperationActions() {
     // These should be promoted to a larger select which is supported.
     setOperationAction(ISD::SELECT          , MVT::i1   , Promote);
     // Cse523 wants to expand cmov itself.
-    setOperationAction(ISD::SELECT          , MVT::i8   , Custom);
-    setOperationAction(ISD::SELECT          , MVT::i16  , Custom);
-    setOperationAction(ISD::SELECT          , MVT::i32  , Custom);
+    setOperationAction(ISD::SELECT          , MVT::i8   , Promote);
+    setOperationAction(ISD::SELECT          , MVT::i16  , Promote);
+    setOperationAction(ISD::SELECT          , MVT::i32  , Promote);
     setOperationAction(ISD::SELECT          , MVT::f32  , Custom);
     setOperationAction(ISD::SELECT          , MVT::f64  , Custom);
     setOperationAction(ISD::SELECT          , MVT::f80  , Custom);
-    setOperationAction(ISD::SETCC           , MVT::i8   , Custom);
-    setOperationAction(ISD::SETCC           , MVT::i16  , Custom);
-    setOperationAction(ISD::SETCC           , MVT::i32  , Custom);
+    setOperationAction(ISD::SETCC           , MVT::i8   , Promote);
+    setOperationAction(ISD::SETCC           , MVT::i16  , Promote);
+    setOperationAction(ISD::SETCC           , MVT::i32  , Promote);
     setOperationAction(ISD::SETCC           , MVT::f32  , Custom);
     setOperationAction(ISD::SETCC           , MVT::f64  , Custom);
     setOperationAction(ISD::SETCC           , MVT::f80  , Custom);
@@ -9288,11 +9289,7 @@ bool Cse523TargetLowering::isVectorShiftByScalarCheap(Type *Ty) const {
 }
 
 bool Cse523TargetLowering::isTruncateFree(Type *Ty1, Type *Ty2) const {
-    if (!Ty1->isIntegerTy() || !Ty2->isIntegerTy())
-        return false;
-    unsigned NumBits1 = Ty1->getPrimitiveSizeInBits();
-    unsigned NumBits2 = Ty2->getPrimitiveSizeInBits();
-    return NumBits1 > NumBits2;
+    return false;
 }
 
 bool Cse523TargetLowering::allowTruncateForTailCall(Type *Ty1, Type *Ty2) const {
@@ -9319,44 +9316,18 @@ bool Cse523TargetLowering::isLegalAddImmediate(int64_t Imm) const {
 }
 
 bool Cse523TargetLowering::isTruncateFree(EVT VT1, EVT VT2) const {
-    if (!VT1.isInteger() || !VT2.isInteger())
-        return false;
-    unsigned NumBits1 = VT1.getSizeInBits();
-    unsigned NumBits2 = VT2.getSizeInBits();
-    return NumBits1 > NumBits2;
+    return false;
 }
 
 bool Cse523TargetLowering::isZExtFree(Type *Ty1, Type *Ty2) const {
-    // cse523-64 implicitly zero-extends 32-bit results in 64-bit registers.
-    return Ty1->isIntegerTy(32) && Ty2->isIntegerTy(64) && Subtarget->is64Bit();
+    return false;
 }
 
 bool Cse523TargetLowering::isZExtFree(EVT VT1, EVT VT2) const {
-    // cse523-64 implicitly zero-extends 32-bit results in 64-bit registers.
-    return VT1 == MVT::i32 && VT2 == MVT::i64 && Subtarget->is64Bit();
+    return false;
 }
 
 bool Cse523TargetLowering::isZExtFree(SDValue Val, EVT VT2) const {
-    EVT VT1 = Val.getValueType();
-    if (isZExtFree(VT1, VT2))
-        return true;
-
-    if (Val.getOpcode() != ISD::LOAD)
-        return false;
-
-    if (!VT1.isSimple() || !VT1.isInteger() ||
-            !VT2.isSimple() || !VT2.isInteger())
-        return false;
-
-    switch (VT1.getSimpleVT().SimpleTy) {
-        default: break;
-        case MVT::i8:
-        case MVT::i16:
-        case MVT::i32:
-                 // Cse523 has 8, 16, and 32-bit zero-extending loads.
-                 return true;
-    }
-
     return false;
 }
 

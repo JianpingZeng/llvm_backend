@@ -11,8 +11,6 @@
  *
  ****************************************************************************
  */
-#define int long
-
 static int seedi;
 
 void spec_srand(int seed) {
