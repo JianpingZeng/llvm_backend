@@ -1087,6 +1087,15 @@ def CMPXCHG64rr  : RI<0xB1, MRMDestReg, (outs GR64:$dst), (ins GR64:$src),
 
 let SchedRW = [WriteALULd, WriteRMW] in {
 let mayLoad = 1, mayStore = 1 in {
+def CMPXCHG8rm   : I<0xB0, MRMDestMem, (outs), (ins i8mem:$dst, GR8:$src),
+                     "cmpxchg{b}\t{$src, $dst|$dst, $src}", [],
+                     IIC_CMPXCHG_MEM8>, TB;
+def CMPXCHG16rm  : I<0xB1, MRMDestMem, (outs), (ins i16mem:$dst, GR16:$src),
+                     "cmpxchg{w}\t{$src, $dst|$dst, $src}", [],
+                     IIC_CMPXCHG_MEM>, TB;
+def CMPXCHG32rm  : I<0xB1, MRMDestMem, (outs), (ins i32mem:$dst, GR32:$src),
+                     "cmpxchg{l}\t{$src, $dst|$dst, $src}", [],
+                     IIC_CMPXCHG_MEM>, TB;
 def CMPXCHG64rm  : RI<0xB1, MRMDestMem, (outs), (ins i64mem:$dst, GR64:$src),
                       "cmpxchg{q}\t{$src, $dst|$dst, $src}", [],
                       IIC_CMPXCHG_MEM>, TB;

@@ -267,12 +267,7 @@ void Cse523TargetLowering::resetOperationActions() {
         setLibcallName(RTLIB::FPTOUINT_F64_I32, 0);
         setLibcallName(RTLIB::FPTOUINT_F32_I32, 0);
     }
-    setLibcallName(RTLIB::ADD_F64, "float64_add");
-    setLibcallName(RTLIB::MUL_F64, "float64_mul");
-    setLibcallName(RTLIB::DIV_F64, "float64_div");
-    setLibcallName(RTLIB::SINTTOFP_I32_F64, "int32_to_float64");
-    setLibcallName(RTLIB::SINTTOFP_I64_F64, "int64_to_float64");
-    setLibcallName(RTLIB::FPTOSINT_F64_I64, "float64_to_int64");
+    #include "Cse523SelLibCallName.inc"
 
 
     if (Subtarget->isTargetDarwin()) {
@@ -333,8 +328,8 @@ void Cse523TargetLowering::resetOperationActions() {
     setOperationAction(ISD::FP_TO_SINT       , MVT::i1   , Promote);
     setOperationAction(ISD::FP_TO_SINT       , MVT::i8   , Promote);
 
-    setOperationAction(ISD::FP_TO_SINT     , MVT::i16  , Custom);
-    setOperationAction(ISD::FP_TO_SINT     , MVT::i32  , Custom);
+    setOperationAction(ISD::FP_TO_SINT     , MVT::i16  , Promote);
+    setOperationAction(ISD::FP_TO_SINT     , MVT::i32  , Promote);
 
     // Handle FP_TO_UINT by promoting the destination to a larger signed
     // conversion.
@@ -470,13 +465,13 @@ void Cse523TargetLowering::resetOperationActions() {
     setOperationAction(ISD::SELECT          , MVT::i8   , Promote);
     setOperationAction(ISD::SELECT          , MVT::i16  , Promote);
     setOperationAction(ISD::SELECT          , MVT::i32  , Promote);
-    setOperationAction(ISD::SELECT          , MVT::f32  , Custom);
+    setOperationAction(ISD::SELECT          , MVT::f32  , Promote);
     setOperationAction(ISD::SELECT          , MVT::f64  , Custom);
     setOperationAction(ISD::SELECT          , MVT::f80  , Custom);
     setOperationAction(ISD::SETCC           , MVT::i8   , Promote);
     setOperationAction(ISD::SETCC           , MVT::i16  , Promote);
     setOperationAction(ISD::SETCC           , MVT::i32  , Promote);
-    setOperationAction(ISD::SETCC           , MVT::f32  , Custom);
+    setOperationAction(ISD::SETCC           , MVT::f32  , Promote);
     setOperationAction(ISD::SETCC           , MVT::f64  , Custom);
     setOperationAction(ISD::SETCC           , MVT::f80  , Custom);
     if (Subtarget->is64Bit()) {
@@ -1920,17 +1915,16 @@ Cse523TargetLowering::LowerCall(TargetLowering::CallLoweringInfo &CLI,
         // registers used and is in the range 0 - 8 inclusive.
 
         // Count the number of XMM registers allocated.
-        assert(0);
         //static const uint16_t XMMArgRegs[] = {
         //    Cse523::XMM0, Cse523::XMM1, Cse523::XMM2, Cse523::XMM3,
         //    Cse523::XMM4, Cse523::XMM5, Cse523::XMM6, Cse523::XMM7
         //};
-        //unsigned NumXMMRegs = CCInfo.getFirstUnallocated(XMMArgRegs, 8);
-        //assert((Subtarget->hasSSE1() || !NumXMMRegs)
-        //        && "SSE registers cannot be used when SSE is disabled");
+        unsigned NumXMMRegs = 0;//CCInfo.getFirstUnallocated(XMMArgRegs, 8);
+        assert((Subtarget->hasSSE1() || !NumXMMRegs)
+                && "SSE registers cannot be used when SSE is disabled");
 
-        //RegsToPass.push_back(std::make_pair(unsigned(Cse523::AL),
-        //            DAG.getConstant(NumXMMRegs, MVT::i8)));
+        RegsToPass.push_back(std::make_pair(unsigned(Cse523::RAX),
+                    DAG.getConstant(NumXMMRegs, MVT::i64)));
     }
 
     // For tail calls lower the arguments to the 'real' stack slot.

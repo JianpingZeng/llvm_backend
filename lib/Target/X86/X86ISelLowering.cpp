@@ -270,6 +270,7 @@ void X86TargetLowering::resetOperationActions() {
     setLibcallName(RTLIB::FPTOUINT_F64_I32, 0);
     setLibcallName(RTLIB::FPTOUINT_F32_I32, 0);
   }
+  #include "../Cse523/Cse523SelLibCallName.inc"
 
   if (Subtarget->isTargetDarwin()) {
     // Darwin should use _setjmp/_longjmp instead of setjmp/longjmp.
