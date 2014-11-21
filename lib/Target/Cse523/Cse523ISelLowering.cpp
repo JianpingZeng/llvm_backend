@@ -8874,6 +8874,12 @@ void Cse523TargetLowering::ReplaceNodeResults(SDNode *N,
         case ISD::ADDE:
         case ISD::SUBC:
         case ISD::SUBE:
+        case ISD::SADDO:
+        case ISD::UADDO:
+        case ISD::SSUBO:
+        case ISD::USUBO:
+        case ISD::SMULO:
+        case ISD::UMULO:
             // We don't want to expand or promote these.
             return;
         case ISD::FP_TO_SINT:
