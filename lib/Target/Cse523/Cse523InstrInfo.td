@@ -1013,6 +1013,9 @@ def MOV64rr_REV : RI<0x8B, MRMSrcReg, (outs GR64:$dst), (ins GR64:$src),
 }
 
 let canFoldAsLoad = 1, isReMaterializable = 1, SchedRW = [WriteLoad] in {
+def MOV32rm : I<0x8B, MRMSrcMem, (outs GR32:$dst), (ins i32mem:$src),
+                "mov{l}\t{$src, $dst|$dst, $src}",
+                [(set GR32:$dst, (zextloadi64i32 addr:$src))], IIC_MOV_MEM>;
 def MOV64rm : RI<0x8B, MRMSrcMem, (outs GR64:$dst), (ins i64mem:$src),
                  "mov{q}\t{$src, $dst|$dst, $src}",
                  [(set GR64:$dst, (load addr:$src))], IIC_MOV_MEM>;

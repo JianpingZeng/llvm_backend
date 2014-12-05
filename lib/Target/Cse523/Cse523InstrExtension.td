@@ -38,8 +38,7 @@ def MOVZX64rm16 : I<0xB7, MRMSrcMem, (outs GR32:$dst), (ins i16mem :$src),
                    "movz{bl|x}\t{$src, $dst|$dst, $src}",
                    [(set GR32:$dst, (zextloadi64i16 addr:$src))], IIC_MOVZX>,
                    TB, Sched<[WriteALULd]>;
-def : Pat<(zextloadi64i32 addr:$src), (MOVSX64rm32 addr:$src)>;
 
-def : Pat<(extloadi64i8 addr:$src), (MOVSX64rm8 addr:$src)>;
-def : Pat<(extloadi64i16 addr:$src), (MOVSX64rm16 addr:$src)>;
-def : Pat<(extloadi64i32 addr:$src), (MOVSX64rm32 addr:$src)>;
+def : Pat<(extloadi64i8 addr:$src), (MOVZX64rm8 addr:$src)>;
+def : Pat<(extloadi64i16 addr:$src), (MOVZX64rm16 addr:$src)>;
+def : Pat<(extloadi64i32 addr:$src), (MOV32rm addr:$src)>;
