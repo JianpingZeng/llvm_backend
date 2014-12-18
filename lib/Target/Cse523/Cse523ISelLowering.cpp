@@ -393,8 +393,8 @@ void Cse523TargetLowering::resetOperationActions() {
     setOperationAction(ISD::BR_CC            , MVT::i32,   Expand);
     setOperationAction(ISD::BR_CC            , MVT::i64,   Expand);
     setOperationAction(ISD::SELECT_CC        , MVT::Other, Expand);
-    if (Subtarget->is64Bit())
-        setOperationAction(ISD::SIGN_EXTEND_INREG, MVT::i32, Expand);
+
+    setOperationAction(ISD::SIGN_EXTEND_INREG, MVT::i32, Expand);
     setOperationAction(ISD::SIGN_EXTEND_INREG, MVT::i16  , Expand);
     setOperationAction(ISD::SIGN_EXTEND_INREG, MVT::i8   , Expand);
     setOperationAction(ISD::SIGN_EXTEND_INREG, MVT::i1   , Expand);

@@ -41,4 +41,4 @@ def MOVZX64rm16 : I<0xB7, MRMSrcMem, (outs GR32:$dst), (ins i16mem :$src),
 
 def : Pat<(extloadi64i8 addr:$src), (MOVZX64rm8 addr:$src)>;
 def : Pat<(extloadi64i16 addr:$src), (MOVZX64rm16 addr:$src)>;
-def : Pat<(extloadi64i32 addr:$src), (MOV32rm addr:$src)>;
+def : Pat<(zextloadi64i32 addr:$src), (MOV32rm addr:$src)>;

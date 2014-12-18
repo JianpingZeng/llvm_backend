@@ -1106,10 +1106,10 @@ Cse523FrameLowering::adjustForSegmentedStacks(MachineFunction &MF) const {
         BuildMI(checkMBB, DL, TII.get(Cse523::LEA64r), ScratchReg).addReg(Cse523::RSP)
             .addImm(1).addReg(0).addImm(-StackSize).addReg(0);
 
-    BuildMI(checkMBB, DL, TII.get(Cse523::CMP64rm)).addReg(ScratchReg)
-        .addReg(0).addImm(1).addReg(0).addImm(TlsOffset).addReg(TlsReg);
+    assert(0 && "Need to support CMP64rm!");
+    //BuildMI(checkMBB, DL, TII.get(Cse523::CMP64rm)).addReg(ScratchReg)
+    //    .addReg(0).addImm(1).addReg(0).addImm(TlsOffset).addReg(TlsReg);
 
-    assert(0);
     // This jump is taken if SP >= (Stacklet Limit + Stack Space required).
     // It jumps to normal execution of the function body.
     //BuildMI(checkMBB, DL, TII.get(Cse523::JA_4)).addMBB(&prologueMBB);

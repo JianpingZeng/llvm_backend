@@ -1462,26 +1462,26 @@ def : Pat<(add GR64:$src1, GR64:$src2),
     (ADD64rr GR64:$src1, GR64:$src2)>;
 def : Pat<(add GR64:$src1, i64immSExt32:$src2),
     (ADD64ri32 GR64:$src1, i64immSExt32:$src2)>;
-def : Pat<(add GR64:$src1, (loadi64 addr:$src2)),
-    (ADD64rm GR64:$src1, addr:$src2)>;
+//def : Pat<(add GR64:$src1, (loadi64 addr:$src2)),
+//    (ADD64rm GR64:$src1, addr:$src2)>;
 
 // subtraction
 def : Pat<(sub GR64:$src1, GR64:$src2),
     (SUB64rr GR64:$src1, GR64:$src2)>;
-def : Pat<(sub GR64:$src1, (loadi64 addr:$src2)),
-    (SUB64rm GR64:$src1, addr:$src2)>;
+//def : Pat<(sub GR64:$src1, (loadi64 addr:$src2)),
+//    (SUB64rm GR64:$src1, addr:$src2)>;
 def : Pat<(sub GR64:$src1, i64immSExt32:$src2),
     (SUB64ri32 GR64:$src1, i64immSExt32:$src2)>;
 
 // Multiply
 def : Pat<(mul GR64:$src1, GR64:$src2),
     (IMUL64rr GR64:$src1, GR64:$src2)>;
-def : Pat<(mul GR64:$src1, (loadi64 addr:$src2)),
-    (IMUL64rm GR64:$src1, addr:$src2)>;
+//def : Pat<(mul GR64:$src1, (loadi64 addr:$src2)),
+//    (IMUL64rm GR64:$src1, addr:$src2)>;
 def : Pat<(mul GR64:$src1, i64immSExt32:$src2),
     (IMUL64rri32 GR64:$src1, i64immSExt32:$src2)>;
-def : Pat<(mul (loadi64 addr:$src1), i64immSExt32:$src2),
-    (IMUL64rmi32 addr:$src1, i64immSExt32:$src2)>;
+//def : Pat<(mul (loadi64 addr:$src1), i64immSExt32:$src2),
+//    (IMUL64rmi32 addr:$src1, i64immSExt32:$src2)>;
 
 // Increment reg.
 def : Pat<(add GR64:$src, 1), (INC64r    GR64:$src)>;
@@ -1493,8 +1493,8 @@ def : Pat<(add GR64:$src, -1), (DEC64r    GR64:$src)>;
 def : Pat<(or GR64:$src1, GR64:$src2), (OR64rr GR64:$src1, GR64:$src2)>;
 
 // or reg/mem
-def : Pat<(or GR64:$src1, (loadi64 addr:$src2)),
-    (OR64rm GR64:$src1, addr:$src2)>;
+//def : Pat<(or GR64:$src1, (loadi64 addr:$src2)),
+//    (OR64rm GR64:$src1, addr:$src2)>;
 
 // or reg/imm
 def : Pat<(or GR64:$src1, i64immSExt32:$src2),
@@ -1504,8 +1504,8 @@ def : Pat<(or GR64:$src1, i64immSExt32:$src2),
 def : Pat<(xor GR64:$src1, GR64:$src2), (XOR64rr GR64:$src1, GR64:$src2)>;
 
 // xor reg/mem
-def : Pat<(xor GR64:$src1, (loadi64 addr:$src2)),
-    (XOR64rm GR64:$src1, addr:$src2)>;
+//def : Pat<(xor GR64:$src1, (loadi64 addr:$src2)),
+//    (XOR64rm GR64:$src1, addr:$src2)>;
 
 // xor reg/imm
 def : Pat<(xor GR64:$src1, i64immSExt32:$src2),
@@ -1515,8 +1515,8 @@ def : Pat<(xor GR64:$src1, i64immSExt32:$src2),
 def : Pat<(and GR64:$src1, GR64:$src2), (AND64rr GR64:$src1, GR64:$src2)>;
 
 // and reg/mem
-def : Pat<(and GR64:$src1, (loadi64 addr:$src2)),
-    (AND64rm GR64:$src1, addr:$src2)>;
+//def : Pat<(and GR64:$src1, (loadi64 addr:$src2)),
+//    (AND64rm GR64:$src1, addr:$src2)>;
 
 // and reg/imm
 def : Pat<(and GR64:$src1, i64immSExt32:$src2),

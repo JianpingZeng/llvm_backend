@@ -1015,7 +1015,7 @@ def MOV64rr_REV : RI<0x8B, MRMSrcReg, (outs GR64:$dst), (ins GR64:$src),
 let canFoldAsLoad = 1, isReMaterializable = 1, SchedRW = [WriteLoad] in {
 def MOV32rm : I<0x8B, MRMSrcMem, (outs GR32:$dst), (ins i32mem:$src),
                 "mov{l}\t{$src, $dst|$dst, $src}",
-                [(set GR32:$dst, (zextloadi64i32 addr:$src))], IIC_MOV_MEM>;
+                [(set GR32:$dst, (extloadi64i32 addr:$src))], IIC_MOV_MEM>;
 def MOV64rm : RI<0x8B, MRMSrcMem, (outs GR64:$dst), (ins i64mem:$src),
                  "mov{q}\t{$src, $dst|$dst, $src}",
                  [(set GR64:$dst, (load addr:$src))], IIC_MOV_MEM>;
@@ -1076,11 +1076,11 @@ def XADD64rr  : RI<0xC1, MRMDestReg, (outs GR64:$dst), (ins GR64:$src),
                    "xadd{q}\t{$src, $dst|$dst, $src}", [], IIC_XADD_REG>, TB;
 } // SchedRW
 
-let mayLoad = 1, mayStore = 1, SchedRW = [WriteALULd, WriteRMW] in {
-def XADD64rm  : RI<0xC1, MRMDestMem, (outs), (ins i64mem:$dst, GR64:$src),
-                   "xadd{q}\t{$src, $dst|$dst, $src}", [], IIC_XADD_MEM>, TB;
-
-}
+//let mayLoad = 1, mayStore = 1, SchedRW = [WriteALULd, WriteRMW] in {
+//def XADD64rm  : RI<0xC1, MRMDestMem, (outs), (ins i64mem:$dst, GR64:$src),
+//                   "xadd{q}\t{$src, $dst|$dst, $src}", [], IIC_XADD_MEM>, TB;
+//
+//}
 
 let SchedRW = [WriteALU] in {
 def CMPXCHG64rr  : RI<0xB1, MRMDestReg, (outs GR64:$dst), (ins GR64:$src),
@@ -1512,7 +1512,7 @@ def : InstAlias<"movq $imm, $reg", (MOV64ri GR64:$reg, i64imm:$imm)>;
 //FIXME */
 //
 // test: We accept "testX <reg>, <mem>" and "testX <mem>, <reg>" as synonyms.
-def : InstAlias<"test{q}\t{$val, $mem|$mem, $val}", (TEST64rm GR64:$val, i64mem:$mem)>;
+//def : InstAlias<"test{q}\t{$val, $mem|$mem, $val}", (TEST64rm GR64:$val, i64mem:$mem)>;
 //
 //// xchg: We accept "xchgX <reg>, <mem>" and "xchgX <mem>, <reg>" as synonyms.
 //def : InstAlias<"xchg{q}\t{$mem, $val|$val, $mem}", (XCHG64rm GR64:$val, i64mem:$mem)>;

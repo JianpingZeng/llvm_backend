@@ -189,10 +189,10 @@ Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
     }
 
     static const Cse523OpTblEntry OpTbl1[] = {
-        { Cse523::CMP64rr,         Cse523::CMP64rm,             0 },
-        { Cse523::IMUL64rri32,     Cse523::IMUL64rmi32,         0 },
-        { Cse523::MOV64rr,         Cse523::MOV64rm,             0 },
-        { Cse523::TEST64rr,        Cse523::TEST64rm,            0 }
+    //    { Cse523::CMP64rr,         Cse523::CMP64rm    , 0 },
+    //    { Cse523::IMUL64rri32,     Cse523::IMUL64rmi32, 0 },
+    //    { Cse523::TEST64rr,        Cse523::TEST64rm   , 0 },
+        { Cse523::MOV64rr,         Cse523::MOV64rm,     0 }
     };
 
     for (unsigned i = 0, e = array_lengthof(OpTbl1); i != e; ++i) {
@@ -205,41 +205,41 @@ Cse523InstrInfo::Cse523InstrInfo(Cse523TargetMachine &tm)
                 Flags | TB_INDEX_1 | TB_FOLDED_LOAD);
     }
 
-    static const Cse523OpTblEntry OpTbl2[] = {
-        { Cse523::ADC64rr,         Cse523::ADC64rm,       0 },
-        { Cse523::ADD64rr,         Cse523::ADD64rm,       0 },
-        { Cse523::AND64rr,         Cse523::AND64rm,       0 },
-        //{ Cse523::CMOVA64rr,       Cse523::CMOVA64rm,     0 },
-        //{ Cse523::CMOVAE64rr,      Cse523::CMOVAE64rm,    0 },
-        //{ Cse523::CMOVB64rr,       Cse523::CMOVB64rm,     0 },
-        //{ Cse523::CMOVBE64rr,      Cse523::CMOVBE64rm,    0 },
-        //{ Cse523::CMOVE64rr,       Cse523::CMOVE64rm,     0 },
-        //{ Cse523::CMOVG64rr,       Cse523::CMOVG64rm,     0 },
-        //{ Cse523::CMOVGE64rr,      Cse523::CMOVGE64rm,    0 },
-        //{ Cse523::CMOVL64rr,       Cse523::CMOVL64rm,     0 },
-        //{ Cse523::CMOVLE64rr,      Cse523::CMOVLE64rm,    0 },
-        //{ Cse523::CMOVNE64rr,      Cse523::CMOVNE64rm,    0 },
-        //{ Cse523::CMOVNO64rr,      Cse523::CMOVNO64rm,    0 },
-        //{ Cse523::CMOVNP64rr,      Cse523::CMOVNP64rm,    0 },
-        //{ Cse523::CMOVNS64rr,      Cse523::CMOVNS64rm,    0 },
-        //{ Cse523::CMOVO64rr,       Cse523::CMOVO64rm,     0 },
-        //{ Cse523::CMOVP64rr,       Cse523::CMOVP64rm,     0 },
-        //{ Cse523::CMOVS64rr,       Cse523::CMOVS64rm,     0 },
-        { Cse523::IMUL64rr,        Cse523::IMUL64rm,      0 },
-        { Cse523::OR64rr,          Cse523::OR64rm,        0 },
-        { Cse523::SUB64rr,         Cse523::SUB64rm,       0 },
-        { Cse523::XOR64rr,         Cse523::XOR64rm,       0 }
-    };
+    //static const Cse523OpTblEntry OpTbl2[] = {
+    //    { Cse523::ADC64rr,         Cse523::ADC64rm,       0 },
+    //    { Cse523::ADD64rr,         Cse523::ADD64rm,       0 },
+    //    { Cse523::AND64rr,         Cse523::AND64rm,       0 },
+    //    { Cse523::CMOVA64rr,       Cse523::CMOVA64rm,     0 },
+    //    { Cse523::CMOVAE64rr,      Cse523::CMOVAE64rm,    0 },
+    //    { Cse523::CMOVB64rr,       Cse523::CMOVB64rm,     0 },
+    //    { Cse523::CMOVBE64rr,      Cse523::CMOVBE64rm,    0 },
+    //    { Cse523::CMOVE64rr,       Cse523::CMOVE64rm,     0 },
+    //    { Cse523::CMOVG64rr,       Cse523::CMOVG64rm,     0 },
+    //    { Cse523::CMOVGE64rr,      Cse523::CMOVGE64rm,    0 },
+    //    { Cse523::CMOVL64rr,       Cse523::CMOVL64rm,     0 },
+    //    { Cse523::CMOVLE64rr,      Cse523::CMOVLE64rm,    0 },
+    //    { Cse523::CMOVNE64rr,      Cse523::CMOVNE64rm,    0 },
+    //    { Cse523::CMOVNO64rr,      Cse523::CMOVNO64rm,    0 },
+    //    { Cse523::CMOVNP64rr,      Cse523::CMOVNP64rm,    0 },
+    //    { Cse523::CMOVNS64rr,      Cse523::CMOVNS64rm,    0 },
+    //    { Cse523::CMOVO64rr,       Cse523::CMOVO64rm,     0 },
+    //    { Cse523::CMOVP64rr,       Cse523::CMOVP64rm,     0 },
+    //    { Cse523::CMOVS64rr,       Cse523::CMOVS64rm,     0 },
+    //    { Cse523::IMUL64rr,        Cse523::IMUL64rm,      0 },
+    //    { Cse523::OR64rr,          Cse523::OR64rm  ,      0 },
+    //    { Cse523::SUB64rr,         Cse523::SUB64rm ,      0 },
+    //    { Cse523::XOR64rr,         Cse523::XOR64rm ,      0 }
+    //};
 
-    for (unsigned i = 0, e = array_lengthof(OpTbl2); i != e; ++i) {
-        unsigned RegOp = OpTbl2[i].RegOp;
-        unsigned MemOp = OpTbl2[i].MemOp;
-        unsigned Flags = OpTbl2[i].Flags;
-        AddTableEntry(RegOp2MemOpTable2, MemOp2RegOpTable,
-                RegOp, MemOp,
-                // Index 2, folded load
-                Flags | TB_INDEX_2 | TB_FOLDED_LOAD);
-    }
+    //for (unsigned i = 0, e = array_lengthof(OpTbl2); i != e; ++i) {
+    //    unsigned RegOp = OpTbl2[i].RegOp;
+    //    unsigned MemOp = OpTbl2[i].MemOp;
+    //    unsigned Flags = OpTbl2[i].Flags;
+    //    AddTableEntry(RegOp2MemOpTable2, MemOp2RegOpTable,
+    //            RegOp, MemOp,
+    //            // Index 2, folded load
+    //            Flags | TB_INDEX_2 | TB_FOLDED_LOAD);
+    //}
 }
 
 void
@@ -1596,12 +1596,12 @@ analyzeCompare(const MachineInstr *MI, unsigned &SrcReg, unsigned &SrcReg2,
                  CmpValue = MI->getOperand(1).getImm();
                  return true;
                  // A SUB can be used to perform comparison.
-        case Cse523::SUB64rm:
-                 SrcReg = MI->getOperand(1).getReg();
-                 SrcReg2 = 0;
-                 CmpMask = ~0;
-                 CmpValue = 0;
-                 return true;
+        //case Cse523::SUB64rm:
+        //         SrcReg = MI->getOperand(1).getReg();
+        //         SrcReg2 = 0;
+        //         CmpMask = ~0;
+        //         CmpValue = 0;
+        //         return true;
         case Cse523::SUB64rr:
                  SrcReg = MI->getOperand(1).getReg();
                  SrcReg2 = MI->getOperand(2).getReg();
@@ -1685,21 +1685,21 @@ inline static bool isDefConvertible(MachineInstr *MI) {
 
         case Cse523::SUB64ri32:
         case Cse523::SUB64rr:
-        case Cse523::SUB64rm:
+        //case Cse523::SUB64rm:
         case Cse523::DEC64r:
         case Cse523::ADD64ri32:
         case Cse523::ADD64rr:
-        case Cse523::ADD64rm:
+        //case Cse523::ADD64rm:
         case Cse523::INC64r:
         case Cse523::AND64ri32:
         case Cse523::AND64rr:
-        case Cse523::AND64rm:
+        //case Cse523::AND64rm:
         case Cse523::XOR64ri32:
         case Cse523::XOR64rr:
-        case Cse523::XOR64rm:
+        //case Cse523::XOR64rm:
         case Cse523::OR64ri32:
         case Cse523::OR64rr:
-        case Cse523::OR64rm:
+        //case Cse523::OR64rm:
         case Cse523::NEG64r:
         case Cse523::SAR64r1:
         case Cse523::SHR64r1:
@@ -1742,7 +1742,7 @@ optimizeCompareInstr(MachineInstr *CmpInstr, unsigned SrcReg, unsigned SrcReg2,
     switch (CmpInstr->getOpcode()) {
         default: break;
         case Cse523::SUB64ri32:
-        case Cse523::SUB64rm:
+        //case Cse523::SUB64rm:
         case Cse523::SUB64rr:
         {
             if (!MRI->use_nodbg_empty(CmpInstr->getOperand(0).getReg()))
@@ -1750,15 +1750,15 @@ optimizeCompareInstr(MachineInstr *CmpInstr, unsigned SrcReg, unsigned SrcReg2,
             // There is no use of the destination register, we can replace SUB with CMP.
             switch (CmpInstr->getOpcode()) {
                 default: llvm_unreachable("Unreachable!");
-                case Cse523::SUB64rm:   NewOpcode = Cse523::CMP64rm;   break;
+                //case Cse523::SUB64rm:   NewOpcode = Cse523::CMP64rm;   break;
                 case Cse523::SUB64rr:   NewOpcode = Cse523::CMP64rr;   break;
                 case Cse523::SUB64ri32: NewOpcode = Cse523::CMP64ri32; break;
             }
             CmpInstr->setDesc(get(NewOpcode));
             CmpInstr->RemoveOperand(0);
             // Fall through to optimize Cmp if Cmp is CMPrr or CMPri.
-            if (NewOpcode == Cse523::CMP64rm)
-                return false;
+            //if (NewOpcode == Cse523::CMP64rm)
+            //    return false;
         }
     }
 

@@ -81,15 +81,15 @@ def IMUL64rr : RI<0xAF, MRMSrcReg, (outs GR64:$dst),
 } // isCommutable, SchedRW
 
 // Register-Memory Signed Integer Multiply
-let SchedRW = [WriteIMulLd, ReadAfterLd] in {
-def IMUL64rm : RI<0xAF, MRMSrcMem, (outs GR64:$dst),
-                                   (ins GR64:$src1, i64mem:$src2),
-                  "imul{q}\t{$src2, $dst|$dst, $src2}",
-                  [(set GR64:$dst, EFLAGS,
-                        (Cse523smul_flag GR64:$src1, (load addr:$src2)))],
-                        IIC_IMUL64_RM>,
-               TB;
-} // SchedRW
+//let SchedRW = [WriteIMulLd, ReadAfterLd] in {
+//def IMUL64rm : RI<0xAF, MRMSrcMem, (outs GR64:$dst),
+//                                   (ins GR64:$src1, i64mem:$src2),
+//                  "imul{q}\t{$src2, $dst|$dst, $src2}",
+//                  [(set GR64:$dst, EFLAGS,
+//                        (Cse523smul_flag GR64:$src1, (load addr:$src2)))],
+//                        IIC_IMUL64_RM>,
+//               TB;
+//} // SchedRW
 } // Constraints = "$src1 = $dst"
 
 } // Defs = [EFLAGS]
@@ -107,15 +107,15 @@ def IMUL64rri32 : RIi32S<0x69, MRMSrcReg,                    // GR64 = GR64*I32
 } // SchedRW
 
 // Memory-Integer Signed Integer Multiply
-let SchedRW = [WriteIMulLd] in {
-def IMUL64rmi32 : RIi32S<0x69, MRMSrcMem,                   // GR64 = [mem64]*I32
-                         (outs GR64:$dst), (ins i64mem:$src1, i64i32imm:$src2),
-                         "imul{q}\t{$src2, $src1, $dst|$dst, $src1, $src2}",
-                         [(set GR64:$dst, EFLAGS,
-                              (Cse523smul_flag (load addr:$src1),
-                                            i64immSExt32:$src2))],
-                                            IIC_IMUL64_RMI>;
-} // SchedRW
+//let SchedRW = [WriteIMulLd] in {
+//def IMUL64rmi32 : RIi32S<0x69, MRMSrcMem,                   // GR64 = [mem64]*I32
+//                         (outs GR64:$dst), (ins i64mem:$src1, i64i32imm:$src2),
+//                         "imul{q}\t{$src2, $src1, $dst|$dst, $src1, $src2}",
+//                         [(set GR64:$dst, EFLAGS,
+//                              (Cse523smul_flag (load addr:$src1),
+//                                            i64immSExt32:$src2))],
+//                                            IIC_IMUL64_RMI>;
+//} // SchedRW
 } // Defs = [EFLAGS]
 
 
@@ -651,7 +651,7 @@ multiclass ArithBinOp_RF<bits<8> BaseOpc, bits<8> BaseOpc2, bits<8> BaseOpc4,
 
       def NAME#64rr_REV : BinOpRR_Rev<BaseOpc2, mnemonic, Xi64>;
 
-      def NAME#64rm  : BinOpRM_RF<BaseOpc2, mnemonic, Xi64, opnodeflag>;
+      //def NAME#64rm  : BinOpRM_RF<BaseOpc2, mnemonic, Xi64, opnodeflag>;
 
       let isConvertibleToThreeAddress = ConvertibleToThreeAddress in {
         // NOTE: These are order specific, we want the ri8 forms to be listed
@@ -689,7 +689,7 @@ multiclass ArithBinOp_RFF<bits<8> BaseOpc, bits<8> BaseOpc2, bits<8> BaseOpc4,
 
       def NAME#64rr_REV : BinOpRR_RFF_Rev<BaseOpc2, mnemonic, Xi64>;
 
-      def NAME#64rm  : BinOpRM_RFF<BaseOpc2, mnemonic, Xi64, opnode>;
+      //def NAME#64rm  : BinOpRM_RFF<BaseOpc2, mnemonic, Xi64, opnode>;
     } // Constraints = "$src1 = $dst"
 
     def NAME#64mr   : BinOpMR_RMW_FF<BaseOpc, mnemonic, Xi64, opnode>;
@@ -715,7 +715,7 @@ multiclass ArithBinOp_F<bits<8> BaseOpc, bits<8> BaseOpc2, bits<8> BaseOpc4,
 
     def NAME#64rr_REV : BinOpRR_F_Rev<BaseOpc2, mnemonic, Xi64>;
 
-    def NAME#64rm  : BinOpRM_F<BaseOpc2, mnemonic, Xi64, opnode>;
+    //def NAME#64rm  : BinOpRM_F<BaseOpc2, mnemonic, Xi64, opnode>;
 
     let isConvertibleToThreeAddress = ConvertibleToThreeAddress in {
       // NOTE: These are order specific, we want the ri8 forms to be listed
@@ -775,7 +775,7 @@ let isCompare = 1 in {
       def TEST64rr : BinOpRR_F<0x84, "test", Xi64, Cse523testpat, MRMSrcReg>;
     } // isCommutable
 
-    def TEST64rm   : BinOpRM_F<0x84, "test", Xi64, Cse523testpat>;
+    //def TEST64rm   : BinOpRM_F<0x84, "test", Xi64, Cse523testpat>;
 
     def TEST64ri32 : BinOpRI_F<0xF6, "test", Xi64, Cse523testpat, MRM0r>;
 
@@ -807,10 +807,10 @@ let Predicates = [HasBMI], Defs = [EFLAGS] in {
   defm ANDN64 : bmi_andn<"andn{q}", GR64, i64mem, loadi64>, T8PS, VEX_4V, VEX_W;
 }
 
-let Predicates = [HasBMI] in {
-  def : Pat<(and (not GR64:$src1), (loadi64 addr:$src2)),
-            (ANDN64rm GR64:$src1, addr:$src2)>;
-}
+//let Predicates = [HasBMI] in {
+//  def : Pat<(and (not GR64:$src1), (loadi64 addr:$src2)),
+//            (ANDN64rm GR64:$src1, addr:$src2)>;
+//}
 
 //===----------------------------------------------------------------------===//
 // MULX Instruction
@@ -844,11 +844,11 @@ let hasSideEffects = 0, Predicates = [HasADX], Defs = [EFLAGS] in {
              [], IIC_BIN_NONMEM>, T8PD, Requires<[In64BitMode]>;
   } // SchedRW
 
-  let mayLoad = 1, SchedRW = [WriteALULd] in {
-  def ADCX64rm : RI<0xF6, MRMSrcMem, (outs GR64:$dst), (ins i64mem:$src),
-             "adcx{q}\t{$src, $dst|$dst, $src}",
-             [], IIC_BIN_MEM>, T8PD, Requires<[In64BitMode]>;
-  }
+  //let mayLoad = 1, SchedRW = [WriteALULd] in {
+  //def ADCX64rm : RI<0xF6, MRMSrcMem, (outs GR64:$dst), (ins i64mem:$src),
+  //           "adcx{q}\t{$src, $dst|$dst, $src}",
+  //           [], IIC_BIN_MEM>, T8PD, Requires<[In64BitMode]>;
+  //}
 }
 
 //===----------------------------------------------------------------------===//
@@ -861,9 +861,9 @@ let hasSideEffects = 0, Predicates = [HasADX], Defs = [EFLAGS] in {
              [], IIC_BIN_NONMEM>, T8XS, Requires<[In64BitMode]>;
   } // SchedRW
 
-  let mayLoad = 1, SchedRW = [WriteALULd] in {
-  def ADOX64rm : RI<0xF6, MRMSrcMem, (outs GR64:$dst), (ins i64mem:$src),
-             "adox{q}\t{$src, $dst|$dst, $src}",
-             [], IIC_BIN_MEM>, T8XS, Requires<[In64BitMode]>;
-  }
+  //let mayLoad = 1, SchedRW = [WriteALULd] in {
+  //def ADOX64rm : RI<0xF6, MRMSrcMem, (outs GR64:$dst), (ins i64mem:$src),
+  //           "adox{q}\t{$src, $dst|$dst, $src}",
+  //           [], IIC_BIN_MEM>, T8XS, Requires<[In64BitMode]>;
+  //}
 }
