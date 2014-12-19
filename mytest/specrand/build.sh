@@ -16,8 +16,7 @@ for c in *.c; do
     echo "[Running] as $c.S"
     as -o $c.o $c.S
 done
-#echo "[Running] as crt1.s"
-#as -o crt1.o crt1.s
+
 echo "[Running] ld $NAME"
 ld -static -o $NAME *.o $LIBS
 

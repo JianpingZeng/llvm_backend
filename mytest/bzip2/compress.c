@@ -161,42 +161,12 @@ void makeMaps_e ( EState* s )
 
 /*---------------------------------------------------*/
 static
-void generateMTFValues ( EState* s )
+void generateMTFValues1 ( EState* s, Int32 EOB, UInt32* ptr, UChar* block, UInt16* mtfv )
 {
    UChar   yy[256];
    Int32   i, j;
    Int32   zPend;
    Int32   wr;
-   Int32   EOB;
-
-   /* 
-      After sorting (eg, here),
-         s->arr1 [ 0 .. s->nblock-1 ] holds sorted order,
-         and
-         ((UChar*)s->arr2) [ 0 .. s->nblock-1 ] 
-         holds the original block data.
-
-      The first thing to do is generate the MTF values,
-      and put them in
-         ((UInt16*)s->arr1) [ 0 .. s->nblock-1 ].
-      Because there are strictly fewer or equal MTF values
-      than block values, ptr values in this area are overwritten
-      with MTF values only when they are no longer needed.
-
-      The final compressed bitstream is generated into the
-      area starting at
-         (UChar*) (&((UChar*)s->arr2)[s->nblock])
-
-      These storage aliases are set up in bzCompressInit(),
-      except for the last one, which is arranged in 
-      compressBlock().
-   */
-   UInt32* ptr   = s->ptr;
-   UChar* block  = s->block;
-   UInt16* mtfv  = s->mtfv;
-
-   makeMaps_e ( s );
-   EOB = s->nInUse+1;
 
    for (i = 0; i <= EOB; i++) s->mtfFreq[i] = 0;
 
@@ -272,6 +242,42 @@ void generateMTFValues ( EState* s )
    mtfv[wr] = EOB; wr++; s->mtfFreq[EOB]++;
 
    s->nMTF = wr;
+}
+
+static
+void generateMTFValues ( EState* s )
+{
+   Int32   EOB;
+   /* 
+      After sorting (eg, here),
+         s->arr1 [ 0 .. s->nblock-1 ] holds sorted order,
+         and
+         ((UChar*)s->arr2) [ 0 .. s->nblock-1 ] 
+         holds the original block data.
+
+      The first thing to do is generate the MTF values,
+      and put them in
+         ((UInt16*)s->arr1) [ 0 .. s->nblock-1 ].
+      Because there are strictly fewer or equal MTF values
+      than block values, ptr values in this area are overwritten
+      with MTF values only when they are no longer needed.
+
+      The final compressed bitstream is generated into the
+      area starting at
+         (UChar*) (&((UChar*)s->arr2)[s->nblock])
+
+      These storage aliases are set up in bzCompressInit(),
+      except for the last one, which is arranged in 
+      compressBlock().
+   */
+   UInt32* ptr   = s->ptr;
+   UChar* block  = s->block;
+   UInt16* mtfv  = s->mtfv;
+
+   makeMaps_e ( s );
+   EOB = s->nInUse+1;
+
+   generateMTFValues1 ( s, EOB, ptr, block, mtfv );
 }
 
 
