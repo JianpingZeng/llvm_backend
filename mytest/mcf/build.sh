@@ -4,7 +4,7 @@ NAME=mcf
 
 #PATH=~/llvm/built/Debug+Asserts/bin:$PATH
 
-LIBC_PATH=$HOME/llvm/mytest/musl-1.0.4
+LIBC_PATH=../musl-1.0.4
 LIBS=`echo $LIBC_PATH/lib/{crt1.o,libc.a,softfloat.o}`
 
 for c in *.c; do
