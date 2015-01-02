@@ -1,0 +1,2 @@
+-C /var/services/homes/spparmar/spec2006/benchspec/CPU2006/482.sphinx3/run/run_base_ref_elider-amd64-m64-gcc42-nn.0001
+-o an4.log -e an4.err ../run_base_ref_elider-amd64-m64-gcc42-nn.0001/sphinx_livepretend_base.elider-amd64-m64-gcc42-nn ctlfile . args.an4

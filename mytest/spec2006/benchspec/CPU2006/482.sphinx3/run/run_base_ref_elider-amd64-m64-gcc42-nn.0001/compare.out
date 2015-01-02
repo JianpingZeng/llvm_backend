@@ -1,0 +1,13 @@
+running commands in compare.cmd 1 times
+runs started at 1397530118, 320417000, Mon Apr 14 22:48:38 2014
+run 1 started at 1397530118, 320472000, Mon Apr 14 22:48:38 2014
+child started: 0, 1397530118, 320485000, pid=18688, 'specperl /var/services/homes/spparmar/spec2006/bin/specdiff -m -l 10  --reltol 0.001  --floatcompare /var/services/homes/spparmar/spec2006/benchspec/CPU2006/482.sphinx3/data/ref/output/an4.log an4.log'
+child finished: 0, 1397530119, 81609000, sec=0, nsec=761124000, pid=18688, rc=0
+child started: 0, 1397530119, 81624000, pid=18689, 'specperl /var/services/homes/spparmar/spec2006/bin/specdiff -m -l 10  --reltol 0.0004  --floatcompare /var/services/homes/spparmar/spec2006/benchspec/CPU2006/482.sphinx3/data/ref/output/considered.out considered.out'
+child finished: 0, 1397530119, 202795000, sec=0, nsec=121171000, pid=18689, rc=0
+child started: 0, 1397530119, 202805000, pid=18690, 'specperl /var/services/homes/spparmar/spec2006/bin/specdiff -m -l 10  --reltol 1e-06  --floatcompare /var/services/homes/spparmar/spec2006/benchspec/CPU2006/482.sphinx3/data/ref/output/total_considered.out total_considered.out'
+child finished: 0, 1397530119, 295059000, sec=0, nsec=92254000, pid=18690, rc=0
+run 1 finished at: 1397530119, 295064000, Mon Apr 14 22:48:39 2014
+run 1 elapsed time: 0, 974592000, 0.974592000
+runs finished at 1397530119, 295081000, Mon Apr 14 22:48:39 2014
+runs elapsed time: 0, 974664000, 0.974664000

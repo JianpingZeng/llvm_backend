@@ -1,0 +1,81 @@
+LLVM Backend for Reduced X86-64 Instruction Set (Cse523 Backend)
+==================================================================
+
+The purpose of this project is to build a new LLVM Backend for Reduced
+X86-64 Instruction Set.
+
+This new backend will support following instructions:
+- MOV [REG/MEM/IMM], [REG/MEM]
+- ADD/SUB/IMUL/IDIVQ
+- AND/OR/XOR
+- CALLQ/RETQ
+- SHR/SHL/SAR/ROL
+- CMP/TEST
+- Conditional and non-conditional JMPs
+- PUSHQ/POPQ
+- SYSCALL
+- NOP
+
+--------------------------------------------------------------------------------
+
+Important Source Changes Made:
+==============================
+
+1. Added a new backend "Cse523" into llvm_backend/lib/Target directory
+   refering to X86 backend.
+
+2. Added support only for 64 bit registers. For non-64 bit memory loads and stores
+   we have defined a new class of 64 bit registers GR{8/16/32}, which consists of
+   a custom print routine to emit 8/16/32 bit register names in final instruction
+   printing.
+   Commit => https://github.com/sahilpparmar/llvm_backend/commit/f1b6d3b26e1e7b0fdd0ac1f707cb1ae54e3094cd
+
+3. Extended Loads: There are 3 types of extended loads.
+   a. SIGN_EXTEND => Sign extends 1/8/16/32 bit loads into 64 bit registers.
+   b. ZERO_EXTEND => Zero extends 1/8/16/32 bit loads into 64 bit registers.
+   c. ANY_EXTEND  => Zero extends 1/8/16/32 bit loads into 64 bit registers.
+   Intructions defined at => lib/Target/Cse523/Cse523InstrExtension.td
+
+4. Truncate Stores: All 8/16/32 bit stores use truncStore to truncate 64 bit registers values.
+   Commit => https://github.com/sahilpparmar/llvm_backend/commit/f1b6d3b26e1e7b0fdd0ac1f707cb1ae54e3094cd
+
+5. Generating floating point instructions is not supported. Instead a soft-float library is
+   used to emulate floating point operations.
+   In order to use soft-float operations, compile llc with "-soft-float" option and link
+   soft-float library functions to final executable.
+   Soft-float sources => mytest/softfloat/
+   Adding custom soft-float functions => lib/Target/Cse523/Cse523SelLibCallName.inc
+   
+6. X86 instructions CMOV and SETCC are no longer supported in final assembly.
+   Instead they are defined as PSEUDO instructions and are expanded into a
+   combination of MOV and JMP instructions.
+   (CMOV)  => https://github.com/sahilpparmar/llvm_backend/commit/0412076271ade70d1e8520df696570ca379520cf
+   (SETCC) => https://github.com/sahilpparmar/llvm_backend/commit/7e91d623b56e1f57219a36bc9905f859630fc1d1
+
+7. Inline Assembly: Non-8 byte registers are replaced by their equivalent 8 byte register class.
+   Commit => https://github.com/sahilpparmar/llvm_backend/commit/cb9e16ce96fac916f61153394f6060799b4a30be
+             (Refer: lib/Target/Cse523/Cse523ISelLowering.cpp)
+
+8. Currently we use pre-compiled musl-libc library (via gcc) and soft-float
+   library (via our Cse523 llvm backend) while compiling any test.
+   Library path => mytest/musl-1.0.4/lib
+   Include path => mytest/musl-1.0.4/include
+
+--------------------------------------------------------------------------------
+
+TODO's
+======
+
+1. Currently we are able to compile and execute specrand, bzip2 and mcf.
+   Need to fix compilation errors for other SpecInt benchmarks.
+   SpecInt Benchmarks => mytest/spec2006/benchspec/CPU2006/
+
+2. Need to support more floating point operations apart from existing set of FP operations.
+
+3. Currently we use gcc pre-compiled version of libc.
+   Need to compile libc sources using our Cse523 backend.
+   Download musl libc source from => http://www.musl-libc.org/download.html
+
+4. Need perf comparision between our Cse523 and X86 backend compiler on SpecInt benchmarks.
+
+--------------------------------------------------------------------------------
